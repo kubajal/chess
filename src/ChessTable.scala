@@ -1,0 +1,3 @@
+class ChessTable extends App {
+  
+}
