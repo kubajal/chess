@@ -1,0 +1,5 @@
+package model
+
+class Node {
+
+}

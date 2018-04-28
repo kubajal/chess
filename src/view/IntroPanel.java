@@ -11,7 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import controller.Controller;
-import model.Constants.PlayerColor;
+import model.PlayerColor;
 
 public class IntroPanel extends JPanel implements ActionListener {
 
@@ -25,7 +25,7 @@ public class IntroPanel extends JPanel implements ActionListener {
     private Controller controller;
 	
     private long timeForMove;
-    private PlayerColor playerColor;
+    boolean playerHasWhiteFigures;
     
     IntroPanel(Controller controller) {
     	
@@ -34,8 +34,8 @@ public class IntroPanel extends JPanel implements ActionListener {
     	
     	whitePlayerColorButton = new JButton("Biały");
     	blackPlayerColorButton = new JButton("Czarny");
-    	acceptButton = new JButton("Ok");  	
-    	playerColor = PlayerColor.White;
+    	acceptButton = new JButton("Ok");
+		playerHasWhiteFigures = true;
     	
     	whitePlayerColorButton.setActionCommand("White");
     	blackPlayerColorButton.setActionCommand("Black");
@@ -72,12 +72,12 @@ public class IntroPanel extends JPanel implements ActionListener {
     	
     	if ("White".equals(event.getActionCommand())) {
     		playerColorField.setText("Biały");
-    		playerColor = PlayerColor.White;
+			playerHasWhiteFigures = true;
     		
         } else if("Black".equals(event.getActionCommand())) {
         	playerColorField.setText("Czarny");
-    		playerColor = PlayerColor.Black;
-        	
+			playerHasWhiteFigures = false;
+
         } else if("Accept".equals(event.getActionCommand())) {
         	
         	try {
@@ -88,9 +88,10 @@ public class IntroPanel extends JPanel implements ActionListener {
         	}
         	
         	controller.setTimeForMove(timeForMove);
-        	controller.setPlayerColor(playerColor);
-        	controller.createFigures();
-        	controller.createBoard();
+        	if(playerHasWhiteFigures)
+        		controller.setPlayerColor(PlayerColor.White());
+        	else // playerHasWhiteFigures == false
+				controller.setPlayerColor(PlayerColor.Black());
         	controller.getMainWindow().showBoardPanel();
         }
     }

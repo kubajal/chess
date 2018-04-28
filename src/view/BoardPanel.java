@@ -1,7 +1,7 @@
 package view;
 
+import controller.Controller;
 import model.Figure;
-import model.Constants;
 
 import java.awt.*;
 import java.awt.event.MouseListener;
@@ -10,14 +10,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Iterator;
 import javax.swing.*;
 
-import controller.Controller;
+import static model.Constants.*;
 
 
-public class BoardPanel extends JPanel implements MouseListener, MouseMotionListener, ActionListener, Constants {
+public class BoardPanel extends JPanel implements MouseListener, MouseMotionListener, ActionListener {
 	
 	public static final long serialVersionUID = -7729510720848698723L; // kod seryjny klasy JPanel
 	
@@ -36,7 +35,10 @@ public class BoardPanel extends JPanel implements MouseListener, MouseMotionList
     public BoardPanel(Controller controller) {
         this.controller = controller;
         this.setLayout(null);
-        placeImagesOnBoard();
+
+        controller.createFigures();
+        controller.createBoard();
+        controller.placeImagesOnBoard(this);
         
         setFocusable(true);
         dimension = new Dimension(BOARD_WIDTH, BOARD_HEIGHT);
@@ -149,16 +151,7 @@ public class BoardPanel extends JPanel implements MouseListener, MouseMotionList
     }
     
     private void placeImagesOnBoard() {
-    	ArrayList<Figure> allFigures = new ArrayList<Figure>();
-    	allFigures.addAll(controller.getBlackFigures());
-    	allFigures.addAll(controller.getWhiteFigures());
-
-    	for (Figure figure : allFigures) {
-    		figure.getFigureImage().setBounds(figure.getPoint().x * SQUARE_SIZE, 
-    				(NUMBER_OF_SQUARES - figure.getPoint().y - 1) * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
-            this.add(figure.getFigureImage());
-    	}
-    	
+        controller.placeImagesOnBoard(this);
 	}
     
     // function used in mouse clicked event, it returns point representing square pressed by mouse
