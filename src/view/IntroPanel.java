@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 import controller.Controller;
 import model.PlayerColor;
 
-public class IntroPanel extends JPanel implements ActionListener {
+public class IntroPanel extends JPanel{
 
 	private static final long serialVersionUID = -7729510720848698725L; // kod seryjny klasy JPanel
 	
@@ -37,13 +37,36 @@ public class IntroPanel extends JPanel implements ActionListener {
     	acceptButton = new JButton("Ok");
 		playerHasWhiteFigures = true;
     	
-    	whitePlayerColorButton.setActionCommand("White");
-    	blackPlayerColorButton.setActionCommand("Black");
-    	acceptButton.setActionCommand("Accept");
-    	
-    	whitePlayerColorButton.addActionListener(this);
-    	blackPlayerColorButton.addActionListener(this);
-    	acceptButton.addActionListener(this);
+    	whitePlayerColorButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				playerColorField.setText("biały");
+				playerHasWhiteFigures = true;
+			}
+		});
+    	blackPlayerColorButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				playerColorField.setText("czarny");
+				playerHasWhiteFigures = false;
+			}
+		});
+    	acceptButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				try {
+					timeForMove = Integer.parseInt(timeField.getText());
+				}
+				catch(NumberFormatException exception) {
+					return;
+				}
+
+				controller.setTimeForMove(timeForMove);
+				if(playerHasWhiteFigures)
+					controller.setPlayerColor(PlayerColor.White());
+				else // playerHasWhiteFigures == false
+					controller.setPlayerColor(PlayerColor.Black());
+				controller.getMainWindow().showBoardPanel();
+			}
+		});
     	
     	playerColorLabel1 = new Label("Wybierz kolor figur, którymi będzie grał gracz.");
     	playerColorLabel2 = new Label("Komputer otrzyma figury przeciwnego koloru");
@@ -65,34 +88,5 @@ public class IntroPanel extends JPanel implements ActionListener {
         add(timeLabel2);
         add(timeField);    
         add(acceptButton);        
-    }
-    
-    @Override
-    public void actionPerformed(ActionEvent event) {
-    	
-    	if ("White".equals(event.getActionCommand())) {
-    		playerColorField.setText("Biały");
-			playerHasWhiteFigures = true;
-    		
-        } else if("Black".equals(event.getActionCommand())) {
-        	playerColorField.setText("Czarny");
-			playerHasWhiteFigures = false;
-
-        } else if("Accept".equals(event.getActionCommand())) {
-        	
-        	try {
-        		timeForMove = Integer.parseInt(timeField.getText());
-        	}
-        	catch(NumberFormatException exception) {
-        		return;
-        	}
-        	
-        	controller.setTimeForMove(timeForMove);
-        	if(playerHasWhiteFigures)
-        		controller.setPlayerColor(PlayerColor.White());
-        	else // playerHasWhiteFigures == false
-				controller.setPlayerColor(PlayerColor.Black());
-        	controller.getMainWindow().showBoardPanel();
-        }
     }
 }
