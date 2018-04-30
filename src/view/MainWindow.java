@@ -13,8 +13,7 @@ public class MainWindow extends JFrame implements Constants {
 	private IntroPanel introPanel;
 	private BoardPanel boardPanel;
 	
-    public MainWindow(Controller controller)
-    {
+    public MainWindow(Controller controller){
     	this.controller = controller;
     }
     
