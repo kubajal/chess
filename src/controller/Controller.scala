@@ -99,6 +99,10 @@ case class Controller(var blackFigures: Vector[Figure] = Vector.empty[Figure], v
     return Vector[(Int, Int)]((x+1,y));
   }
 
+  def move(from: (Int, Int), to: (Int, Int)) = {
+    System.out.printf("move (" + from._1 + ", " + from._2 + ") to (" + to._1 + ", " + to._2 + ")\n");
+  }
+
   def getPlayersFigures: Vector[Figure] = {
     if(playerColor == PlayerColor.White)
       return whiteFigures

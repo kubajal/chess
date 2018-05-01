@@ -97,9 +97,9 @@ public class BoardPanel extends JPanel {
 
                             Field newSelected = (Field)e.getSource();
                             if(possibleMoves != null && possibleMoves.contains(new scala.Tuple2(newSelected.y, newSelected.x))){
+                                controller.move(new scala.Tuple2(selected.y, selected.x), new scala.Tuple2(newSelected.y, newSelected.x));
                                 newSelected.figure = selected.figure;
                                 newSelected.add(selected.figure.getFigureImage());
-                                newSelected.figure = selected.figure;
                                 selected.remove(selected.figure.getFigureImage()); // IconImage
                                 selected.figure = null;
                                 selected.resetColor();
