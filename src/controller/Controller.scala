@@ -96,7 +96,7 @@ case class Controller(var blackFigures: Vector[Figure] = Vector.empty[Figure], v
 
   def getMoves(x: Int, y: Int): Vector[(scala.Int, scala.Int)] = {
     Thread.sleep(100)
-    return Vector[(Int, Int)]((x+1,y));
+    return Vector[(Int, Int)]((x,y+1));
   }
 
   def move(from: (Int, Int), to: (Int, Int)) = {

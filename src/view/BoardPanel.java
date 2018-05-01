@@ -85,9 +85,9 @@ public class BoardPanel extends JPanel {
         controller = _c;
         this.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         board = new Field[8][8];
-        for(int i = 0; i < 8; i++){
-            for(int j = 0; j < 8; j++){
-                board[i][j] = new Field(j, i);
+        for(int j = 0; j < 8; j++){
+            for(int i = 0; i < 8; i++){
+                board[i][j] = new Field(i, j);
                 board[i][j].setPreferredSize(new Dimension(SQUARE_SIZE, SQUARE_SIZE));
                 board[i][j].setVisible(true);
                 board[i][j].addActionListener(new ActionListener() {
@@ -96,8 +96,8 @@ public class BoardPanel extends JPanel {
                         if(playersMove) {
 
                             Field newSelected = (Field)e.getSource();
-                            if(possibleMoves != null && possibleMoves.contains(new scala.Tuple2(newSelected.y, newSelected.x))){
-                                controller.move(new scala.Tuple2(selected.y, selected.x), new scala.Tuple2(newSelected.y, newSelected.x));
+                            if(possibleMoves != null && possibleMoves.contains(new scala.Tuple2(newSelected.x, newSelected.y))){
+                                controller.move(new scala.Tuple2(selected.x, selected.y), new scala.Tuple2(newSelected.x, newSelected.y));
                                 newSelected.figure = selected.figure;
                                 newSelected.add(selected.figure.getFigureImage());
                                 selected.remove(selected.figure.getFigureImage()); // IconImage
@@ -109,7 +109,7 @@ public class BoardPanel extends JPanel {
                                     board[(int)field._1()][(int)field._2()].setEnabled(false);
                                 });
                                 JavaConverters.asJavaCollection(controller.getPlayersFigures()).forEach(figure -> {
-                                    board[figure.y()][figure.x()].setEnabled(false);
+                                    board[figure.x()][figure.y()].setEnabled(false);
                                 });
                                 playersMove = false;
                                 return;
@@ -126,7 +126,7 @@ public class BoardPanel extends JPanel {
                             selected.setBackground(selectedFieldColor);
                             System.out.println(selected.x + "x y" + selected.y + "\n");
 
-                            possibleMoves = possibleMoves = JavaConverters.asJavaCollection(controller.getMoves(selected.y, selected.x));
+                            possibleMoves = JavaConverters.asJavaCollection(controller.getMoves(selected.x, selected.y));
                             possibleMoves.forEach(field -> {
 
                                     board[(int)field._1()][(int)field._2()].setBackground(possibleMoveFieldColor);
@@ -147,9 +147,9 @@ public class BoardPanel extends JPanel {
         for(Figure f : c){
             System.out.println(f.x() + " " + f.y() + "\n");
             if(controller.playerColor() == PlayerColor.Black())
-                board[f.y()][f.x()].setEnabled(true);
-            board[f.y()][f.x()].setFigure(f);
-            board[f.y()][f.x()].add(f.getFigureImage());
+                board[f.x()][f.y()].setEnabled(true);
+            board[f.x()][f.y()].setFigure(f);
+            board[f.x()][f.y()].add(f.getFigureImage());
         }
 
         v = controller.getWhiteFigures();
@@ -157,9 +157,9 @@ public class BoardPanel extends JPanel {
         for(Figure f : c){
             System.out.println(f.x() + " " + f.y() + "\n");
             if(controller.playerColor() == PlayerColor.White())
-                board[f.y()][f.x()].setEnabled(true);
-            board[f.y()][f.x()].setFigure(f);
-            board[f.y()][f.x()].add(f.getFigureImage());
+                board[f.x()][f.y()].setEnabled(true);
+            board[f.x()][f.y()].setFigure(f);
+            board[f.x()][f.y()].add(f.getFigureImage());
         }
         if(controller.playerColor() == PlayerColor.White())
             playersMove = true;
