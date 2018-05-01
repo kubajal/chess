@@ -6,9 +6,7 @@ import controller.Controller;
 import model.Constants;
 
 public class MainWindow extends JFrame implements Constants {
-	
-	private static final long serialVersionUID = -7729510720848698724L; // kod seryjny klasy JFrame
-	
+
 	private Controller controller;
 	private IntroPanel introPanel;
 	private BoardPanel boardPanel;

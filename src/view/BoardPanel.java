@@ -8,23 +8,18 @@ import javax.swing.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.concurrent.*;
 
 import model.PlayerColor;
 import scala.Tuple2;
 import scala.collection.JavaConverters;
 import scala.collection.immutable.Vector;
 
-import static model.Constants.SQUARE_SIZE;
-
+import static model.Constants.*;
 
 public class BoardPanel extends JPanel {
-	
-	public static final long serialVersionUID = -7729510720848698723L; // kod seryjny klasy JPanel
-	
+
     private Color brightFieldColor = new Color(196, 200, 190);
     private Color darkFieldColor = new Color(125, 40, 15);
     private Color possibleMoveFieldColor = new Color(144, 150, 98);
@@ -63,7 +58,7 @@ public class BoardPanel extends JPanel {
 
     private Field[][] board;
 
-    class getMovesRunnable implements Runnable {
+/*    class getMovesRunnable implements Runnable {
 
         int x;
         int y;
@@ -72,18 +67,19 @@ public class BoardPanel extends JPanel {
             y = _y;
         }
         public void run(){
-            possibleMoves = JavaConverters.asJavaIterable(controller.getMoves(5, 5));
+            possibleMoves = JavaConverters.asJavaIterable(controller.getMoves(y, x));
             try {
                 SwingUtilities.invokeAndWait(new Runnable(){
                     public void run(){
                         possibleMoves.forEach(field -> board[(int)field._1()][(int)field._2()].setBackground(possibleMoveFieldColor));
                     }
                 });
+                return;
             } catch (InterruptedException | InvocationTargetException e) {
                 e.printStackTrace();
             }
         }
-    }
+    }*/
 
     public BoardPanel(Controller _c) {
         possibleMoves = new Iterable<Tuple2<Object, Object>>() {
@@ -103,20 +99,16 @@ public class BoardPanel extends JPanel {
                 board[i][j].addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        Field newSelected = (Field) e.getSource();
                         if (selected != null) {
                             selected.resetColor();
-                            return;
+                            possibleMoves.forEach(field -> board[(int)field._1()][(int)field._2()].resetColor());
                         }
-                        newSelected.setBackground(selectedFieldColor);
-                        selected = board[newSelected.y][newSelected.x];
-                        System.out.println(newSelected.x + "x y" + newSelected.y + "\n");
+                        selected = (Field) e.getSource();
+                        selected.setBackground(selectedFieldColor);
+                        System.out.println(selected.x + "x y" + selected.y + "\n");
 
-                        System.out.println("nacisnieto");
-                        if (playersMove == true) {
-                            new Thread(new getMovesRunnable(selected.x, selected.y)).start();
-
-                        }
+                        possibleMoves = possibleMoves = JavaConverters.asJavaIterable(controller.getMoves(selected.y, selected.x));
+                        possibleMoves.forEach(field -> board[(int)field._1()][(int)field._2()].setBackground(possibleMoveFieldColor));
                     }
                 });
                 board[i][j].resetColor();
@@ -131,8 +123,8 @@ public class BoardPanel extends JPanel {
             System.out.println(f.x() + " " + f.y() + "\n");
             if(controller.playerColor() == PlayerColor.Black())
                 board[f.y()][f.x()].setEnabled(true);
-            board[f.y()][f.x()].add(f.getFigureImage());
             board[f.y()][f.x()].setFigure(f);
+            board[f.y()][f.x()].add(f.getFigureImage());
         }
 
         v = controller.getWhiteFigures();
@@ -141,8 +133,8 @@ public class BoardPanel extends JPanel {
             System.out.println(f.x() + " " + f.y() + "\n");
             if(controller.playerColor() == PlayerColor.White())
                 board[f.y()][f.x()].setEnabled(true);
-            board[f.y()][f.x()].add(f.getFigureImage());
             board[f.y()][f.x()].setFigure(f);
+            board[f.y()][f.x()].add(f.getFigureImage());
         }
         if(controller.playerColor() == PlayerColor.White())
             playersMove = true;

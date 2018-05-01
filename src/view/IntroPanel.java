@@ -15,8 +15,6 @@ import model.PlayerColor;
 
 public class IntroPanel extends JPanel{
 
-	private static final long serialVersionUID = -7729510720848698725L; // kod seryjny klasy JPanel
-	
     private JButton acceptButton, whitePlayerColorButton, blackPlayerColorButton;
     
     private Label playerColorLabel1, playerColorLabel2, timeLabel1, timeLabel2;
