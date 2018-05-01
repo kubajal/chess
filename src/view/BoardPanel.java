@@ -54,7 +54,7 @@ public class BoardPanel extends JPanel {
     private Boolean playersMove = false;
     private Field selected;
 
-    private Iterable<Tuple2<Object, Object>> possibleMoves;
+    private Collection<Tuple2<Object, Object>> possibleMoves;
 
     private Field[][] board;
 
@@ -82,12 +82,6 @@ public class BoardPanel extends JPanel {
     }*/
 
     public BoardPanel(Controller _c) {
-        possibleMoves = new Iterable<Tuple2<Object, Object>>() {
-            @Override
-            public Iterator<Tuple2<Object, Object>> iterator() {
-                return null;
-            }
-        };
         controller = _c;
         this.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         board = new Field[8][8];
@@ -99,16 +93,47 @@ public class BoardPanel extends JPanel {
                 board[i][j].addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        if (selected != null) {
-                            selected.resetColor();
-                            possibleMoves.forEach(field -> board[(int)field._1()][(int)field._2()].resetColor());
-                        }
-                        selected = (Field) e.getSource();
-                        selected.setBackground(selectedFieldColor);
-                        System.out.println(selected.x + "x y" + selected.y + "\n");
+                        if(playersMove) {
 
-                        possibleMoves = possibleMoves = JavaConverters.asJavaIterable(controller.getMoves(selected.y, selected.x));
-                        possibleMoves.forEach(field -> board[(int)field._1()][(int)field._2()].setBackground(possibleMoveFieldColor));
+                            Field newSelected = (Field)e.getSource();
+                            if(possibleMoves != null && possibleMoves.contains(new scala.Tuple2(newSelected.y, newSelected.x))){
+                                newSelected.figure = selected.figure;
+                                newSelected.add(selected.figure.getFigureImage());
+                                newSelected.figure = selected.figure;
+                                selected.remove(selected.figure.getFigureImage()); // IconImage
+                                selected.figure = null;
+                                selected.resetColor();
+                                selected = null;
+                                possibleMoves.forEach(field -> {
+                                    board[(int)field._1()][(int)field._2()].resetColor();
+                                    board[(int)field._1()][(int)field._2()].setEnabled(false);
+                                });
+                                JavaConverters.asJavaCollection(controller.getPlayersFigures()).forEach(figure -> {
+                                    board[figure.y()][figure.x()].setEnabled(false);
+                                });
+                                playersMove = false;
+                                return;
+                            }
+                            if (selected != null) {
+                                selected.resetColor();
+                                possibleMoves.forEach(field -> {
+
+                                    board[(int)field._1()][(int)field._2()].resetColor();
+                                    board[(int)field._1()][(int)field._2()].setEnabled(false);
+                                });
+                            }
+                            selected = (Field) e.getSource();
+                            selected.setBackground(selectedFieldColor);
+                            System.out.println(selected.x + "x y" + selected.y + "\n");
+
+                            possibleMoves = possibleMoves = JavaConverters.asJavaCollection(controller.getMoves(selected.y, selected.x));
+                            possibleMoves.forEach(field -> {
+
+                                    board[(int)field._1()][(int)field._2()].setBackground(possibleMoveFieldColor);
+                                    board[(int)field._1()][(int)field._2()].setEnabled(true);
+                                }
+                            );
+                        }
                     }
                 });
                 board[i][j].resetColor();

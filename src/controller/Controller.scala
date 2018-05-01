@@ -96,6 +96,13 @@ case class Controller(var blackFigures: Vector[Figure] = Vector.empty[Figure], v
 
   def getMoves(x: Int, y: Int): Vector[(scala.Int, scala.Int)] = {
     Thread.sleep(100)
-    return Vector[(Int, Int)]((x-1,y-1));
+    return Vector[(Int, Int)]((x+1,y));
+  }
+
+  def getPlayersFigures: Vector[Figure] = {
+    if(playerColor == PlayerColor.White)
+      return whiteFigures
+    else
+      return blackFigures
   }
 }
