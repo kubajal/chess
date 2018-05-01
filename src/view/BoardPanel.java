@@ -9,7 +9,6 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
-import java.util.Iterator;
 
 import model.PlayerColor;
 import scala.Tuple2;
@@ -142,22 +141,17 @@ public class BoardPanel extends JPanel {
             }
         }
 
-        Vector<Figure> v = controller.getBlackFigures();
+        Vector<Figure> v = controller.getPlayersFigures();
         Collection<Figure> c = JavaConverters.asJavaCollection(v);
         for(Figure f : c){
-            System.out.println(f.x() + " " + f.y() + "\n");
-            if(controller.playerColor() == PlayerColor.Black())
-                board[f.x()][f.y()].setEnabled(true);
+            board[f.x()][f.y()].setEnabled(true);
             board[f.x()][f.y()].setFigure(f);
             board[f.x()][f.y()].add(f.getFigureImage());
         }
 
-        v = controller.getWhiteFigures();
+        v = controller.getOpponentsFigures();
         c = JavaConverters.asJavaCollection(v);
         for(Figure f : c){
-            System.out.println(f.x() + " " + f.y() + "\n");
-            if(controller.playerColor() == PlayerColor.White())
-                board[f.x()][f.y()].setEnabled(true);
             board[f.x()][f.y()].setFigure(f);
             board[f.x()][f.y()].add(f.getFigureImage());
         }

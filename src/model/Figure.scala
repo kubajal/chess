@@ -9,8 +9,11 @@ case class Figure(figureType : FigureType, playerColor : PlayerColor, var x : In
   def getFigureImage: JLabel = figureImage
   def setFigureImage(figureImage: JLabel): Unit = this.figureImage = figureImage
   def getPoint: (Int, Int) = (x, y)
+  def getX: Int = x
+  def getY: Int = y
   def setPoint(_x: Int, _y: Int): Unit = {
     this.x = _x
     this.y = _y;
   }
+  def getType: FigureType = figureType
 }
