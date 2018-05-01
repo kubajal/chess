@@ -101,6 +101,7 @@ case class Controller(var blackFigures: Vector[Figure] = Vector.empty[Figure], v
 
   def move(from: (Int, Int), to: (Int, Int)) = {
     System.out.printf("move (" + from._1 + ", " + from._2 + ") to (" + to._1 + ", " + to._2 + ")\n");
+    System.out.print(getPlayersFigures.filterNot(figure => figure.x == from._1 && figure.y == from._2).map(figure => (figure.x, figure.y)));
   }
 
   def getPlayersFigures: Vector[Figure] = {
