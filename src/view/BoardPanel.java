@@ -5,25 +5,20 @@ import model.Figure;
 
 import java.awt.*;
 import javax.swing.*;
-import java.awt.FlowLayout;
 
-import model.PlayerColor;
-import scala.collection.immutable.Vector;
-import scala.collection.JavaConverters;
-
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
-import java.util.List;
 import java.util.Iterator;
+import java.util.concurrent.*;
+
+import model.PlayerColor;
+import scala.Tuple2;
+import scala.collection.JavaConverters;
 import scala.collection.immutable.Vector;
 
-
-import static model.Constants.*;
-import static model.PlayerColor.*;
+import static model.Constants.SQUARE_SIZE;
 
 
 public class BoardPanel extends JPanel {
@@ -34,10 +29,8 @@ public class BoardPanel extends JPanel {
     private Color darkFieldColor = new Color(125, 40, 15);
     private Color possibleMoveFieldColor = new Color(144, 150, 98);
     private Color selectedFieldColor = new Color(14, 150, 0);
-    private Font smallFont = new Font("Helvetica", Font.BOLD, 16);
-    private Font bigFont = new Font("Helvetica", Font.BOLD, 20);
 
-    private Controller controller;
+    private static Controller controller;
 
     private Figure draggedFigure = null;
 
@@ -53,14 +46,53 @@ public class BoardPanel extends JPanel {
             x = _x;
             y = _y;
         }
+
+        public void resetColor(){
+
+            if ((x + y) % 2 == 0)
+                setBackground(brightFieldColor);
+            else
+                setBackground(darkFieldColor);
+        }
     }
 
     private Boolean playersMove = false;
     private Field selected;
 
+    private Iterable<Tuple2<Object, Object>> possibleMoves;
+
     private Field[][] board;
 
-    public BoardPanel(Controller controller) {
+    class getMovesRunnable implements Runnable {
+
+        int x;
+        int y;
+        getMovesRunnable(int _x, int _y){
+            x = _x;
+            y = _y;
+        }
+        public void run(){
+            possibleMoves = JavaConverters.asJavaIterable(controller.getMoves(5, 5));
+            try {
+                SwingUtilities.invokeAndWait(new Runnable(){
+                    public void run(){
+                        possibleMoves.forEach(field -> board[(int)field._1()][(int)field._2()].setBackground(possibleMoveFieldColor));
+                    }
+                });
+            } catch (InterruptedException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public BoardPanel(Controller _c) {
+        possibleMoves = new Iterable<Tuple2<Object, Object>>() {
+            @Override
+            public Iterator<Tuple2<Object, Object>> iterator() {
+                return null;
+            }
+        };
+        controller = _c;
         this.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         board = new Field[8][8];
         for(int i = 0; i < 8; i++){
@@ -71,33 +103,23 @@ public class BoardPanel extends JPanel {
                 board[i][j].addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        if(playersMove == true){
-                            Field newSelected = (Field)e.getSource();
-                            if(selected != null && selected.x.equals(newSelected.x) && selected.y.equals(newSelected.y) ){
-                                if((selected.x + selected.y)%2 == 0)
-                                    selected.setBackground(brightFieldColor);
-                                else
-                                    selected.setBackground(darkFieldColor);
-                                return;
-                            }
-                            newSelected.setBackground(selectedFieldColor);
-                            if(selected != null){
-                                if((selected.x + selected.y)%2 == 0)
-                                    selected.setBackground(brightFieldColor);
-                                else
-                                    selected.setBackground(darkFieldColor);
-                            }
-                            controller.getMoves(newSelected.figure);
-                            System.out.println(newSelected.x + "x y" + newSelected.y + "\n");
-                            selected = board[newSelected.y][newSelected.x];
+                        Field newSelected = (Field) e.getSource();
+                        if (selected != null) {
+                            selected.resetColor();
+                            return;
                         }
+                        newSelected.setBackground(selectedFieldColor);
+                        selected = board[newSelected.y][newSelected.x];
+                        System.out.println(newSelected.x + "x y" + newSelected.y + "\n");
+
                         System.out.println("nacisnieto");
+                        if (playersMove == true) {
+                            new Thread(new getMovesRunnable(selected.x, selected.y)).start();
+
+                        }
                     }
                 });
-                if((i+j)%2 == 0)
-                    board[i][j].setBackground(brightFieldColor);
-                else
-                    board[i][j].setBackground(darkFieldColor);
+                board[i][j].resetColor();
                 board[i][j].setEnabled(false);
                 this.add(board[i][j]);
             }
