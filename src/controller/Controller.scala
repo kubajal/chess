@@ -10,7 +10,8 @@ import model.Constants._
 
 case class Controller(var playersFigures: Vector[Figure] = Vector.empty[Figure], var opponentsFigures: Vector[Figure] = Vector.empty[Figure],
                       var mainWindow: MainWindow = null, var timeForMove: Long = 100, var playerColor: PlayerColor = PlayerColor.White,
-                      board: Array[Array[Figure]] = Array.ofDim[Figure](8, 8), inGame: Boolean = true, gameOver: Boolean = false) {
+                      var opponentsColor: PlayerColor = PlayerColor.Black, board: Array[Array[Figure]] = Array.ofDim[Figure](8, 8),
+                      inGame: Boolean = true, gameOver: Boolean = false) {
 
   private val whitePawnImage = new ImageIcon(getClass.getResource("/images/white_pawn.png"))
   private val whiteKnightImage = new ImageIcon(getClass.getResource("/images/white_knight.png"))
@@ -82,7 +83,18 @@ case class Controller(var playersFigures: Vector[Figure] = Vector.empty[Figure],
 
   def setTimeForMove(timeForMove: Long): Unit = this.timeForMove = timeForMove
 
-  def setPlayerColor(playerColor: PlayerColor): Unit = this.playerColor = playerColor
+  def setPlayerColor(playerColor: PlayerColor): Unit = {
+    playerColor match {
+      case PlayerColor.Black => {
+        this.playerColor = PlayerColor.Black
+        this.opponentsColor = PlayerColor.White
+      }
+      case PlayerColor.White => {
+        this.playerColor = PlayerColor.White
+        this.opponentsColor = PlayerColor.Black
+      }
+    }
+  }
 
   def setMainWindow(mainWindow: MainWindow) = this.mainWindow = mainWindow
 
@@ -90,9 +102,46 @@ case class Controller(var playersFigures: Vector[Figure] = Vector.empty[Figure],
 
   def getBoard: Array[Array[Figure]] = board
 
-  def getMoves(x: Int, y: Int): Vector[(scala.Int, scala.Int)] = {
-    Thread.sleep(100)
-    return Vector[(Int, Int)]((x,y+1));
+  def getMoves(_x: Int, _y: Int): Vector[(scala.Int, scala.Int)] = {
+    val figure = mainWindow.getFigure(_x, _y);
+    println(figure);
+    figure.getType match {
+      case FigureType.Pawn => {
+        playerColor match {
+          case PlayerColor.White => {
+            println(" -bialy")
+          }
+          case PlayerColor.Black => {
+            println(" -czarny")
+          }
+        }
+      }
+      case FigureType.Rook => {
+        println("wieza")
+      }
+      case FigureType.Knight => {
+        println("kon")
+      }
+      case FigureType.Bishop => {
+        println("goniec")
+      }
+      case FigureType.King=> {
+        println("krol")
+      }
+      case FigureType.Queen => {
+        println("hetman")
+      }
+    }
+
+    return Vector[(Int, Int)]((_x, _y+1));
+  }
+
+  def opponentsMove() = {
+    playersFigures = playersFigures.filterNot(figure => figure.x == 1 && figure.y == 6)
+    playersFigures = playersFigures :+ new Figure(FigureType.Pawn, opponentsColor, 1, 5, new JLabel(whitePawnImage));
+    //getMainWindow.getBoardPanel.repaintFigures
+    getMainWindow.getBoardPanel.enablePlayersMove
+    Thread.sleep(1500)
   }
 
   def move(from: (Int, Int), to: (Int, Int)) = {
@@ -107,5 +156,4 @@ case class Controller(var playersFigures: Vector[Figure] = Vector.empty[Figure],
 
   def getPlayersFigures: Vector[Figure] = playersFigures
   def getOpponentsFigures: Vector[Figure] = opponentsFigures
-
 }

@@ -159,4 +159,29 @@ public class BoardPanel extends JPanel {
             playersMove = true;
 
     }
+    public Figure getFigure(int x, int y){
+        return board[x][y].figure;
+    }
+
+    public void enablePlayersMove(){
+        playersMove = true;
+    }
+
+    public void repaintFigures() {
+
+        for(Figure f : JavaConverters.asJavaCollection(controller.getOpponentsFigures())){
+            board[f.x()][f.y()].removeAll();
+            board[f.x()][f.y()].add(f.getFigureImage());
+        }
+        for(Figure f : JavaConverters.asJavaCollection(controller.getPlayersFigures())){
+            board[f.x()][f.y()].removeAll();
+            board[f.x()][f.y()].add(f.getFigureImage());
+            board[f.x()][f.y()].setEnabled(true);
+        }
+        for(int i = 0; i < 8; i++){
+            for(int j = 0; j < 8; j++){
+                board[i][j].resetColor();
+            }
+        }
+    }
 }

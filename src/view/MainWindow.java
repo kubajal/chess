@@ -4,6 +4,7 @@ import javax.swing.JFrame;
 
 import controller.Controller;
 import model.Constants;
+import model.Figure;
 
 public class MainWindow extends JFrame implements Constants {
 
@@ -37,4 +38,12 @@ public class MainWindow extends JFrame implements Constants {
     	setLocationRelativeTo(null); // ustawiamy ekran gry na srodku ekranu
     	setResizable(false);
     }
+
+    public BoardPanel getBoardPanel(){
+    	return boardPanel;
+	}
+
+	public Figure getFigure(int x, int y){
+    	return boardPanel.getFigure(x, y);
+	}
 }

@@ -52,18 +52,20 @@ public class IntroPanel extends JPanel{
 
 				try {
 					timeForMove = Integer.parseInt(timeField.getText());
-				}
-				catch(NumberFormatException exception) {
+				} catch (NumberFormatException exception) {
 					return;
 				}
 
 				controller.setTimeForMove(timeForMove);
-				if(playerHasWhiteFigures)
-					controller.setPlayerColor(PlayerColor.White());
-				else // playerHasWhiteFigures == false
-					controller.setPlayerColor(PlayerColor.Black());
 				controller.createFigures();
 				controller.getMainWindow().showBoardPanel();
+				if (playerHasWhiteFigures)
+					controller.setPlayerColor(PlayerColor.White());
+				else { // playerHasWhiteFigures == false
+					controller.setPlayerColor(PlayerColor.Black());
+					controller.opponentsMove();
+				}
+
 			}
 		});
     	
