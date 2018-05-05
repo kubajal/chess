@@ -103,6 +103,11 @@ case class Controller(var playersFigures: Vector[Figure] = Vector.empty[Figure],
 
   def getBoard: Array[Array[Figure]] = board
 
+  def whitePawnMoves(figure: Figure): Vector[(Int, Int)] ={
+    val moves = Vector[(Int, Int)](figure.x, figure.y+1)
+
+  }
+
   def getMoves(figure: Figure): Vector[(scala.Int, scala.Int)] = {
     println(figure);
     val x = figure.x
@@ -113,7 +118,7 @@ case class Controller(var playersFigures: Vector[Figure] = Vector.empty[Figure],
           case PlayerColor.White => {
             println(" -bialy")
           }
-          case PlayerColor.Black => s{
+          case PlayerColor.Black => {
             println(" -czarny")
           }
         }
@@ -148,6 +153,7 @@ case class Controller(var playersFigures: Vector[Figure] = Vector.empty[Figure],
     System.out.println(opponentsFigures.map(figure => (figure.x, figure.y)));
     //Thread.sleep(1500)
     getMainWindow.getBoardPanel.repaintFigures
+
 
   }
 
