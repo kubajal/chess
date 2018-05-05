@@ -11,7 +11,7 @@ import model.Constants._
 case class Controller(var playersFigures: Vector[Figure] = Vector.empty[Figure], var opponentsFigures: Vector[Figure] = Vector.empty[Figure],
                       var mainWindow: MainWindow = null, var timeForMove: Long = 100, var playerColor: PlayerColor = PlayerColor.White,
                       var opponentsColor: PlayerColor = PlayerColor.Black, board: Array[Array[Figure]] = Array.ofDim[Figure](8, 8),
-                      inGame: Boolean = true, gameOver: Boolean = false) {
+                      inGame: Boolean = true, gameOver: Boolean = false, var playersMove: Boolean = false) {
 
   private val whitePawnImage = new ImageIcon(getClass.getResource("/images/white_pawn.png"))
   private val whiteKnightImage = new ImageIcon(getClass.getResource("/images/white_knight.png"))
@@ -94,6 +94,7 @@ case class Controller(var playersFigures: Vector[Figure] = Vector.empty[Figure],
         this.opponentsColor = PlayerColor.Black
       }
     }
+    createFigures
   }
 
   def setMainWindow(mainWindow: MainWindow) = this.mainWindow = mainWindow
@@ -102,16 +103,17 @@ case class Controller(var playersFigures: Vector[Figure] = Vector.empty[Figure],
 
   def getBoard: Array[Array[Figure]] = board
 
-  def getMoves(_x: Int, _y: Int): Vector[(scala.Int, scala.Int)] = {
-    val figure = mainWindow.getFigure(_x, _y);
+  def getMoves(figure: Figure): Vector[(scala.Int, scala.Int)] = {
     println(figure);
+    val x = figure.x
+    val y = figure.y
     figure.getType match {
       case FigureType.Pawn => {
-        playerColor match {
+        figure.getColor match {
           case PlayerColor.White => {
             println(" -bialy")
           }
-          case PlayerColor.Black => {
+          case PlayerColor.Black => s{
             println(" -czarny")
           }
         }
@@ -133,26 +135,35 @@ case class Controller(var playersFigures: Vector[Figure] = Vector.empty[Figure],
       }
     }
 
-    return Vector[(Int, Int)]((_x, _y+1));
+    return Vector[(Int, Int)]((x, y+1));
   }
 
   def opponentsMove() = {
-    playersFigures = playersFigures.filterNot(figure => figure.x == 1 && figure.y == 6)
-    playersFigures = playersFigures :+ new Figure(FigureType.Pawn, opponentsColor, 1, 5, new JLabel(whitePawnImage));
+    System.out.println("ruch przeciwnika, sytuacja przed:");
+    System.out.println(opponentsFigures.map(figure => (figure.x, figure.y)));
+    opponentsFigures = opponentsFigures.filterNot(figure => figure.x == 6 && figure.y == 6)
+    opponentsFigures = opponentsFigures :+ new Figure(FigureType.Pawn, opponentsColor, 6, 5, new JLabel(blackPawnImage));
     //getMainWindow.getBoardPanel.repaintFigures
-    getMainWindow.getBoardPanel.enablePlayersMove
-    Thread.sleep(1500)
+    System.out.println("ruch przeciwnika, sytuacja po:");
+    System.out.println(opponentsFigures.map(figure => (figure.x, figure.y)));
+    //Thread.sleep(1500)
+    getMainWindow.getBoardPanel.repaintFigures
+
   }
 
-  def move(from: (Int, Int), to: (Int, Int)) = {
-    System.out.printf("move (" + from._1 + ", " + from._2 + ") to (" + to._1 + ", " + to._2 + ")\n");
+  def playersMove(f: Figure, to: (Int, Int)) {
+    System.out.printf("move (" + f.x + ", " + f.y + ") to (" + to._1 + ", " + to._2 + ")\n");
+    System.out.println("ruch gracza, sytuacja przed:");
     System.out.println(playersFigures.map(figure => (figure.x, figure.y)));
-    var tmp = playersFigures.filter(figure => figure.x == from._1 && figure.y == from._2)(0);
-    // System.out.print(getPlayersFigures.filterNot(figure => figure.x == from._1 && figure.y == from._2).map(figure => (figure.x, figure.y)));
-    playersFigures = playersFigures.filterNot(figure => figure.x == from._1 && figure.y == from._2);
-    playersFigures = playersFigures :+ new Figure(tmp.getType, playerColor, to._1, to._2, tmp.getFigureImage);
+    playersFigures = playersFigures.filterNot(figure => figure == f);
+    playersFigures = playersFigures :+ new Figure(f.getType, playerColor, to._1, to._2, f.getFigureImage);
+    System.out.println("ruch gracza, sytuacja po:");
     System.out.println(playersFigures.map(figure => (figure.x, figure.y)));
+    getMainWindow.getBoardPanel.repaintFigures
+
   }
+
+  def enablePlayersMove() = playersMove = true
 
   def getPlayersFigures: Vector[Figure] = playersFigures
   def getOpponentsFigures: Vector[Figure] = opponentsFigures

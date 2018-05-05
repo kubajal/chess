@@ -57,14 +57,15 @@ public class IntroPanel extends JPanel{
 				}
 
 				controller.setTimeForMove(timeForMove);
-				controller.createFigures();
-				controller.getMainWindow().showBoardPanel();
-				if (playerHasWhiteFigures)
+				if (playerHasWhiteFigures){
 					controller.setPlayerColor(PlayerColor.White());
+					controller.enablePlayersMove();
+				}
 				else { // playerHasWhiteFigures == false
 					controller.setPlayerColor(PlayerColor.Black());
 					controller.opponentsMove();
 				}
+				controller.getMainWindow().showBoardPanel();
 
 			}
 		});

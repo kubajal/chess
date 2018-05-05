@@ -33,7 +33,7 @@ public class MainWindow extends JFrame implements Constants {
     	getContentPane().removeAll();
     	getContentPane().add(boardPanel);
     	setTitle("Szachy");
-    	setSize(BOARD_WIDTH, BOARD_HEIGHT);
+    	setSize(BOARD_WIDTH, BOARD_HEIGHT + 100);
     	setDefaultCloseOperation(EXIT_ON_CLOSE);
     	setLocationRelativeTo(null); // ustawiamy ekran gry na srodku ekranu
     	setResizable(false);

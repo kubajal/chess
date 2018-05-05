@@ -8,9 +8,9 @@ import javax.swing.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
-import model.PlayerColor;
 import scala.Tuple2;
 import scala.collection.JavaConverters;
 import scala.collection.immutable.Vector;
@@ -35,6 +35,8 @@ public class BoardPanel extends JPanel {
         public Integer y;
         void setFigure(Figure f){
             figure = f;
+            removeAll();
+            add(f.getFigureImage());
         }
         Field(int _x, int _y){
             x = _x;
@@ -92,25 +94,12 @@ public class BoardPanel extends JPanel {
                 board[i][j].addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        if(playersMove) {
+                        if(controller.playersMove()) {
 
                             Field newSelected = (Field)e.getSource();
                             if(possibleMoves != null && possibleMoves.contains(new scala.Tuple2(newSelected.x, newSelected.y))){
-                                controller.move(new scala.Tuple2(selected.x, selected.y), new scala.Tuple2(newSelected.x, newSelected.y));
-                                newSelected.figure = selected.figure;
-                                newSelected.add(selected.figure.getFigureImage());
-                                selected.remove(selected.figure.getFigureImage()); // IconImage
-                                selected.figure = null;
-                                selected.resetColor();
-                                selected = null;
-                                possibleMoves.forEach(field -> {
-                                    board[(int)field._1()][(int)field._2()].resetColor();
-                                    board[(int)field._1()][(int)field._2()].setEnabled(false);
-                                });
-                                JavaConverters.asJavaCollection(controller.getPlayersFigures()).forEach(figure -> {
-                                    board[figure.x()][figure.y()].setEnabled(false);
-                                });
-                                playersMove = false;
+                                controller.playersMove(selected.figure, new scala.Tuple2(newSelected.x, newSelected.y));
+                                controller.opponentsMove();
                                 return;
                             }
                             if (selected != null) {
@@ -123,9 +112,9 @@ public class BoardPanel extends JPanel {
                             }
                             selected = (Field) e.getSource();
                             selected.setBackground(selectedFieldColor);
-                            System.out.println(selected.x + "x y" + selected.y + "\n");
+                            System.out.println("x " + selected.x + ", y " + selected.y + "\n");
 
-                            possibleMoves = JavaConverters.asJavaCollection(controller.getMoves(selected.x, selected.y));
+                            possibleMoves = JavaConverters.asJavaCollection(controller.getMoves(selected.figure));
                             possibleMoves.forEach(field -> {
 
                                     board[(int)field._1()][(int)field._2()].setBackground(possibleMoveFieldColor);
@@ -140,48 +129,46 @@ public class BoardPanel extends JPanel {
                 this.add(board[i][j]);
             }
         }
-
-        Vector<Figure> v = controller.getPlayersFigures();
-        Collection<Figure> c = JavaConverters.asJavaCollection(v);
-        for(Figure f : c){
-            board[f.x()][f.y()].setEnabled(true);
-            board[f.x()][f.y()].setFigure(f);
-            board[f.x()][f.y()].add(f.getFigureImage());
-        }
-
-        v = controller.getOpponentsFigures();
-        c = JavaConverters.asJavaCollection(v);
-        for(Figure f : c){
-            board[f.x()][f.y()].setFigure(f);
-            board[f.x()][f.y()].add(f.getFigureImage());
-        }
-        if(controller.playerColor() == PlayerColor.White())
-            playersMove = true;
-
+        repaintFigures();
+        JButton pomoc = new JButton();
+        pomoc.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                repaintFigures();
+                System.out.println("odswiezam widok");
+            }
+        });
+        pomoc.setPreferredSize(new Dimension(30, 30));
+        pomoc.setVisible(true);
+        pomoc.setEnabled(true);
+        add(pomoc);
     }
     public Figure getFigure(int x, int y){
         return board[x][y].figure;
     }
 
-    public void enablePlayersMove(){
-        playersMove = true;
-    }
+    public void repaintFigures(){
 
-    public void repaintFigures() {
-
-        for(Figure f : JavaConverters.asJavaCollection(controller.getOpponentsFigures())){
-            board[f.x()][f.y()].removeAll();
-            board[f.x()][f.y()].add(f.getFigureImage());
-        }
-        for(Figure f : JavaConverters.asJavaCollection(controller.getPlayersFigures())){
-            board[f.x()][f.y()].removeAll();
-            board[f.x()][f.y()].add(f.getFigureImage());
-            board[f.x()][f.y()].setEnabled(true);
-        }
         for(int i = 0; i < 8; i++){
             for(int j = 0; j < 8; j++){
+                board[i][j].removeAll();
                 board[i][j].resetColor();
+                board[i][j].figure = null;
             }
         }
+
+        Vector<Figure> v1 = controller.getPlayersFigures();
+        Collection<Figure> c = JavaConverters.asJavaCollection(v1);
+        for(Figure f : c){
+            board[f.x()][f.y()].setEnabled(true);
+            board[f.x()][f.y()].setFigure(f);
+        }
+
+        Vector<Figure> v2 = controller.getOpponentsFigures();
+        Collection<Figure> c1 = JavaConverters.asJavaCollection(v2);
+        for(Figure f : c1){
+            board[f.x()][f.y()].setFigure(f);
+        }
     }
+
 }
