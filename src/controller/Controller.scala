@@ -8,6 +8,9 @@ import model.PlayerColor.PlayerColor
 import view.{BoardPanel, MainWindow}
 import model.Constants._
 
+import scala.collection.JavaConverters
+import scala.concurrent.JavaConversions
+
 case class Controller(var playersFigures: Vector[Figure] = Vector.empty[Figure], var opponentsFigures: Vector[Figure] = Vector.empty[Figure],
                       var mainWindow: MainWindow = null, var timeForMove: Long = 100, var playerColor: PlayerColor = PlayerColor.White,
                       var opponentsColor: PlayerColor = PlayerColor.Black, board: Array[Array[Figure]] = Array.ofDim[Figure](8, 8),
@@ -79,6 +82,8 @@ case class Controller(var playersFigures: Vector[Figure] = Vector.empty[Figure],
         opponentsFigures = opponentsFigures :+ new Figure(FigureType.Queen, PlayerColor.Black, 3, 7, new JLabel(blackQueenImage))
         opponentsFigures = opponentsFigures :+ new Figure(FigureType.King, PlayerColor.Black, 4, 7, new JLabel(blackKingImage))
     }
+    opponentsFigures = opponentsFigures :+ new Figure(FigureType.King, PlayerColor.Black, 5, 2, new JLabel(blackKingImage))
+    opponentsFigures = opponentsFigures :+ new Figure(FigureType.King, PlayerColor.White, 4, 2, new JLabel(whiteKingImage))
   }
 
   def setTimeForMove(timeForMove: Long): Unit = this.timeForMove = timeForMove
@@ -101,46 +106,66 @@ case class Controller(var playersFigures: Vector[Figure] = Vector.empty[Figure],
 
   def getMainWindow: MainWindow = mainWindow
 
-  def getBoard: Array[Array[Figure]] = board
+  def getFigure(_x: Int, _y: Int): Figure = getFigure((_x, _y))
+  def getFigure(_x: (Int, Int)): Figure = {
+    val x = getPlayersFigures.filter(figure => figure.x == _x._1 && figure.y == _x._2) ++ getOpponentsFigures.filter(figure => figure.x == _x._1 && figure.y == _x._2)
+    if(x.isEmpty)
+      null
+    else
+      x(0)
+  }
 
-  def whitePawnMoves(figure: Figure): Vector[(Int, Int)] ={
-    val moves = Vector[(Int, Int)](figure.x, figure.y+1)
+  def whitePawnMoves(figure: Figure): Vector[(Int, Int)] = {
+    var moves = Vector[(Int, Int)]((figure.x, figure.y + 1), (figure.x - 1, figure.y + 1), (figure.x + 1, figure.y + 1))
+    var move = List[(Int, Int)]()
+    if(getFigure(figure.x, figure.y + 1) == null)
+      move = move :+ (figure.x, figure.y + 1)
+    move = move ::: List[(Int, Int)]((figure.x - 1, figure.y + 1), (figure.x + 1, figure.y + 1)).filter(f => getFigure(f._1, f._2) != null && getFigure(f._1, f._2).getColor != figure.getColor)
+    moves = moves.filter(x => x._1 >= 0 && x._1 < 8 && x._2 >= 0 && x._1 < 8)
+    moves.filter(x => getFigure(x) == null || getFigure(x).getColor != figure.getColor)
+    return move.toVector
 
   }
 
-  def getMoves(figure: Figure): Vector[(scala.Int, scala.Int)] = {
+  def getMoves(figure: Figure): Vector[(Int, Int)] = {
     println(figure);
     val x = figure.x
     val y = figure.y
+    val moves = Vector[(Int, Int)]()
     figure.getType match {
       case FigureType.Pawn => {
         figure.getColor match {
           case PlayerColor.White => {
-            println(" -bialy")
+            println("bialy pion")
+            whitePawnMoves(figure)
           }
           case PlayerColor.Black => {
-            println(" -czarny")
+            println("czarny pion")
+            moves
           }
         }
       }
       case FigureType.Rook => {
         println("wieza")
+        moves
       }
       case FigureType.Knight => {
         println("kon")
+        moves
       }
       case FigureType.Bishop => {
         println("goniec")
+        moves
       }
       case FigureType.King=> {
         println("krol")
+        moves
       }
       case FigureType.Queen => {
         println("hetman")
+        moves
       }
     }
-
-    return Vector[(Int, Int)]((x, y+1));
   }
 
   def opponentsMove() = {

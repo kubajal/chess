@@ -4,7 +4,7 @@ import javax.swing.JLabel
 import model.FigureType._
 import model.PlayerColor._
 
-case class Figure(figureType : FigureType, playerColor : PlayerColor, var x : Int, var y: Int, var figureImage : JLabel) {
+case class Figure(figureType : FigureType, color : PlayerColor, var x : Int, var y: Int, var figureImage : JLabel) {
 
   def getFigureImage: JLabel = figureImage
   def setFigureImage(figureImage: JLabel): Unit = this.figureImage = figureImage
@@ -16,5 +16,5 @@ case class Figure(figureType : FigureType, playerColor : PlayerColor, var x : In
     this.y = _y;
   }
   def getType: FigureType = figureType
-  def getColor: PlayerColor = playerColor
+  def getColor: PlayerColor = color
 }
