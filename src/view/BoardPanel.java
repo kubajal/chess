@@ -9,11 +9,15 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Collection;
 
+import model.PlayerColor;
+import model.PlayerColor$;
 import scala.Tuple2;
 import scala.collection.JavaConverters;
 import scala.collection.immutable.Vector;
+import scala.Array;
 
 import static model.Constants.*;
 
@@ -53,7 +57,7 @@ public class BoardPanel extends JPanel {
     }
 
     private Boolean playersMove = false;
-    private Field selected;
+    private Field selected = null;
 
     private Collection<Tuple2<Object, Object>> possibleMoves;
 
@@ -86,7 +90,7 @@ public class BoardPanel extends JPanel {
         controller = _c;
         this.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         board = new Field[8][8];
-        for(int j = 0; j < 8; j++){
+        for(int j = 7; j >= 0; j--){
             for(int i = 0; i < 8; i++){
                 board[i][j] = new Field(i, j);
                 board[i][j].setPreferredSize(new Dimension(SQUARE_SIZE, SQUARE_SIZE));
@@ -94,12 +98,16 @@ public class BoardPanel extends JPanel {
                 board[i][j].addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        if(controller.playersMove()) {
+                        if(controller.isPlayersMove()) {
 
                             Field newSelected = (Field)e.getSource();
+
                             if(possibleMoves != null && possibleMoves.contains(new scala.Tuple2(newSelected.x, newSelected.y))){
-                                controller.playersMove(selected.figure, new scala.Tuple2(newSelected.x, newSelected.y));
-                                controller.opponentsMove();
+                                controller.makePlayerMove(selected.figure, new scala.Tuple2(newSelected.x, newSelected.y));
+                                controller.makeComputerMove();
+								repaintFigures();
+								possibleMoves = null;
+								selected = null;
                                 return;
                             }
                             if (selected != null) {
@@ -114,7 +122,7 @@ public class BoardPanel extends JPanel {
                             selected.setBackground(selectedFieldColor);
                             System.out.println("x " + selected.x + ", y " + selected.y + "\n");
 
-                            possibleMoves = JavaConverters.asJavaCollection(controller.getMoves(selected.figure));
+                            possibleMoves = JavaConverters.asJavaCollection(controller.findPossibleMoves(selected.figure));
                             possibleMoves.forEach(field -> {
 
                                     board[(int)field._1()][(int)field._2()].setBackground(possibleMoveFieldColor);
@@ -154,21 +162,32 @@ public class BoardPanel extends JPanel {
                 board[i][j].removeAll();
                 board[i][j].resetColor();
                 board[i][j].figure = null;
+                board[i][j].setEnabled(false);
+                //board[i][j].repaint();
             }
         }
 
-        Vector<Figure> v1 = controller.getPlayersFigures();
-        Collection<Figure> c = JavaConverters.asJavaCollection(v1);
-        for(Figure f : c){
-            board[f.x()][f.y()].setEnabled(true);
+        Figure [] blackFigures = controller.getBlackFigures();
+        for(Figure f : blackFigures){
+            if(f == null)
+                continue;
+            if(controller.playerColor() == PlayerColor.Black())
+                board[f.x()][f.y()].setEnabled(true);
+            else
+                board[f.x()][f.y()].setEnabled(false);
             board[f.x()][f.y()].setFigure(f);
         }
 
-        Vector<Figure> v2 = controller.getOpponentsFigures();
-        Collection<Figure> c1 = JavaConverters.asJavaCollection(v2);
-        for(Figure f : c1){
+        Figure [] whiteFigures = controller.getWhiteFigures();
+        for(Figure f : whiteFigures){
+            if(f == null)
+                continue;
+            if(controller.playerColor() == PlayerColor.White())
+                board[f.x()][f.y()].setEnabled(true);
+            else
+                board[f.x()][f.y()].setEnabled(false);
             board[f.x()][f.y()].setFigure(f);
         }
+        this.repaint();
     }
-
 }

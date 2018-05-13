@@ -15,7 +15,9 @@ import model.PlayerColor;
 
 public class IntroPanel extends JPanel{
 
-    private JButton acceptButton, whitePlayerColorButton, blackPlayerColorButton;
+	private static final long serialVersionUID = -9025564695102872265L;
+
+	private JButton acceptButton, whitePlayerColorButton, blackPlayerColorButton;
     
     private Label playerColorLabel1, playerColorLabel2, timeLabel1, timeLabel2;
     private TextField playerColorField, timeField;
@@ -37,13 +39,13 @@ public class IntroPanel extends JPanel{
     	
     	whitePlayerColorButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				playerColorField.setText("biały");
+				playerColorField.setText("Biały");
 				playerHasWhiteFigures = true;
 			}
 		});
     	blackPlayerColorButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				playerColorField.setText("czarny");
+				playerColorField.setText("Czarny");
 				playerHasWhiteFigures = false;
 			}
 		});
@@ -59,11 +61,11 @@ public class IntroPanel extends JPanel{
 				controller.setTimeForMove(timeForMove);
 				if (playerHasWhiteFigures){
 					controller.setPlayerColor(PlayerColor.White());
-					controller.enablePlayersMove();
+					//controller.enablePlayersMove();
 				}
 				else { // playerHasWhiteFigures == false
 					controller.setPlayerColor(PlayerColor.Black());
-					controller.opponentsMove();
+					controller.makeComputerMove();
 				}
 				controller.getMainWindow().showBoardPanel();
 
