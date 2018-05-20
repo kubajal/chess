@@ -1,5 +1,7 @@
 package controller
 
+import javax.swing.JLabel
+import model.FigureType.FigureType
 import model.PlayerColor.PlayerColor
 import model.{Figure, FigureType, PlayerColor}
 
@@ -20,9 +22,21 @@ class InternalState(val whiteFigures : Array[Figure], val blackFigures : Array[F
   }
   def whiteHeuristic() : Int = whiteFigures.map(f => points(f)).sum
   def blackHeuristic() : Int = blackFigures.map(f => points(f)).sum
+  def heuristic(color : PlayerColor) : Int = {
+    color match {
+      case PlayerColor.White => whiteHeuristic
+      case PlayerColor.Black => blackHeuristic
+    }
+  }
 
-  def getWhiteFigures() = whiteFigures
-  def getBlackFigures() = blackFigures
+  def getWhiteFigures() : Array[Figure] = whiteFigures
+  def getBlackFigures() : Array[Figure] = blackFigures
+  def getFigures(color : PlayerColor) : Array[Figure] = {
+    color match {
+      case PlayerColor.White => getWhiteFigures
+      case PlayerColor.Black => getBlackFigures
+    }
+  }
 
   def getBoard : Array[Array[Figure]] = board
 
@@ -147,29 +161,19 @@ class InternalState(val whiteFigures : Array[Figure], val blackFigures : Array[F
     possibleMoves.result()
   }
 
+  def makeMove(x : (Figure, (Int, Int))) : InternalState = {
+    makeMove(x._1, x._2)
+  }
 
-  def makeMove(figure : Figure, destination: (Int, Int)) : Unit = {
+  def makeMove(figure : Figure, destination: (Int, Int)) : InternalState = {
 
-    if(board(destination._1)(destination._2) != null) {
-      figure.getColor match {
-        case PlayerColor.Black => {
-          for(i <- 0 to 15) {
-            if(whiteFigures(i) == board(destination._1)(destination._2))
-              whiteFigures(i) = null
-          }
-        }
-        case PlayerColor.White => {
-          for(i <- 0 to 15) {
-            if(blackFigures(i) == board(destination._1)(destination._2))
-              blackFigures(i) = null
-          }
-        }
-      }
-    }
+    val newFigure = new Figure(figure.getType, figure.getColor, destination._1, destination._2, figure.getFigureImage)
+    board(destination._1)(destination._2) = newFigure
     board(figure.x)(figure.y) = null
-    board(destination._1)(destination._2)	= figure
-    figure.x = destination._1
-    figure.y = destination._2
+    if(figure.getColor == PlayerColor.White)
+      return new InternalState(whiteFigures.filterNot(f => f.x == figure.x && f.y == figure.y) :+ newFigure, blackFigures, board)
+    else
+      return new InternalState(whiteFigures, blackFigures.filterNot(f => f.x == figure.x && f.y == figure.y) :+ newFigure, board)
   }
 
   // function which tries to add consistently all possible moves in direction chosen by h - horizontal factor and v - vertical factor, v and h can be only 3 values (-1, 0, 1)

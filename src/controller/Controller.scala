@@ -1,5 +1,6 @@
 package controller
 
+import controller.Main.controller
 import javax.swing.{ImageIcon, JLabel}
 import model.{Figure, FigureType, PlayerColor}
 import model.PlayerColor.PlayerColor
@@ -22,14 +23,12 @@ class Controller(var mainWindow: MainWindow = null, var timeForMove: Long = 100,
   private val blackQueenImage = new ImageIcon(getClass.getResource("/images/black_queen.png"))
   private val blackKingImage = new ImageIcon(getClass.getResource("/images/black_king.png"))
 
-  var tmp1 = createWhiteFigures
-  var tmp2 = createBlackFigures
+  val tmp1 = createWhiteFigures
+  val tmp2 = createBlackFigures
 
   var currentState = new InternalState(tmp1, tmp2, createBoard(tmp1, tmp2))
 
   def getBoard() = currentState.getBoard
-  val board = currentState.getBoard
-
 
   def createWhiteFigures(): Array[Figure] = {
 
@@ -96,14 +95,19 @@ class Controller(var mainWindow: MainWindow = null, var timeForMove: Long = 100,
   }
 
 	def makePlayerMove(figure : Figure, destination: (Int, Int)) : Unit = {
-    currentState.makeMove(figure, destination)
+    currentState = currentState.makeMove(figure, destination)
     currentPlayerColor = getOpponentColor(currentPlayerColor)
 	}
 
-  val whiteFigures = currentState.whiteFigures
-  val blackFigures = currentState.blackFigures
+  def makeComputerMove() : Unit = {
 
-	def makeComputerMove() : Unit = {
+    val minimax = new Algorithm(currentState, getOpponentColor)
+    val move = minimax.run()
+    currentState = currentState.makeMove(move)
+    currentPlayerColor = getOpponentColor(currentPlayerColor)
+  }
+
+	/*def makeComputerMove() : Unit = {
 
 		getOpponentColor(playerColor) match {
       case PlayerColor.Black => {
@@ -149,19 +153,17 @@ class Controller(var mainWindow: MainWindow = null, var timeForMove: Long = 100,
 				}
 			}
     }
-	}
+	}*/
 
   def findPossibleMoves(figure : Figure) = currentState.findPossibleMoves(figure)
 
   def isPlayersMove : Boolean = currentPlayerColor == playerColor
   
-  def figureAtSquareBelongsToPlayer(x : Int, y : Int) : Boolean = board(x)(y).getColor == playerColor
-  
-  //def enablePlayersMove() = playersMove = true
+  def figureAtSquareBelongsToPlayer(x : Int, y : Int) : Boolean = getBoard()(x)(y).getColor == playerColor
 
-  def getBlackFigures: Array[Figure] = blackFigures
+  def getBlackFigures: Array[Figure] = currentState.getWhiteFigures
 
-  def getWhiteFigures: Array[Figure] = whiteFigures
+  def getWhiteFigures: Array[Figure] = currentState.getBlackFigures
 
   def setPlayerColor(playerColor: PlayerColor): Unit = this.playerColor = playerColor
 

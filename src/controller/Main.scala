@@ -1,5 +1,6 @@
 package controller
 
+import model.PlayerColor.PlayerColor
 import view.MainWindow
 
 object Main extends App {
@@ -7,5 +8,4 @@ object Main extends App {
   val mainWindow = new MainWindow(controller)
   controller.setMainWindow(mainWindow)
   mainWindow.showIntroPanel()
-  val minimaxAlgorithm = new Algorithm(controller, controller.getOpponentColor())
 }

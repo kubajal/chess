@@ -125,8 +125,8 @@ public class BoardPanel extends JPanel {
                             possibleMoves = JavaConverters.asJavaCollection(controller.findPossibleMoves(selected.figure));
                             possibleMoves.forEach(field -> {
 
-                                    board[(int)field._1()][(int)field._2()].setBackground(possibleMoveFieldColor);
-                                    board[(int)field._1()][(int)field._2()].setEnabled(true);
+                                board[(int)field._1()][(int)field._2()].setBackground(possibleMoveFieldColor);
+                                board[(int)field._1()][(int)field._2()].setEnabled(true);
                                 }
                             );
                         }
@@ -168,8 +168,8 @@ public class BoardPanel extends JPanel {
         }
 
         Figure [] blackFigures = controller.getBlackFigures();
-
         Figure [] whiteFigures = controller.getWhiteFigures();
+
         for(Figure f : whiteFigures){
             if(f == null)
                 continue;
