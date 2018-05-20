@@ -163,20 +163,11 @@ public class BoardPanel extends JPanel {
                 board[i][j].resetColor();
                 board[i][j].figure = null;
                 board[i][j].setEnabled(false);
-                //board[i][j].repaint();
+                board[i][j].repaint();
             }
         }
 
         Figure [] blackFigures = controller.getBlackFigures();
-        for(Figure f : blackFigures){
-            if(f == null)
-                continue;
-            if(controller.playerColor() == PlayerColor.Black())
-                board[f.x()][f.y()].setEnabled(true);
-            else
-                board[f.x()][f.y()].setEnabled(false);
-            board[f.x()][f.y()].setFigure(f);
-        }
 
         Figure [] whiteFigures = controller.getWhiteFigures();
         for(Figure f : whiteFigures){
@@ -188,6 +179,17 @@ public class BoardPanel extends JPanel {
                 board[f.x()][f.y()].setEnabled(false);
             board[f.x()][f.y()].setFigure(f);
         }
+
+        for(Figure f : blackFigures){
+            if(f == null)
+                continue;
+            if(controller.playerColor() == PlayerColor.Black())
+                board[f.x()][f.y()].setEnabled(true);
+            else
+                board[f.x()][f.y()].setEnabled(false);
+            board[f.x()][f.y()].setFigure(f);
+        }
+
         this.repaint();
     }
 }

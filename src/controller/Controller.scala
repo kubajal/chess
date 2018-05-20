@@ -1,22 +1,13 @@
 package controller
 
-import java.awt.Point
-
 import javax.swing.{ImageIcon, JLabel}
 import model.{Figure, FigureType, PlayerColor}
 import model.PlayerColor.PlayerColor
-import view.{BoardPanel, MainWindow}
+import view.MainWindow
 import model.Constants._
 
-import scala.annotation.tailrec
-import scala.collection.JavaConverters
-import scala.collection.immutable.VectorBuilder
-import scala.concurrent.JavaConversions
-
-class Controller(var blackFigures: Array[Figure] = Array.ofDim[Figure](16), var whiteFigures: Array[Figure] = Array.ofDim[Figure](16),
-                      var mainWindow: MainWindow = null, var timeForMove: Long = 100, var playerColor: PlayerColor = PlayerColor.White,
-                      var currentPlayerColor: PlayerColor = PlayerColor.White, board: Array[Array[Figure]] = Array.ofDim[Figure](8, 8),
-                      inGame: Boolean = true, gameOver: Boolean = false) {
+class Controller(var mainWindow: MainWindow = null, var timeForMove: Long = 100, var playerColor: PlayerColor = PlayerColor.White,
+                 var currentPlayerColor: PlayerColor = PlayerColor.White, inGame: Boolean = true, gameOver: Boolean = false) {
 
   private val whitePawnImage = new ImageIcon(getClass.getResource("/images/white_pawn.png"))
   private val whiteKnightImage = new ImageIcon(getClass.getResource("/images/white_knight.png"))
@@ -31,37 +22,52 @@ class Controller(var blackFigures: Array[Figure] = Array.ofDim[Figure](16), var 
   private val blackQueenImage = new ImageIcon(getClass.getResource("/images/black_queen.png"))
   private val blackKingImage = new ImageIcon(getClass.getResource("/images/black_king.png"))
 
-  createFigures()
-  createBoard()
+  var tmp1 = createWhiteFigures
+  var tmp2 = createBlackFigures
 
-  def createFigures(): Unit = {
+  var currentState = new InternalState(tmp1, tmp2, createBoard(tmp1, tmp2))
 
+  def getBoard() = currentState.getBoard
+  val board = currentState.getBoard
+
+
+  def createWhiteFigures(): Array[Figure] = {
+
+    var whiteFigures = new Array[Figure](16)
     for (i <- 0 to NUMBER_OF_SQUARES - 1)
       whiteFigures(i) = new Figure(FigureType.Pawn, PlayerColor.White, i, 1, new JLabel(whitePawnImage))
 
+    whiteFigures(8) = new Figure(FigureType.Rook, PlayerColor.White, 0, 0, new JLabel(whiteRookImage))
+    whiteFigures(9) = new Figure(FigureType.Rook, PlayerColor.White, 7, 0, new JLabel(whiteRookImage))
+    whiteFigures(10) = new Figure(FigureType.Knight, PlayerColor.White, 1, 0, new JLabel(whiteKnightImage))
+    whiteFigures(11) = new Figure(FigureType.Knight, PlayerColor.White, 6, 0, new JLabel(whiteKnightImage))
+    whiteFigures(12) = new Figure(FigureType.Bishop, PlayerColor.White, 2, 0, new JLabel(whiteBishopImage))
+    whiteFigures(13) = new Figure(FigureType.Bishop, PlayerColor.White, 5, 0, new JLabel(whiteBishopImage))
+    whiteFigures(14) = new Figure(FigureType.Queen, PlayerColor.White, 3, 0, new JLabel(whiteQueenImage))
+    whiteFigures(15) = new Figure(FigureType.King, PlayerColor.White, 4, 0, new JLabel(whiteKingImage))
+    return whiteFigures
+  }
+
+  def createBlackFigures(): Array[Figure] = {
+
+    var blackFigures = new Array[Figure](16)
     for (i <- 0 to NUMBER_OF_SQUARES - 1)
       blackFigures(i) = new Figure(FigureType.Pawn, PlayerColor.Black, i, 6, new JLabel(blackPawnImage))
 
-    whiteFigures(8) = new Figure(FigureType.Rook, PlayerColor.White, 0, 0, new JLabel(whiteRookImage))
-    whiteFigures(9) = new Figure(FigureType.Rook, PlayerColor.White, 7, 0, new JLabel(whiteRookImage))
     blackFigures(8) = new Figure(FigureType.Rook, PlayerColor.Black, 0, 7, new JLabel(blackRookImage))
     blackFigures(9) = new Figure(FigureType.Rook, PlayerColor.Black, 7, 7, new JLabel(blackRookImage))
-    whiteFigures(10) = new Figure(FigureType.Knight, PlayerColor.White, 1, 0, new JLabel(whiteKnightImage))
-    whiteFigures(11) = new Figure(FigureType.Knight, PlayerColor.White, 6, 0, new JLabel(whiteKnightImage))
     blackFigures(10) = new Figure(FigureType.Knight, PlayerColor.Black, 1, 7, new JLabel(blackKnightImage))
     blackFigures(11) = new Figure(FigureType.Knight, PlayerColor.Black, 6, 7, new JLabel(blackKnightImage))
-    whiteFigures(12) = new Figure(FigureType.Bishop, PlayerColor.White, 2, 0, new JLabel(whiteBishopImage))
-    whiteFigures(13) = new Figure(FigureType.Bishop, PlayerColor.White, 5, 0, new JLabel(whiteBishopImage))
     blackFigures(12) = new Figure(FigureType.Bishop, PlayerColor.Black, 2, 7, new JLabel(blackBishopImage))
     blackFigures(13) = new Figure(FigureType.Bishop, PlayerColor.Black, 5, 7, new JLabel(blackBishopImage))
-    whiteFigures(14) = new Figure(FigureType.Queen, PlayerColor.White, 3, 0, new JLabel(whiteQueenImage))
-    whiteFigures(15) = new Figure(FigureType.King, PlayerColor.White, 4, 0, new JLabel(whiteKingImage))
     blackFigures(14) = new Figure(FigureType.Queen, PlayerColor.Black, 3, 7, new JLabel(blackQueenImage))
     blackFigures(15) = new Figure(FigureType.King, PlayerColor.Black, 4, 7, new JLabel(blackKingImage))
+    return blackFigures
   }
 
-  def createBoard(): Unit = {
+  def createBoard(whiteFigures : Array[Figure], blackFigures : Array[Figure]): Array[Array[Figure]] = {
 
+    var board = Array.ofDim[Figure](8, 8)
     for (i <- 0 to NUMBER_OF_SQUARES - 1)
       for (j <- 0 to NUMBER_OF_SQUARES - 1)
         board(i)(j) = null
@@ -73,19 +79,8 @@ class Controller(var blackFigures: Array[Figure] = Array.ofDim[Figure](16), var 
     for (figure <- blackFigures) {
       board(figure.x)(figure.y) = figure
     }
+    return board
   }
-
-  /*def whitePawnPossibleMoves(figure: Figure): Vector[(Int, Int)] = {
-    var possibleMoves = Vector[(Int, Int)]((figure.x, figure.y + 1), (figure.x - 1, figure.y + 1), (figure.x + 1, figure.y + 1))
-    var move = List[(Int, Int)]()
-    if(getFigure(figure.x, figure.y + 1) == null)
-      move = move :+ (figure.x, figure.y + 1)
-    move = move ::: List[(Int, Int)]((figure.x - 1, figure.y + 1), (figure.x + 1, figure.y + 1)).filter(f => getFigure(f._1, f._2) != null && getFigure(f._1, f._2).getColor != figure.getColor)
-    possibleMoves = possibleMoves.filter(x => x._1 >= 0 && x._1 < 8 && x._2 >= 0 && x._1 < 8)
-    possibleMoves.filter(x => getFigure(x) == null || getFigure(x).getColor != figure.getColor)
-    return move.toVector
-
-  }*/
 
   def getOpponentColor(playerColor: PlayerColor): PlayerColor = {
     playerColor match {
@@ -94,243 +89,27 @@ class Controller(var blackFigures: Array[Figure] = Array.ofDim[Figure](16), var 
     }
   }
 
-  def findPawnPossibleMoves(figure : Figure) : Vector[(Int, Int)] = {
-    val possibleMoves = new VectorBuilder[(Int, Int)]
-
-    figure.getColor match {
-      case PlayerColor.Black => {
-        if(figure.y > 0 && board(figure.x)(figure.y-1) == null)
-          possibleMoves += ((figure.x, figure.y-1))
-        if(figure.y == 6 && board(figure.x)(5) == null && board(figure.x)(4) == null)
-          possibleMoves += ((figure.x, 4))
-        if(figure.x > 0 && figure.y > 0 && board(figure.x-1)(figure.y-1) != null && board(figure.x-1)(figure.y-1).getColor == getOpponentColor(currentPlayerColor))
-          possibleMoves += ((figure.x-1, figure.y-1))
-        if(figure.x < 7 && figure.y > 0 && board(figure.x+1)(figure.y-1) != null && board(figure.x+1)(figure.y-1).getColor == getOpponentColor(currentPlayerColor))
-          possibleMoves += ((figure.x+1, figure.y-1))
-      }
-      case PlayerColor.White => {
-        if(figure.y < 7 && board(figure.x)(figure.y+1) == null)
-          possibleMoves += ((figure.x, figure.y+1))
-        if(figure.y == 1 && board(figure.x)(2) == null && board(figure.x)(3) == null)
-          possibleMoves += ((figure.x, 3))
-        if(figure.x > 0 && figure.y < 7 && board(figure.x-1)(figure.y+1) != null && board(figure.x-1)(figure.y+1).getColor == getOpponentColor(currentPlayerColor))
-          possibleMoves += ((figure.x-1, figure.y+1))
-        if(figure.x < 7 && figure.y < 7 && board(figure.x+1)(figure.y+1) != null && board(figure.x+1)(figure.y+1).getColor == getOpponentColor(currentPlayerColor))
-          possibleMoves += ((figure.x+1, figure.y+1))
-      }
-    }
-    possibleMoves.result()
+  def getOpponentColor(): PlayerColor = {
+    if(playerColor == PlayerColor.White)
+      PlayerColor.Black
+    PlayerColor.White
   }
-
-  def findKnightPossibleMoves(figure : Figure) : Vector[(Int, Int)] = {
-    val possibleMoves = new VectorBuilder[(Int, Int)]
-    
-		if(figure.x < 7 && figure.y < 6)
-			if(board(figure.x+1)(figure.y+2) == null || board(figure.x+1)(figure.y+2).getColor == getOpponentColor(currentPlayerColor))
-				possibleMoves += ((figure.x+1, figure.y+2))
-			
-		if(figure.x < 6 && figure.y < 7)
-			if(board(figure.x+2)(figure.y+1) == null || board(figure.x+2)(figure.y+1).getColor == getOpponentColor(currentPlayerColor))
-				possibleMoves += ((figure.x+2, figure.y+1))
-
-		if(figure.x < 6 && figure.y > 0)
-			if(board(figure.x+2)(figure.y-1) == null || board(figure.x+2)(figure.y-1).getColor == getOpponentColor(currentPlayerColor))
-				possibleMoves += ((figure.x+2, figure.y-1))
-
-		if(figure.x < 7 && figure.y > 1)
-			if(board(figure.x+1)(figure.y-2) == null || board(figure.x+1)(figure.y-2).getColor == getOpponentColor(currentPlayerColor))
-				possibleMoves += ((figure.x+1, figure.y-2))
-
-		if(figure.x > 0 && figure.y > 1)
-			if(board(figure.x-1)(figure.y-2) == null || board(figure.x-1)(figure.y-2).getColor == getOpponentColor(currentPlayerColor))
-				possibleMoves += ((figure.x-1, figure.y-2))
-
-		if(figure.x > 1 && figure.y > 0)
-			if(board(figure.x-2)(figure.y-1) == null || board(figure.x-2)(figure.y-1).getColor == getOpponentColor(currentPlayerColor))
-				possibleMoves += ((figure.x-2, figure.y-1))
-
-		if(figure.x > 1 && figure.y < 7)
-			if(board(figure.x-2)(figure.y+1) == null || board(figure.x-2)(figure.y+1).getColor == getOpponentColor(currentPlayerColor))
-				possibleMoves += ((figure.x-2, figure.y+1))
-
-		if(figure.x > 0 && figure.y < 6)
-			if(board(figure.x-1)(figure.y+2) == null || board(figure.x-1)(figure.y+2).getColor == getOpponentColor(currentPlayerColor))
-				possibleMoves += ((figure.x-1, figure.y+2))
-
-    possibleMoves.result()
-  }
-
-  def findKingPossibleMoves(figure : Figure) : Vector[(Int, Int)] = {
-    val possibleMoves = new VectorBuilder[(Int, Int)]
-
-		if(figure.y < 7)
-			if(board(figure.x)(figure.y+1) == null || board(figure.x)(figure.y+1).getColor == getOpponentColor(currentPlayerColor))
-				possibleMoves += ((figure.x, figure.y+1))
-			
-		if(figure.x < 7 && figure.y < 7)
-			if(board(figure.x+1)(figure.y+1) == null || board(figure.x+1)(figure.y+1).getColor == getOpponentColor(currentPlayerColor))
-				possibleMoves += ((figure.x+1, figure.y+1))
-
-		if(figure.x < 7)
-			if(board(figure.x+1)(figure.y) == null || board(figure.x+1)(figure.y).getColor == getOpponentColor(currentPlayerColor))
-				possibleMoves += ((figure.x+1, figure.y))
-
-		if(figure.x < 7 && figure.y > 0)
-			if(board(figure.x+1)(figure.y-1) == null || board(figure.x+1)(figure.y-1).getColor == getOpponentColor(currentPlayerColor))
-				possibleMoves += ((figure.x+1, figure.y-1))
-
-		if(figure.y > 0)
-			if(board(figure.x)(figure.y-1) == null || board(figure.x)(figure.y-1).getColor == getOpponentColor(currentPlayerColor))
-				possibleMoves += ((figure.x, figure.y-1))
-
-		if(figure.x > 0 && figure.y > 0)
-			if(board(figure.x-1)(figure.y-1) == null || board(figure.x-1)(figure.y-1).getColor == getOpponentColor(currentPlayerColor))
-				possibleMoves += ((figure.x-1, figure.y-1))
-
-		if(figure.x > 0)
-			if(board(figure.x-1)(figure.y) == null || board(figure.x-1)(figure.y).getColor == getOpponentColor(currentPlayerColor))
-				possibleMoves += ((figure.x-1, figure.y))
-
-		if(figure.x > 0 && figure.y < 7)
-			if(board(figure.x-1)(figure.y+1) == null || board(figure.x-1)(figure.y+1).getColor == getOpponentColor(currentPlayerColor))
-				possibleMoves += ((figure.x-1, figure.y+1))
-
-    possibleMoves.result()
-  }
-
-	// function which tries to add consistently all possible moves in direction chosen by h - horizontal factor and v - vertical factor, v and h can be only 3 values (-1, 0, 1)
-	def addAllPossibleMovesInDirection(figure : Figure, h : Int, v : Int) : Vector[(Int, Int)] = {
-
-		@tailrec
-		def recursion(i : Int, vector : Vector[(Int, Int)]) : Vector[(Int, Int)] = {
-			val x = figure.x + h * i
-			val y = figure.y + v * i
-			
-			if(0 <= x && x <= 7 && 0 <= y && y <= 7)
-      {
-          if(board(x)(y) == null)
-            recursion(i+1, vector :+ (x, y))
-          else if(board(x)(y).getColor == getOpponentColor(currentPlayerColor))
-          	vector :+ (x, y)
-          else if(board(x)(y).getColor == currentPlayerColor)
-            vector
-          else
-            vector
-      }
-			else
-				vector
-		}
-
-    recursion(1, Vector.empty[(Int, Int)])
-	}
-
-	def findBishopPossibleMoves(figure : Figure) : Vector[(Int, Int)] = {
-    val possibleMoves = new VectorBuilder[(Int, Int)]
-
-		possibleMoves ++= addAllPossibleMovesInDirection(figure, 1, 1); // up right
-    possibleMoves ++= addAllPossibleMovesInDirection(figure, 1, -1); // down right
-    possibleMoves ++= addAllPossibleMovesInDirection(figure, -1, -1); // down left
-    possibleMoves ++= addAllPossibleMovesInDirection(figure, -1, 1); // up left
-
-    possibleMoves.result()
-  }
-
-  def findRookPossibleMoves(figure : Figure) : Vector[(Int, Int)] = {
-    val possibleMoves = new VectorBuilder[(Int, Int)]
-
-    possibleMoves ++= addAllPossibleMovesInDirection(figure, 0, 1); // up
-    possibleMoves ++= addAllPossibleMovesInDirection(figure, 1, 0); // right
-    possibleMoves ++= addAllPossibleMovesInDirection(figure, 0, -1); // down
-    possibleMoves ++= addAllPossibleMovesInDirection(figure, -1, 0); // left
-
-    possibleMoves.result()
-  }
-
-  def findQueenPossibleMoves(figure : Figure) : Vector[(Int, Int)] = {
-    val possibleMoves = new VectorBuilder[(Int, Int)]
-
-    possibleMoves ++= addAllPossibleMovesInDirection(figure, 0, 1); // up
-    possibleMoves ++= addAllPossibleMovesInDirection(figure, 1, 1); // up right
-    possibleMoves ++= addAllPossibleMovesInDirection(figure, 1, 0); // right
-    possibleMoves ++= addAllPossibleMovesInDirection(figure, 1, -1); // down right
-    possibleMoves ++= addAllPossibleMovesInDirection(figure, 0, -1); // down
-    possibleMoves ++= addAllPossibleMovesInDirection(figure, -1, -1); // down left
-    possibleMoves ++= addAllPossibleMovesInDirection(figure, -1, 0); // left
-    possibleMoves ++= addAllPossibleMovesInDirection(figure, -1, 1); // up left
-
-    possibleMoves.result()
-  }
-
-  def findPossibleMoves(figure: Figure) : Vector[(Int, Int)] = {
-
-    figure.getType match {
-      case FigureType.Pawn => findPawnPossibleMoves(figure)
-      case FigureType.Knight => findKnightPossibleMoves(figure)
-      case FigureType.Bishop => findBishopPossibleMoves(figure)
-      case FigureType.Rook => findRookPossibleMoves(figure)
-      case FigureType.Queen => findQueenPossibleMoves(figure)
-      case FigureType.King => findKingPossibleMoves(figure)
-    }
-  }
-
-  /*def opponentsMove() = {
-    System.out.println("ruch przeciwnika, sytuacja przed:");
-    System.out.println(opponentsFigures.map(figure => (figure.x, figure.y)));
-    opponentsFigures = opponentsFigures.filterNot(figure => figure.x == 6 && figure.y == 6)
-    opponentsFigures = opponentsFigures :+ new Figure(FigureType.Pawn, opponentsColor, 6, 5, new JLabel(blackPawnImage));
-    //getMainWindow.getBoardPanel.repaintFigures
-    System.out.println("ruch przeciwnika, sytuacja po:");
-    System.out.println(opponentsFigures.map(figure => (figure.x, figure.y)));
-    //Thread.sleep(1500)
-    getMainWindow.getBoardPanel.repaintFigures
-
-
-  }
-
-  def playersMove(f: Figure, to: (Int, Int)) {
-    System.out.printf("move (" + f.x + ", " + f.y + ") to (" + to._1 + ", " + to._2 + ")\n");
-    System.out.println("ruch gracza, sytuacja przed:");
-    System.out.println(playersFigures.map(figure => (figure.x, figure.y)));
-    playersFigures = playersFigures.filterNot(figure => figure == f);
-    playersFigures = playersFigures :+ new Figure(f.getType, playerColor, to._1, to._2, f.getFigureImage);
-    System.out.println("ruch gracza, sytuacja po:");
-    System.out.println(playersFigures.map(figure => (figure.x, figure.y)));
-    getMainWindow.getBoardPanel.repaintFigures
-
-  }*/
 
 	def makePlayerMove(figure : Figure, destination: (Int, Int)) : Unit = {
-
-		if(board(destination._1)(destination._2) != null) {
-			playerColor match {
-				case PlayerColor.Black => {
-					for(i <- 0 to 15) {
-						if(whiteFigures(i) == board(destination._1)(destination._2))
-							whiteFigures(i) = null
-					}				
-				}
-				case PlayerColor.White => {
-					for(i <- 0 to 15) {
-						if(blackFigures(i) == board(destination._1)(destination._2))
-							blackFigures(i) = null
-					}	
-				}
-			}
-		}
-		board(figure.x)(figure.y) = null
-		board(destination._1)(destination._2)	= figure				
-		figure.x = destination._1
-		figure.y = destination._2
+    currentState.makeMove(figure, destination)
     currentPlayerColor = getOpponentColor(currentPlayerColor)
 	}
 
+  val whiteFigures = currentState.whiteFigures
+  val blackFigures = currentState.blackFigures
+
 	def makeComputerMove() : Unit = {
-		
+
 		getOpponentColor(playerColor) match {
       case PlayerColor.Black => {
 				for(figure <- blackFigures) {
           if(figure != null) {
-            val possibleMoves = findPossibleMoves(figure)
+            val possibleMoves = currentState.findPossibleMoves(figure)
             if(!possibleMoves.isEmpty) {
               if(board(possibleMoves.last._1)(possibleMoves.last._2) != null) {
                 for(i <- 0 to 15) {
@@ -351,7 +130,7 @@ class Controller(var blackFigures: Array[Figure] = Array.ofDim[Figure](16), var 
       case PlayerColor.White => {
 				for(figure <- whiteFigures) {
           if(figure != null) {
-            val possibleMoves = findPossibleMoves(figure)
+            val possibleMoves = currentState.findPossibleMoves(figure)
             if(!possibleMoves.isEmpty) {
               if(board(possibleMoves.last._1)(possibleMoves.last._2) != null) {
                 for(i <- 0 to 15) {
@@ -371,6 +150,8 @@ class Controller(var blackFigures: Array[Figure] = Array.ofDim[Figure](16), var 
 			}
     }
 	}
+
+  def findPossibleMoves(figure : Figure) = currentState.findPossibleMoves(figure)
 
   def isPlayersMove : Boolean = currentPlayerColor == playerColor
   
