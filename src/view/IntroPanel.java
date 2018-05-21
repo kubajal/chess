@@ -61,10 +61,11 @@ public class IntroPanel extends JPanel{
 				controller.setTimeForMove(timeForMove);
 				if (playerHasWhiteFigures){
 					controller.setPlayerColor(PlayerColor.White());
-					//controller.enablePlayersMove();
+					controller.setCurrentPlayersColor(PlayerColor.White());
 				}
 				else { // playerHasWhiteFigures == false
 					controller.setPlayerColor(PlayerColor.Black());
+					controller.setCurrentPlayersColor(PlayerColor.Black());
 					controller.makeComputerMove();
 				}
 				controller.getMainWindow().showBoardPanel();

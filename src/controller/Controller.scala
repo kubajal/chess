@@ -1,6 +1,5 @@
 package controller
 
-import controller.Main.controller
 import javax.swing.{ImageIcon, JLabel}
 import model.{Figure, FigureType, PlayerColor}
 import model.PlayerColor.PlayerColor
@@ -97,11 +96,12 @@ class Controller(var mainWindow: MainWindow = null, var timeForMove: Long = 100,
 	def makePlayerMove(figure : Figure, destination: (Int, Int)) : Unit = {
     currentState = currentState.makeMove(figure, destination)
     currentPlayerColor = getOpponentColor(currentPlayerColor)
+    makeComputerMove
 	}
 
   def makeComputerMove() : Unit = {
 
-    val minimax = new Algorithm(currentState, getOpponentColor)
+    val minimax = new Algorithm(currentState.copy(), currentPlayerColor)
     val move = minimax.run()
     currentState = currentState.makeMove(move)
     currentPlayerColor = getOpponentColor(currentPlayerColor)
@@ -155,17 +155,19 @@ class Controller(var mainWindow: MainWindow = null, var timeForMove: Long = 100,
     }
 	}*/
 
+  def setCurrentPlayersColor(color : PlayerColor) = currentPlayerColor = color
+
   def findPossibleMoves(figure : Figure) = currentState.findPossibleMoves(figure)
 
   def isPlayersMove : Boolean = currentPlayerColor == playerColor
   
   def figureAtSquareBelongsToPlayer(x : Int, y : Int) : Boolean = getBoard()(x)(y).getColor == playerColor
 
-  def getBlackFigures: Array[Figure] = currentState.getWhiteFigures
+  def getBlackFigures: Array[Figure] = currentState.getBlackFigures
 
-  def getWhiteFigures: Array[Figure] = currentState.getBlackFigures
+  def getWhiteFigures: Array[Figure] = currentState.getWhiteFigures
 
-  def setPlayerColor(playerColor: PlayerColor): Unit = this.playerColor = playerColor
+  def setPlayerColor(_playerColor: PlayerColor): Unit = this.playerColor = _playerColor
 
   def setTimeForMove(timeForMove: Long): Unit = this.timeForMove = timeForMove
 

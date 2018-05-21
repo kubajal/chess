@@ -8,7 +8,7 @@ import model.{Figure, FigureType, PlayerColor}
 import scala.annotation.tailrec
 import scala.collection.immutable.VectorBuilder
 
-class InternalState(val whiteFigures : Array[Figure], val blackFigures : Array[Figure], val board: Array[Array[Figure]]) {
+case class InternalState(val whiteFigures : Array[Figure], val blackFigures : Array[Figure], val board: Array[Array[Figure]]) {
 
   def points(figure : Figure) : Int = {
     figure.getType match {
@@ -165,15 +165,33 @@ class InternalState(val whiteFigures : Array[Figure], val blackFigures : Array[F
     makeMove(x._1, x._2)
   }
 
+
+
   def makeMove(figure : Figure, destination: (Int, Int)) : InternalState = {
 
     val newFigure = new Figure(figure.getType, figure.getColor, destination._1, destination._2, figure.getFigureImage)
-    board(destination._1)(destination._2) = newFigure
-    board(figure.x)(figure.y) = null
-    if(figure.getColor == PlayerColor.White)
-      return new InternalState(whiteFigures.filterNot(f => f.x == figure.x && f.y == figure.y) :+ newFigure, blackFigures, board)
-    else
-      return new InternalState(whiteFigures, blackFigures.filterNot(f => f.x == figure.x && f.y == figure.y) :+ newFigure, board)
+    val newBoard = board.map(_.clone)
+    newBoard(figure.x)(figure.y) = null
+    newBoard(destination._1)(destination._2) = newFigure
+    if(figure.getColor == PlayerColor.White){
+      val newWhiteFigures = whiteFigures.filterNot(f => f.x == figure.x && f.y == figure.y) :+ newFigure
+      return new InternalState(newWhiteFigures,
+        if(board(destination._1)(destination._2) != null && board(destination._1)(destination._2).getColor() != figure.getColor())
+          getBlackFigures.filterNot(f => f.x == destination._1 && f.y == destination._2)
+        else
+          getBlackFigures,
+        newBoard)
+    }
+    else{
+      val newBlackFigures = blackFigures.filterNot(f => f.x == figure.x && f.y == figure.y) :+ newFigure
+      return new InternalState(
+        if(board(destination._1)(destination._2) != null && board(destination._1)(destination._2).getColor() != figure.getColor())
+          getWhiteFigures.filterNot(f => f.x == destination._1 && f.y == destination._2)
+        else
+          getWhiteFigures,
+        newBlackFigures,
+        newBoard)
+    }
   }
 
   // function which tries to add consistently all possible moves in direction chosen by h - horizontal factor and v - vertical factor, v and h can be only 3 values (-1, 0, 1)

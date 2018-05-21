@@ -10,13 +10,13 @@ class Algorithm(val initialState : InternalState, val maximizing : PlayerColor) 
 
   def run(): (Figure, (Int, Int)) = {
 
-    val DEPTH = 10
+    val DEPTH = 2
     var move = (-1, -1)
     var figure : Figure = null;
     var maxi = -10000000 // minus infinity, score is being maximized
-    for (f <- initialState.getFigures(maximizing)) {
+     for (f <- initialState.getFigures(maximizing)) {
       for (e <- initialState.findPossibleMoves(f)) {
-        val score = recursion(DEPTH, initialState, maximizing)
+        val score = recursion(DEPTH, initialState.copy(), maximizing)
         if(score > maxi){
           maxi = score
           move = e

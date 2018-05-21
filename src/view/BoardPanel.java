@@ -8,17 +8,11 @@ import javax.swing.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Collection;
 
 import model.PlayerColor;
-import model.PlayerColor$;
 import scala.Tuple2;
 import scala.collection.JavaConverters;
-import scala.collection.immutable.Vector;
-import scala.Array;
-
 import static model.Constants.*;
 
 public class BoardPanel extends JPanel {
@@ -63,29 +57,6 @@ public class BoardPanel extends JPanel {
 
     private Field[][] board;
 
-/*    class getMovesRunnable implements Runnable {
-
-        int x;
-        int y;
-        getMovesRunnable(int _x, int _y){
-            x = _x;
-            y = _y;
-        }
-        public void run(){
-            possibleMoves = JavaConverters.asJavaIterable(controller.getMoves(y, x));
-            try {
-                SwingUtilities.invokeAndWait(new Runnable(){
-                    public void run(){
-                        possibleMoves.forEach(field -> board[(int)field._1()][(int)field._2()].setBackground(possibleMoveFieldColor));
-                    }
-                });
-                return;
-            } catch (InterruptedException | InvocationTargetException e) {
-                e.printStackTrace();
-            }
-        }
-    }*/
-
     public BoardPanel(Controller _c) {
         controller = _c;
         this.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -104,16 +75,14 @@ public class BoardPanel extends JPanel {
 
                             if(possibleMoves != null && possibleMoves.contains(new scala.Tuple2(newSelected.x, newSelected.y))){
                                 controller.makePlayerMove(selected.figure, new scala.Tuple2(newSelected.x, newSelected.y));
-                                controller.makeComputerMove();
-								repaintFigures();
-								possibleMoves = null;
-								selected = null;
+								 repaintFigures();
+								 possibleMoves = null;
+								 selected = null;
                                 return;
                             }
-                            if (selected != null) {
+                            if(selected != null) {
                                 selected.resetColor();
                                 possibleMoves.forEach(field -> {
-
                                     board[(int)field._1()][(int)field._2()].resetColor();
                                     board[(int)field._1()][(int)field._2()].setEnabled(false);
                                 });
@@ -124,7 +93,6 @@ public class BoardPanel extends JPanel {
 
                             possibleMoves = JavaConverters.asJavaCollection(controller.findPossibleMoves(selected.figure));
                             possibleMoves.forEach(field -> {
-
                                 board[(int)field._1()][(int)field._2()].setBackground(possibleMoveFieldColor);
                                 board[(int)field._1()][(int)field._2()].setEnabled(true);
                                 }
