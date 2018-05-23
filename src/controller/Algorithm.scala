@@ -8,6 +8,8 @@ import scala.annotation.tailrec
 
 class Algorithm(val initialState : InternalState, val maximizing : PlayerColor) {
 
+  val evaluator = new Evaluator
+
   def run(): (Figure, (Int, Int)) = {
 
     val DEPTH = 4
@@ -30,7 +32,7 @@ class Algorithm(val initialState : InternalState, val maximizing : PlayerColor) 
 
   def recursion(depth : Int, internalState : InternalState, color: PlayerColor) : Int = {
     if(depth == 0)
-      internalState.heuristic(PlayerColor.Black) - internalState.heuristic(PlayerColor.White)
+      evaluator.evaluateState(internalState)
     else if(color == maximizing){
       var maxi = -10000000 // minus infinity, score is being maximized
       for(figure <- internalState.getFigures(color)){
@@ -43,6 +45,8 @@ class Algorithm(val initialState : InternalState, val maximizing : PlayerColor) 
           }
         }
       }
+      if(maxi == -10000000)
+        evaluator.evaluateState(internalState)
       return maxi
     }
     else{
@@ -57,6 +61,8 @@ class Algorithm(val initialState : InternalState, val maximizing : PlayerColor) 
           }
         }
       }
+      if(mini == 10000000)
+        evaluator.evaluateState(internalState)
       return mini
     }
   }

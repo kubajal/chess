@@ -17,4 +17,5 @@ case class Figure(figureType : FigureType, color : PlayerColor, var x : Int, var
   }
   def getType(): FigureType = figureType
   def getColor(): PlayerColor = color
+
 }
