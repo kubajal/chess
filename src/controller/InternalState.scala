@@ -165,8 +165,6 @@ case class InternalState(val whiteFigures : Array[Figure], val blackFigures : Ar
     makeMove(x._1, x._2)
   }
 
-
-
   def makeMove(figure : Figure, destination: (Int, Int)) : InternalState = {
 
     val newFigure = new Figure(figure.getType, figure.getColor, destination._1, destination._2, figure.getFigureImage)

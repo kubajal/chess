@@ -106,7 +106,7 @@ public class BoardPanel extends JPanel {
             }
         }
         repaintFigures();
-        JButton pomoc = new JButton();
+/*        JButton pomoc = new JButton();
         pomoc.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -117,7 +117,7 @@ public class BoardPanel extends JPanel {
         pomoc.setPreferredSize(new Dimension(30, 30));
         pomoc.setVisible(true);
         pomoc.setEnabled(true);
-        add(pomoc);
+        add(pomoc);*/
     }
     public Figure getFigure(int x, int y){
         return board[x][y].figure;
