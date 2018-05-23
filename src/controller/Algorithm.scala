@@ -9,16 +9,17 @@ import scala.annotation.tailrec
 class Algorithm(val initialState : InternalState, val maximizing : PlayerColor) {
 
   val evaluator = new Evaluator
+  val INFINITY = 1000000
 
   def run(): (Figure, (Int, Int)) = {
 
     val DEPTH = 4
     var move = (-1, -1)
     var figure : Figure = null;
-    var maxi = -10000000 // minus infinity, score is being maximized
+    var maxi = -INFINITY // minus infinity, score is being maximized
      for (f <- initialState.getFigures(maximizing)) {
       for (e <- initialState.findPossibleMoves(f)) {
-        val score = recursion(DEPTH, initialState.makeMove(f, e), initialState.getOpponentColor(maximizing))
+        val score = alfabeta(DEPTH, initialState.makeMove(f, e), initialState.getOpponentColor(maximizing), -INFINITY, INFINITY)
         println(f.x + " " + f.y + ": " + score)
         if(score > maxi){
           maxi = score
@@ -30,40 +31,42 @@ class Algorithm(val initialState : InternalState, val maximizing : PlayerColor) 
     return (figure, move)
   }
 
-  def recursion(depth : Int, internalState : InternalState, color: PlayerColor) : Int = {
+  var alfa = -INFINITY
+  var beta = INFINITY
+
+  def alfabeta(depth : Int, internalState : InternalState, color: PlayerColor, alfa : Int, beta : Int) : Int = {
     if(depth == 0)
-      evaluator.evaluateState(internalState)
-    else if(color == maximizing){
-      var maxi = -10000000 // minus infinity, score is being maximized
+      return evaluator.evaluateState(internalState)
+    if(color == maximizing){
+      var newAlfa = alfa
       for(figure <- internalState.getFigures(color)){
-        if(figure != null){
-          for(e <- internalState.findPossibleMoves(figure)){
-            val score = recursion(depth - 1, internalState.makeMove(figure, e), internalState.getOpponentColor(color))
-            if(score > maxi){
-              maxi = score
-            }
+        for(e <- internalState.findPossibleMoves(figure)){
+          val score = alfabeta(depth - 1, internalState.makeMove(figure, e), internalState.getOpponentColor(color), newAlfa, beta)
+          println(figure.x + " " + figure.y + ": " + score)
+          newAlfa = if(score > newAlfa) score else newAlfa
+          if(newAlfa >= beta){
+            println("odciecie beta")
+            return beta
           }
         }
       }
-      if(maxi == -10000000)
-        evaluator.evaluateState(internalState)
-      return maxi
-    }
+      return newAlfa
+      }
     else{
-      var mini = 10000000 // plus infinity, score is being minimalized
+      var newBeta = beta
       for(figure <- internalState.getFigures(color)){
-        if(figure != null){
-          for(e <- internalState.findPossibleMoves(figure)){
-            val score = recursion(depth - 1, internalState.makeMove(figure, e), internalState.getOpponentColor(color))
-            if(score < mini){
-              mini = score
-            }
+        for(e <- internalState.findPossibleMoves(figure)){
+          val score = alfabeta(depth - 1, internalState.makeMove(figure, e), internalState.getOpponentColor(color), alfa, newBeta)
+          println(figure.x + " " + figure.y + ": " + score)
+          newBeta = if(score < newBeta) score else newBeta
+          if(newBeta <= alfa){
+            println("odciecie alfa")
+            return alfa
           }
         }
       }
-      if(mini == 10000000)
-        evaluator.evaluateState(internalState)
-      return mini
+      return newBeta
     }
   }
+
 }

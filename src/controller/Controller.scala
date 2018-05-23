@@ -25,8 +25,6 @@ class Controller(var mainWindow: MainWindow = null, var timeForMove: Long = 100,
   val tmp1 = createWhiteFigures
   val tmp2 = createBlackFigures
 
-  var movesNumber = 0
-
   var currentState = new InternalState(tmp1, tmp2, createBoard(tmp1, tmp2))
 
   def getBoard() = currentState.getBoard
@@ -98,7 +96,6 @@ class Controller(var mainWindow: MainWindow = null, var timeForMove: Long = 100,
 	def makePlayerMove(figure : Figure, destination: (Int, Int)) : Unit = {
     currentState = currentState.makeMove(figure, destination)
     currentPlayerColor = getOpponentColor(currentPlayerColor)
-    movesNumber = movesNumber + 1
     makeComputerMove
 	}
 
@@ -107,7 +104,6 @@ class Controller(var mainWindow: MainWindow = null, var timeForMove: Long = 100,
     val minimax = new Algorithm(currentState.copy(), currentPlayerColor)
     val move = minimax.run()
     currentState = currentState.makeMove(move)
-    movesNumber = movesNumber + 1
     currentPlayerColor = getOpponentColor(currentPlayerColor)
   }
 
