@@ -107,6 +107,27 @@ class Controller(var mainWindow: MainWindow = null, var timeForMove: Long = 100,
     currentPlayerColor = getOpponentColor(currentPlayerColor)
   }
 
+  def makePlayerMove1() : Unit = {
+    val minimax = new Algorithm(currentState.copy(), currentPlayerColor)
+    val move = minimax.run()
+    currentState = currentState.makeMove(move)
+    mainWindow.getBoardPanel.repaintFigures()
+    currentPlayerColor = getOpponentColor(currentPlayerColor)
+    //currentPlayerColor = getOpponentColor(currentPlayerColor)
+    //currentState = currentState.makeMove(figure, destination)
+    //currentPlayerColor = getOpponentColor(currentPlayerColor)
+    makeComputerMove1
+  }
+
+  def makeComputerMove1() : Unit = {
+
+    val minimax = new Algorithm(currentState.copy(), currentPlayerColor)
+    val move = minimax.run()
+    currentState = currentState.makeMove(move)
+    mainWindow.getBoardPanel.repaintFigures()
+    currentPlayerColor = getOpponentColor(currentPlayerColor)
+    makePlayerMove1
+  }
 	/*def makeComputerMove() : Unit = {
 
 		getOpponentColor(playerColor) match {

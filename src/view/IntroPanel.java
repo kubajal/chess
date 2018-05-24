@@ -92,6 +92,6 @@ public class IntroPanel extends JPanel{
         add(timeLabel1);
         add(timeLabel2);
         add(timeField);    
-        add(acceptButton);        
+        add(acceptButton);
     }
 }

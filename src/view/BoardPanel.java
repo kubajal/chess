@@ -66,7 +66,7 @@ public class BoardPanel extends JPanel {
                 board[i][j] = new Field(i, j);
                 board[i][j].setPreferredSize(new Dimension(SQUARE_SIZE, SQUARE_SIZE));
                 board[i][j].setVisible(true);
-                board[i][j].addActionListener(new ActionListener() {
+/*                board[i][j].addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         if(controller.isPlayersMove()) {
@@ -99,25 +99,29 @@ public class BoardPanel extends JPanel {
                             );
                         }
                     }
-                });
+                });*/
                 board[i][j].resetColor();
                 board[i][j].setEnabled(false);
                 this.add(board[i][j]);
             }
         }
         repaintFigures();
-/*        JButton pomoc = new JButton();
+       JButton pomoc = new JButton();
         pomoc.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                repaintFigures();
-                System.out.println("odswiezam widok");
+                new Thread()
+                {
+                    public void run() {
+                        controller.makePlayerMove1();
+                    }
+                }.start();
             }
         });
         pomoc.setPreferredSize(new Dimension(30, 30));
         pomoc.setVisible(true);
         pomoc.setEnabled(true);
-        add(pomoc);*/
+        add(pomoc);
     }
     public Figure getFigure(int x, int y){
         return board[x][y].figure;

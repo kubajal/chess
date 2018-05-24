@@ -5,7 +5,7 @@ import model.{Figure, FigureType}
 class Evaluator {
 
   val pawnTable : Array[Array[Int]] = Array(
-    Array(0, 0,  0,  0,  0,  0,  0,  0),
+    Array(0, 0, 0, 0, 0, 0, 0, 0),
     Array(1, 2, 2, 2, 2, 2, 2, 1),
     Array(1, 2, 2, 2, 2, 2, 2, 1),
     Array(1, 2, 2, 2, 2, 2, 2, 1),
@@ -17,10 +17,10 @@ class Evaluator {
   val knightTable : Array[Array[Int]] = Array(
     Array(3, 3, 5, 5, 5, 5, 3, 3),
     Array(3, 5, 6, 6, 6, 6, 5, 3),
-    Array(5, 5, 8, 8, 8, 8, 0, 5),
+    Array(5, 6, 8, 8, 8, 8, 5, 5),
     Array(5, 6, 8, 9, 9, 8, 6, 5),
     Array(5, 6, 8, 9, 9, 8, 6, 5),
-    Array(5, 6, 8, 8, 8, 8, 6, 5),
+    Array(5, 6, 8, 8, 8, 8, 5, 5),
     Array(3, 5, 6, 6, 6, 6, 5, 3),
     Array(3, 3, 5, 5, 5, 5, 3, 3)
   )
@@ -35,14 +35,14 @@ class Evaluator {
     Array(5, 5, 5, 5, 5, 5, 5, 5)
   )
   val rookTable : Array[Array[Int]] = Array(
-    Array(9,  9,  9,  9,  9,  9,  9,  9),
-    Array(9, 10, 10, 10, 10, 10, 10,  9),
-    Array(9, 10, 10, 10, 10, 10, 10,  9),
-    Array(9, 10, 10, 12, 12, 10, 10,  9),
-    Array(9, 10, 10, 12, 12, 10, 10,  9),
-    Array(9, 10, 10, 10, 10, 10, 10,  9),
-    Array(9, 10, 10, 10, 10, 10, 10,  9),
-    Array(9, 9, 9, 9, 9, 9, 9,  9)
+    Array(9, 9, 9, 9, 9, 9, 9, 9),
+    Array(9,10,10,10,10,10,10, 9),
+    Array(9,10,10,10,10,10,10, 9),
+    Array(9,10,10,12,12,10,10, 9),
+    Array(9,10,10,12,12,10,10, 9),
+    Array(9,10,10,10,10,10,10, 9),
+    Array(9,10,10,10,10,10,10, 9),
+    Array(9, 9, 9, 9, 9, 9, 9, 9)
   )
   val queenTable : Array[Array[Int]] = Array(
     Array(12, 12, 12, 12, 12, 12, 12, 12),

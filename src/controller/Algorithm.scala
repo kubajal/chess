@@ -20,7 +20,7 @@ class Algorithm(val initialState : InternalState, val maximizing : PlayerColor) 
      for (f <- initialState.getFigures(maximizing)) {
       for (e <- initialState.findPossibleMoves(f)) {
         val score = alfabeta(DEPTH, initialState.makeMove(f, e), initialState.getOpponentColor(maximizing), -INFINITY, INFINITY)
-        println(f.x + " " + f.y + ": " + score)
+        //println(f.x + " " + f.y + ": " + score)
         if(score > maxi){
           maxi = score
           move = e
@@ -28,6 +28,7 @@ class Algorithm(val initialState : InternalState, val maximizing : PlayerColor) 
         }
       }
     }
+    println("wynik: " + maxi)
     return (figure, move)
   }
 
@@ -42,10 +43,10 @@ class Algorithm(val initialState : InternalState, val maximizing : PlayerColor) 
       for(figure <- internalState.getFigures(color)){
         for(e <- internalState.findPossibleMoves(figure)){
           val score = alfabeta(depth - 1, internalState.makeMove(figure, e), internalState.getOpponentColor(color), newAlfa, beta)
-          println(figure.x + " " + figure.y + ": " + score)
+          //println(figure.x + " " + figure.y + ": " + score)
           newAlfa = if(score > newAlfa) score else newAlfa
           if(newAlfa >= beta){
-            println("odciecie beta")
+            //println("odciecie beta")
             return beta
           }
         }
@@ -57,10 +58,10 @@ class Algorithm(val initialState : InternalState, val maximizing : PlayerColor) 
       for(figure <- internalState.getFigures(color)){
         for(e <- internalState.findPossibleMoves(figure)){
           val score = alfabeta(depth - 1, internalState.makeMove(figure, e), internalState.getOpponentColor(color), alfa, newBeta)
-          println(figure.x + " " + figure.y + ": " + score)
+          //println(figure.x + " " + figure.y + ": " + score)
           newBeta = if(score < newBeta) score else newBeta
           if(newBeta <= alfa){
-            println("odciecie alfa")
+            //println("odciecie alfa")
             return alfa
           }
         }
