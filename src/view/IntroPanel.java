@@ -19,12 +19,11 @@ public class IntroPanel extends JPanel{
 
 	private JButton acceptButton, whitePlayerColorButton, blackPlayerColorButton;
     
-    private Label playerColorLabel1, playerColorLabel2, timeLabel1, timeLabel2;
+    private Label playerColorLabel1, playerColorLabel2;
     private TextField playerColorField, timeField;
     
     private Controller controller;
 	
-    private long timeForMove;
     boolean playerHasWhiteFigures;
     
     IntroPanel(Controller controller) {
@@ -52,13 +51,6 @@ public class IntroPanel extends JPanel{
     	acceptButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				try {
-					timeForMove = Integer.parseInt(timeField.getText());
-				} catch (NumberFormatException exception) {
-					return;
-				}
-
-				controller.setTimeForMove(timeForMove);
 				if (playerHasWhiteFigures){
 					controller.setPlayerColor(PlayerColor.White());
 					controller.setCurrentPlayersColor(PlayerColor.White());
@@ -75,11 +67,6 @@ public class IntroPanel extends JPanel{
     	
     	playerColorLabel1 = new Label("Wybierz kolor figur, którymi będzie grał gracz.");
     	playerColorLabel2 = new Label("Komputer otrzyma figury przeciwnego koloru");
-    	timeLabel1 = new Label("Podaj czas na wykonanie ruchu komputera");
-    	timeLabel2 = new Label("(w milisekundach)");
-
-        timeField = new TextField("100", 5);
-        timeField.setEditable(true);
         
         playerColorField = new TextField("Biały", 6);
         playerColorField.setEditable(false);
@@ -89,9 +76,6 @@ public class IntroPanel extends JPanel{
         add(whitePlayerColorButton);
         add(blackPlayerColorButton);
         add(playerColorField);
-        add(timeLabel1);
-        add(timeLabel2);
-        add(timeField);    
         add(acceptButton);
     }
 }

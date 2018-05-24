@@ -96,7 +96,6 @@ class Controller(var mainWindow: MainWindow = null, var timeForMove: Long = 100,
 	def makePlayerMove(figure : Figure, destination: (Int, Int)) : Unit = {
     currentState = currentState.makeMove(figure, destination)
     currentPlayerColor = getOpponentColor(currentPlayerColor)
-    makeComputerMove
 	}
 
   def makeComputerMove() : Unit = {
@@ -104,77 +103,25 @@ class Controller(var mainWindow: MainWindow = null, var timeForMove: Long = 100,
     val minimax = new Algorithm(currentState.copy(), currentPlayerColor)
     val move = minimax.run()
     currentState = currentState.makeMove(move)
+    mainWindow.getBoardPanel.repaintFigures()
+    mainWindow.getBoardPanel.enableFigures()
     currentPlayerColor = getOpponentColor(currentPlayerColor)
   }
 
-  def makePlayerMove1() : Unit = {
-    val minimax = new Algorithm(currentState.copy(), currentPlayerColor)
-    val move = minimax.run()
-    currentState = currentState.makeMove(move)
+  def computerVsComputer() : Unit = {
+
+    val minimaxFirst = new Algorithm(currentState.copy(), currentPlayerColor)
+    val firstMove = minimaxFirst.run()
+    currentState = currentState.makeMove(firstMove)
     mainWindow.getBoardPanel.repaintFigures()
     currentPlayerColor = getOpponentColor(currentPlayerColor)
-    //currentPlayerColor = getOpponentColor(currentPlayerColor)
-    //currentState = currentState.makeMove(figure, destination)
-    //currentPlayerColor = getOpponentColor(currentPlayerColor)
-    makeComputerMove1
-  }
 
-  def makeComputerMove1() : Unit = {
-
-    val minimax = new Algorithm(currentState.copy(), currentPlayerColor)
-    val move = minimax.run()
-    currentState = currentState.makeMove(move)
+    val minimaxSecond = new Algorithm(currentState.copy(), currentPlayerColor)
+    val secondMove = minimaxSecond.run()
+    currentState = currentState.makeMove(secondMove)
     mainWindow.getBoardPanel.repaintFigures()
     currentPlayerColor = getOpponentColor(currentPlayerColor)
-    makePlayerMove1
   }
-	/*def makeComputerMove() : Unit = {
-
-		getOpponentColor(playerColor) match {
-      case PlayerColor.Black => {
-				for(figure <- blackFigures) {
-          if(figure != null) {
-            val possibleMoves = currentState.findPossibleMoves(figure)
-            if(!possibleMoves.isEmpty) {
-              if(board(possibleMoves.last._1)(possibleMoves.last._2) != null) {
-                for(i <- 0 to 15) {
-                  if(whiteFigures(i) == board(possibleMoves.last._1)(possibleMoves.last._2))
-                    whiteFigures(i) = null
-                }
-              }
-              board(figure.x)(figure.y) = null
-              board(possibleMoves.last._1)(possibleMoves.last._2)	= figure
-              figure.x = possibleMoves.last._1
-              figure.y = possibleMoves.last._2
-              currentPlayerColor = getOpponentColor(currentPlayerColor)
-              return
-            }
-          }
-				}
-			}
-      case PlayerColor.White => {
-				for(figure <- whiteFigures) {
-          if(figure != null) {
-            val possibleMoves = currentState.findPossibleMoves(figure)
-            if(!possibleMoves.isEmpty) {
-              if(board(possibleMoves.last._1)(possibleMoves.last._2) != null) {
-                for(i <- 0 to 15) {
-                  if(blackFigures(i) == board(possibleMoves.last._1)(possibleMoves.last._2))
-                    blackFigures(i) = null
-                }
-              }
-              board(figure.x)(figure.y) = null
-              board(possibleMoves.last._1)(possibleMoves.last._2)	= figure
-              figure.x = possibleMoves.last._1
-              figure.y = possibleMoves.last._2
-              currentPlayerColor = getOpponentColor(currentPlayerColor)
-              return
-            }
-          }
-				}
-			}
-    }
-	}*/
 
   def setCurrentPlayersColor(color : PlayerColor) = currentPlayerColor = color
 

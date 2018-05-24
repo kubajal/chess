@@ -10,7 +10,7 @@ class Algorithm(val initialState : InternalState, val maximizing : PlayerColor) 
 
   def run(): (Figure, (Int, Int)) = {
 
-    val DEPTH = 3
+    val DEPTH = 4
     var move = (-1, -1)
     var figure : Figure = null;
     var maxi = -INFINITY // minus infinity, score is being maximized
