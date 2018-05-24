@@ -1,8 +1,9 @@
 package controller
 
+import model.PlayerColor.PlayerColor
 import model.{Figure, FigureType}
 
-class Evaluator {
+class Evaluator(val maximizing : PlayerColor) {
 
   val pawnTable : Array[Array[Int]] = Array(
     Array(0, 0, 0, 0, 0, 0, 0, 0),
@@ -77,6 +78,7 @@ class Evaluator {
   }
 
   def evaluateState(internalState : InternalState) : Int = {
-    return internalState.blackFigures.map(f => evaluate(f)).sum - internalState.whiteFigures.map(f => evaluate(f)).sum
+    val minimizing = internalState.getOpponentColor(maximizing)
+    return internalState.getFigures(maximizing).map(f => evaluate(f)).sum - internalState.getFigures(minimizing).map(f => evaluate(f)).sum
   }
 }

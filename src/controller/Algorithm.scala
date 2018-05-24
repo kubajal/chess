@@ -1,19 +1,16 @@
 package controller
 
-import com.sun.media.jfxmedia.events.PlayerEvent
 import model.{Figure, PlayerColor}
 import model.PlayerColor.PlayerColor
 
-import scala.annotation.tailrec
-
 class Algorithm(val initialState : InternalState, val maximizing : PlayerColor) {
 
-  val evaluator = new Evaluator
+  val evaluator = new Evaluator(maximizing)
   val INFINITY = 1000000
 
   def run(): (Figure, (Int, Int)) = {
 
-    val DEPTH = 4
+    val DEPTH = 3
     var move = (-1, -1)
     var figure : Figure = null;
     var maxi = -INFINITY // minus infinity, score is being maximized
@@ -28,16 +25,16 @@ class Algorithm(val initialState : InternalState, val maximizing : PlayerColor) 
         }
       }
     }
-    println("wynik: " + maxi)
+    //println("wynik: " + maxi)
     return (figure, move)
   }
 
-  var alfa = -INFINITY
-  var beta = INFINITY
-
   def alfabeta(depth : Int, internalState : InternalState, color: PlayerColor, alfa : Int, beta : Int) : Int = {
-    if(depth == 0)
-      return evaluator.evaluateState(internalState)
+    if(depth == 0) {
+      val s = evaluator.evaluateState(internalState)
+      //println("score = " + s)
+      return s
+    }
     if(color == maximizing){
       var newAlfa = alfa
       for(figure <- internalState.getFigures(color)){
