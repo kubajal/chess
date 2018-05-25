@@ -8,7 +8,8 @@ import model.{Figure, FigureType, PlayerColor}
 import scala.annotation.tailrec
 import scala.collection.immutable.VectorBuilder
 
-case class InternalState(val whiteFigures : Array[Figure], val blackFigures : Array[Figure], val board: Array[Array[Figure]]) {
+case class InternalState(val whiteFigures : Array[Figure], val blackFigures : Array[Figure],
+                         val board: Array[Array[Figure]], currentPlayerColor : PlayerColor) {
 
   def points(figure : Figure) : Int = {
     figure.getType match {
@@ -20,6 +21,7 @@ case class InternalState(val whiteFigures : Array[Figure], val blackFigures : Ar
       case FigureType.King => 1000
     }
   }
+
   def whiteHeuristic() : Int = whiteFigures.map(f => points(f)).sum
   def blackHeuristic() : Int = blackFigures.map(f => points(f)).sum
   def heuristic(color : PlayerColor) : Int = {
@@ -40,11 +42,27 @@ case class InternalState(val whiteFigures : Array[Figure], val blackFigures : Ar
 
   def getBoard : Array[Array[Figure]] = board
 
-  def getOpponentColor(color : PlayerColor ) : PlayerColor = {
+  def getOpponentColor(color : PlayerColor) : PlayerColor = {
     color match {
       case PlayerColor.White => PlayerColor.Black
       case PlayerColor.Black => PlayerColor.White
     }
+  }
+
+	def getAllPossibleMovesFields(color : PlayerColor) : Set[(Int, Int)] = {
+
+    @tailrec
+    def recursion(i : Int, playerFigures : Array[Figure], allPossibleMovesFields : Set[(Int, Int)]) : Set[(Int, Int)] = {
+      if(i < playerFigures.size)
+        if(playerFigures(i) != null)
+          recursion(i+1, playerFigures, allPossibleMovesFields ++ findPossibleMoves(playerFigures(i)))
+        else
+          recursion(i+1, playerFigures, allPossibleMovesFields)
+      else
+        allPossibleMovesFields
+    }
+
+    recursion(0, getFigures(color), Set.empty[(Int, Int)])
   }
 
   def findPossibleMoves(figure : Figure) : Vector[(Int, Int)] =
@@ -158,8 +176,36 @@ case class InternalState(val whiteFigures : Array[Figure], val blackFigures : Ar
       if(board(figure.x-1)(figure.y+1) == null || board(figure.x-1)(figure.y+1).getColor == getOpponentColor(figure.getColor))
         possibleMoves += ((figure.x-1, figure.y+1))
 
-    possibleMoves.result()
+		if(figure.getColor() == currentPlayerColor && figure.hasMoved == false && board(figure.x+1)(figure.y) == null && board(figure.x+2)(figure.y) == null &&
+      board(figure.x+3)(figure.y) != null && board(figure.x+3)(figure.y).getType == FigureType.Rook && board(figure.x+3)(figure.y).hasMoved == false &&
+			!areFieldsAttacked(Vector((figure.x, figure.y), (figure.x+1, figure.y), (figure.x+2, figure.y), (figure.x+3, figure.y))))
+			possibleMoves += ((figure.x+2, figure.y))
+
+		if(figure.getColor() == currentPlayerColor && figure.hasMoved == false && board(figure.x-1)(figure.y) == null && board(figure.x-2)(figure.y) == null && board(figure.x-3)(figure.y) == null &&
+			board(figure.x-4)(figure.y) != null && board(figure.x-4)(figure.y).getType == FigureType.Rook && board(figure.x-4)(figure.y).hasMoved == false &&
+			!areFieldsAttacked(Vector((figure.x, figure.y), (figure.x-1, figure.y), (figure.x-2, figure.y), (figure.x-3, figure.y), (figure.x-4, figure.y))))
+			possibleMoves += ((figure.x-2, figure.y))
+
+    if(figure.getColor() == currentPlayerColor)
+      removeAttackedFields(possibleMoves.result())
+    else
+      possibleMoves.result()
   }
+
+	def removeAttackedFields(possibleMoves : Vector[(Int, Int)]) : Vector[(Int, Int)] = {
+		val allOpponentPossibleMovesFields : Set[(Int, Int)] = getAllPossibleMovesFields(getOpponentColor(currentPlayerColor))
+		possibleMoves.filterNot(move => allOpponentPossibleMovesFields.contains(move))
+	}
+
+	def isFieldAttacked(fieldPosition: (Int, Int)) : Boolean = {
+		val allOpponentPossibleMovesFields : Set[(Int, Int)] = getAllPossibleMovesFields(getOpponentColor(currentPlayerColor))
+		allOpponentPossibleMovesFields.contains(fieldPosition)
+	}
+
+	def areFieldsAttacked(fieldPositions : Vector[(Int, Int)]) : Boolean = {
+		val allOpponentPossibleMovesFields : Set[(Int, Int)] = getAllPossibleMovesFields(getOpponentColor(currentPlayerColor))
+		fieldPositions.exists(fieldPosition => allOpponentPossibleMovesFields.contains(fieldPosition))
+	}
 
   def makeMove(x : (Figure, (Int, Int))) : InternalState = {
     makeMove(x._1, x._2)
@@ -167,10 +213,18 @@ case class InternalState(val whiteFigures : Array[Figure], val blackFigures : Ar
 
   def makeMove(figure : Figure, destination: (Int, Int)) : InternalState = {
 
-    val newFigure = new Figure(figure.getType, figure.getColor, destination._1, destination._2, figure.getFigureImage)
+		val newFigureType =
+		if((figure.getType == FigureType.Pawn && currentPlayerColor == PlayerColor.Black && figure.y == 0) ||
+			(figure.getType == FigureType.Pawn && currentPlayerColor == PlayerColor.White && figure.y == 7)) 
+			FigureType.Queen
+		else
+			figure.getType
+
+    val newFigure = new Figure(newFigureType, figure.getColor, destination._1, destination._2, figure.getFigureImage, true)
     val newBoard = board.map(_.clone)
     newBoard(figure.x)(figure.y) = null
     newBoard(destination._1)(destination._2) = newFigure
+
     if(figure.getColor == PlayerColor.White){
       val newWhiteFigures = whiteFigures.filterNot(f => f.x == figure.x && f.y == figure.y) :+ newFigure
       return new InternalState(newWhiteFigures,
@@ -178,7 +232,7 @@ case class InternalState(val whiteFigures : Array[Figure], val blackFigures : Ar
           getBlackFigures.filterNot(f => f.x == destination._1 && f.y == destination._2)
         else
           getBlackFigures,
-        newBoard)
+        newBoard, getOpponentColor(currentPlayerColor))
     }
     else{
       val newBlackFigures = blackFigures.filterNot(f => f.x == figure.x && f.y == figure.y) :+ newFigure
@@ -188,7 +242,7 @@ case class InternalState(val whiteFigures : Array[Figure], val blackFigures : Ar
         else
           getWhiteFigures,
         newBlackFigures,
-        newBoard)
+        newBoard, getOpponentColor(currentPlayerColor))
     }
   }
 

@@ -25,7 +25,7 @@ class Controller(var mainWindow: MainWindow = null, var timeForMove: Long = 100,
   val tmp1 = createWhiteFigures
   val tmp2 = createBlackFigures
 
-  var currentState = new InternalState(tmp1, tmp2, createBoard(tmp1, tmp2))
+  var currentState = new InternalState(tmp1, tmp2, createBoard(tmp1, tmp2), currentPlayerColor)
 
   def getBoard() = currentState.getBoard
 

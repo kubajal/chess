@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 import controller.Controller;
 import model.Constants;
 import model.Figure;
+import model.PlayerColor;
 
 public class MainWindow extends JFrame implements Constants {
 
@@ -35,9 +36,11 @@ public class MainWindow extends JFrame implements Constants {
     	setTitle("Szachy");
     	setSize(BOARD_WIDTH, BOARD_HEIGHT + 100);
     	setDefaultCloseOperation(EXIT_ON_CLOSE);
-    	setLocationRelativeTo(null); // ustawiamy ekran gry na srodku ekranu
+    	setLocationRelativeTo(null); // ustawiamy okno gry na srodku ekranu
     	setResizable(false);
-    }
+		if(controller.playerColor() == PlayerColor.Black())
+			controller.makeComputerMove();
+	}
 
     public BoardPanel getBoardPanel(){
     	return boardPanel;

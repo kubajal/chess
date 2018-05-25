@@ -4,7 +4,8 @@ import javax.swing.JLabel
 import model.FigureType._
 import model.PlayerColor._
 
-case class Figure(figureType : FigureType, color : PlayerColor, var x : Int, var y: Int, var figureImage : JLabel) {
+case class Figure(figureType : FigureType, color : PlayerColor, var x : Int, var y: Int, 
+	var figureImage : JLabel, var moved : Boolean = false, var checked : Boolean = false) {
 
   def getFigureImage: JLabel = figureImage
   def setFigureImage(figureImage: JLabel): Unit = this.figureImage = figureImage
@@ -17,5 +18,8 @@ case class Figure(figureType : FigureType, color : PlayerColor, var x : Int, var
   }
   def getType(): FigureType = figureType
   def getColor(): PlayerColor = color
-
+	def hasMoved(): Boolean = moved
+  def setMoved(moved : Boolean) : Unit = this.moved = moved
+	def isChecked(): Boolean = checked
+  def setChecked(checked : Boolean) : Unit = this.checked = checked
 }
