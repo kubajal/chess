@@ -10,20 +10,21 @@ class Algorithm(val initialState : InternalState, val maximizing : PlayerColor) 
 
   def run(): (Figure, (Int, Int)) = {
 
-    val DEPTH = 4
+    val DEPTH = 2
     var move = (-1, -1)
     var figure : Figure = null;
     var maxi = -INFINITY // minus infinity, score is being maximized
      for (f <- initialState.getFigures(maximizing)) {
-      for (e <- initialState.findPossibleMoves(f)) {
-        val score = alfabeta(DEPTH, initialState.makeMove(f, e), initialState.getOpponentColor(maximizing), -INFINITY, INFINITY)
-        //println(f.x + " " + f.y + ": " + score)
-        if(score > maxi){
-          maxi = score
-          move = e
-          figure = f
-        }
-      }
+       if(f != null)
+         for (e <- initialState.findPossibleMoves(f)) {
+           val score = alfabeta(DEPTH, initialState.makeMove(f, e), initialState.getOpponentColor(maximizing), -INFINITY, INFINITY)
+           //println(f.x + " " + f.y + ": " + score)
+           if(score > maxi){
+             maxi = score
+             move = e
+             figure = f
+           }
+         }
     }
     //println("wynik: " + maxi)
     return (figure, move)
@@ -38,33 +39,34 @@ class Algorithm(val initialState : InternalState, val maximizing : PlayerColor) 
     if(color == maximizing){
       var newAlfa = alfa
       for(figure <- internalState.getFigures(color)){
-        for(e <- internalState.findPossibleMoves(figure)){
-          val score = alfabeta(depth - 1, internalState.makeMove(figure, e), internalState.getOpponentColor(color), newAlfa, beta)
-          //println(figure.x + " " + figure.y + ": " + score)
-          newAlfa = if(score > newAlfa) score else newAlfa
-          if(newAlfa >= beta){
-            //println("odciecie beta")
-            return beta
+        if(figure != null)
+          for(e <- internalState.findPossibleMoves(figure)){
+            val score = alfabeta(depth - 1, internalState.makeMove(figure, e), internalState.getOpponentColor(color), newAlfa, beta)
+            //println(figure.x + " " + figure.y + ": " + score)
+            newAlfa = if(score > newAlfa) score else newAlfa
+            if(newAlfa >= beta){
+              //println("odciecie beta")
+              return beta
+            }
           }
-        }
       }
       return newAlfa
       }
     else{
       var newBeta = beta
       for(figure <- internalState.getFigures(color)){
-        for(e <- internalState.findPossibleMoves(figure)){
-          val score = alfabeta(depth - 1, internalState.makeMove(figure, e), internalState.getOpponentColor(color), alfa, newBeta)
-          //println(figure.x + " " + figure.y + ": " + score)
-          newBeta = if(score < newBeta) score else newBeta
-          if(newBeta <= alfa){
-            //println("odciecie alfa")
-            return alfa
+        if(figure != null)
+          for(e <- internalState.findPossibleMoves(figure)){
+            val score = alfabeta(depth - 1, internalState.makeMove(figure, e), internalState.getOpponentColor(color), alfa, newBeta)
+            //println(figure.x + " " + figure.y + ": " + score)
+            newBeta = if(score < newBeta) score else newBeta
+            if(newBeta <= alfa){
+              //println("odciecie alfa")
+              return alfa
+            }
           }
-        }
       }
       return newBeta
     }
   }
-
 }

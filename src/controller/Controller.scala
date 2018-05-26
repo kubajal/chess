@@ -65,7 +65,7 @@ class Controller(var mainWindow: MainWindow = null, var timeForMove: Long = 100,
 
   def createBoard(whiteFigures : Array[Figure], blackFigures : Array[Figure]): Array[Array[Figure]] = {
 
-    var board = Array.ofDim[Figure](8, 8)
+    val board = Array.ofDim[Figure](8, 8)
     for (i <- 0 to NUMBER_OF_SQUARES - 1)
       for (j <- 0 to NUMBER_OF_SQUARES - 1)
         board(i)(j) = null
@@ -94,34 +94,56 @@ class Controller(var mainWindow: MainWindow = null, var timeForMove: Long = 100,
   }
 
 	def makePlayerMove(figure : Figure, destination: (Int, Int)) : Unit = {
-    currentState = currentState.makeMove(figure, destination)
-    currentPlayerColor = getOpponentColor(currentPlayerColor)
+		if(currentState.isCurrentPlayerKingAttacked && !currentState.isAnyMoveDefendingKingPossible(currentPlayerColor))
+      gameOver(getOpponentColor(currentPlayerColor))
+    else
+    {
+		  currentState = currentState.makeMove(figure, destination)
+		  currentPlayerColor = getOpponentColor(currentPlayerColor)
+		}
 	}
 
   def makeComputerMove() : Unit = {
-
-    val minimax = new Algorithm(currentState.copy(), currentPlayerColor)
-    val move = minimax.run()
-    currentState = currentState.makeMove(move)
-    mainWindow.getBoardPanel.repaintFigures()
-    mainWindow.getBoardPanel.enableFigures()
-    currentPlayerColor = getOpponentColor(currentPlayerColor)
+    if(currentState.isCurrentPlayerKingAttacked && !currentState.isAnyMoveDefendingKingPossible(currentPlayerColor))
+      gameOver(getOpponentColor(currentPlayerColor))
+    else
+		{
+		  val minimax = new Algorithm(currentState.copy(), currentPlayerColor)
+		  val move = minimax.run()
+		  currentState = currentState.makeMove(move)
+		  mainWindow.getBoardPanel.repaintFigures()
+		  mainWindow.getBoardPanel.enableFigures()
+		  currentPlayerColor = getOpponentColor(currentPlayerColor)
+		}
   }
 
   def computerVsComputer() : Unit = {
+    if(currentState.isCurrentPlayerKingAttacked && !currentState.isAnyMoveDefendingKingPossible(currentPlayerColor))
+      gameOver(getOpponentColor(currentPlayerColor))
+    else
+		{
+		  val minimaxFirst = new Algorithm(currentState.copy(), currentPlayerColor)
+		  val firstMove = minimaxFirst.run()
+		  currentState = currentState.makeMove(firstMove)
+		  mainWindow.getBoardPanel.repaintFigures()
+		  currentPlayerColor = getOpponentColor(currentPlayerColor)
+		}
 
-    val minimaxFirst = new Algorithm(currentState.copy(), currentPlayerColor)
-    val firstMove = minimaxFirst.run()
-    currentState = currentState.makeMove(firstMove)
-    mainWindow.getBoardPanel.repaintFigures()
-    currentPlayerColor = getOpponentColor(currentPlayerColor)
-
-    val minimaxSecond = new Algorithm(currentState.copy(), currentPlayerColor)
-    val secondMove = minimaxSecond.run()
-    currentState = currentState.makeMove(secondMove)
-    mainWindow.getBoardPanel.repaintFigures()
-    currentPlayerColor = getOpponentColor(currentPlayerColor)
+    if(currentState.isCurrentPlayerKingAttacked && !currentState.isAnyMoveDefendingKingPossible(currentPlayerColor))
+      gameOver(getOpponentColor(currentPlayerColor))
+    else
+		{
+		  val minimaxSecond = new Algorithm(currentState.copy(), currentPlayerColor)
+		  val secondMove = minimaxSecond.run()
+		  currentState = currentState.makeMove(secondMove)
+		  mainWindow.getBoardPanel.repaintFigures()
+		  currentPlayerColor = getOpponentColor(currentPlayerColor)
+		}
   }
+
+	def gameOver(winnerPlayerColor : PlayerColor) : Unit = {
+	
+	}
 
   def setCurrentPlayersColor(color : PlayerColor) = currentPlayerColor = color
 

@@ -233,6 +233,8 @@ public class BoardPanel extends JPanel {
                 Figure [] whiteFigures = controller.getWhiteFigures();
 
                 for(Figure f : whiteFigures){
+                    if(f == null)
+                        continue;
                     if(controller.playerColor() == PlayerColor.White())
                         board[f.x()][f.y()].setEnabled(true);
                     else
@@ -240,6 +242,8 @@ public class BoardPanel extends JPanel {
                 }
 
                 for(Figure f : blackFigures){
+                    if(f == null)
+                        continue;
                     if(controller.playerColor() == PlayerColor.Black())
                         board[f.x()][f.y()].setEnabled(true);
                     else
@@ -265,11 +269,13 @@ public class BoardPanel extends JPanel {
         Figure [] whiteFigures = controller.getWhiteFigures();
 
         for(Figure f : whiteFigures){
-            board[f.x()][f.y()].setFigure(f);
+            if(f != null)
+                board[f.x()][f.y()].setFigure(f);
         }
 
         for(Figure f : blackFigures){
-            board[f.x()][f.y()].setFigure(f);
+            if(f != null)
+                board[f.x()][f.y()].setFigure(f);
         }
 
 

@@ -79,6 +79,7 @@ class Evaluator(val maximizing : PlayerColor) {
 
   def evaluateState(internalState : InternalState) : Int = {
     val minimizing = internalState.getOpponentColor(maximizing)
-    return internalState.getFigures(maximizing).map(f => evaluate(f)).sum - internalState.getFigures(minimizing).map(f => evaluate(f)).sum
+    return internalState.getFigures(maximizing).map(f => if(f == null) 0 else evaluate(f)).sum -
+      internalState.getFigures(minimizing).map(f => if(f == null) 0 else evaluate(f)).sum
   }
 }
