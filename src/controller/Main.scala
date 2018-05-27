@@ -1,5 +1,6 @@
 package controller
 
+import model.PlayerColor.PlayerColor
 import view.MainWindow
 
 object Main extends App {

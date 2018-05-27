@@ -7,25 +7,25 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 
-import javax.swing.JButton;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 import controller.Controller;
 import model.PlayerColor;
 
-public class IntroPanel extends JPanel implements ActionListener {
+public class IntroPanel extends JPanel{
 
-	private static final long serialVersionUID = -7729510720848698725L; // kod seryjny klasy JPanel
-	
-    private JButton acceptButton, whitePlayerColorButton, blackPlayerColorButton;
+	private static final long serialVersionUID = -9025564695102872265L;
+
+	private JButton acceptButton, whitePlayerColorButton, blackPlayerColorButton;
     
-    private Label playerColorLabel1, playerColorLabel2, timeLabel1, timeLabel2;
+    private Label playerColorLabel1, playerColorLabel2, algorithmDepthLabel;
     private TextField playerColorField, timeField;
-    
+    private SpinnerModel depthSpinnerModel;
+	private JSpinner depthSpinner;
+
     private Controller controller;
 	
-    private long timeForMove;
-    boolean playerHasWhiteFigures;
+    private boolean playerHasWhiteFigures;
     
     IntroPanel(Controller controller) {
     	
@@ -36,22 +36,38 @@ public class IntroPanel extends JPanel implements ActionListener {
     	blackPlayerColorButton = new JButton("Czarny");
     	acceptButton = new JButton("Ok");
 		playerHasWhiteFigures = true;
+ 		depthSpinnerModel = new SpinnerNumberModel(2, 1, 5, 1); 
+		depthSpinner = new JSpinner(depthSpinnerModel);
     	
-    	whitePlayerColorButton.setActionCommand("White");
-    	blackPlayerColorButton.setActionCommand("Black");
-    	acceptButton.setActionCommand("Accept");
-    	
-    	whitePlayerColorButton.addActionListener(this);
-    	blackPlayerColorButton.addActionListener(this);
-    	acceptButton.addActionListener(this);
+    	whitePlayerColorButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				playerColorField.setText("Biały");
+				playerHasWhiteFigures = true;
+			}
+		});
+    	blackPlayerColorButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				playerColorField.setText("Czarny");
+				playerHasWhiteFigures = false;
+			}
+		});
+    	acceptButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				controller.setAlgorithmDepth((int) depthSpinner.getValue());
+				
+				if (playerHasWhiteFigures)
+					controller.setPlayerColor(PlayerColor.White());
+				else // playerHasWhiteFigures == false
+					controller.setPlayerColor(PlayerColor.Black());
+
+				controller.getMainWindow().showBoardPanel();
+			}
+		});
     	
     	playerColorLabel1 = new Label("Wybierz kolor figur, którymi będzie grał gracz.");
     	playerColorLabel2 = new Label("Komputer otrzyma figury przeciwnego koloru");
-    	timeLabel1 = new Label("Podaj czas na wykonanie ruchu komputera");
-    	timeLabel2 = new Label("(w milisekundach)");
-
-        timeField = new TextField("100", 5);
-        timeField.setEditable(true);
+		algorithmDepthLabel = new Label("Wybierz głębokość drzewa dla algorytmu Minimax");
         
         playerColorField = new TextField("Biały", 6);
         playerColorField.setEditable(false);
@@ -61,38 +77,8 @@ public class IntroPanel extends JPanel implements ActionListener {
         add(whitePlayerColorButton);
         add(blackPlayerColorButton);
         add(playerColorField);
-        add(timeLabel1);
-        add(timeLabel2);
-        add(timeField);    
-        add(acceptButton);        
-    }
-    
-    @Override
-    public void actionPerformed(ActionEvent event) {
-    	
-    	if ("White".equals(event.getActionCommand())) {
-    		playerColorField.setText("Biały");
-			playerHasWhiteFigures = true;
-    		
-        } else if("Black".equals(event.getActionCommand())) {
-        	playerColorField.setText("Czarny");
-			playerHasWhiteFigures = false;
-
-        } else if("Accept".equals(event.getActionCommand())) {
-        	
-        	try {
-        		timeForMove = Integer.parseInt(timeField.getText());
-        	}
-        	catch(NumberFormatException exception) {
-        		return;
-        	}
-        	
-        	controller.setTimeForMove(timeForMove);
-        	if(playerHasWhiteFigures)
-        		controller.setPlayerColor(PlayerColor.White());
-        	else // playerHasWhiteFigures == false
-				controller.setPlayerColor(PlayerColor.Black());
-        	controller.getMainWindow().showBoardPanel();
-        }
+		add(algorithmDepthLabel);
+		add(depthSpinner);;
+        add(acceptButton);
     }
 }

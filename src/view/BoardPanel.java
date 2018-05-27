@@ -4,211 +4,288 @@ import controller.Controller;
 import model.Figure;
 
 import java.awt.*;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.util.List;
-import java.util.Iterator;
 import javax.swing.*;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Collection;
+
+import model.PlayerColor;
+import scala.Tuple2;
+import scala.collection.JavaConverters;
 import static model.Constants.*;
 
+public class BoardPanel extends JPanel {
 
-public class BoardPanel extends JPanel implements MouseListener, MouseMotionListener, ActionListener {
-	
-	public static final long serialVersionUID = -7729510720848698723L; // kod seryjny klasy JPanel
-	
-    private Color brightFieldColor = new Color(160, 200, 160);
-    private Color darkFieldColor = new Color(20, 160, 20);
-    private Color possibleMoveFieldColor = new Color(40, 150, 40);
-    private Font smallFont = new Font("Helvetica", Font.BOLD, 16);
-    private Font bigFont = new Font("Helvetica", Font.BOLD, 20);
-	
-    private Dimension dimension;
-    
-    private Controller controller;
-        
+    private Color brightFieldColor = new Color(196, 200, 190);
+    private Color darkFieldColor = new Color(125, 40, 15);
+    private Color possibleMoveFieldColor = new Color(144, 150, 98);
+    private Color selectedFieldColor = new Color(14, 150, 0);
+    private Color yellow = new Color(150, 135, 21);
+
+    private static Controller controller;
+
     private Figure draggedFigure = null;
-    
-    public BoardPanel(Controller controller) {
-        this.controller = controller;
-        this.setLayout(null);
 
-        controller.createFigures();
-        controller.createBoard();
-        controller.placeImagesOnBoard(this);
-        
-        setFocusable(true);
-        dimension = new Dimension(BOARD_WIDTH, BOARD_HEIGHT);
-  
-        addMouseListener(this);
-        addMouseMotionListener(this);
-        //controller.algorithm.findPossibleMoves(algorithm.board, algorithm.currentPlayerColor, algorithm.blackDisks, algorithm.whiteDisks);
-    }
-
-	@Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-
-        doDrawing(g);
-    }
-
-    private void doDrawing(Graphics g) {
-        Graphics2D g2d = (Graphics2D) g;
-
-        updateView(g2d);
-
-        /*if(algorithm.noMoveForBlack && algorithm.noMoveForWhite) {
-        	ingame = false;
-        	gameover = true;
-        }*/
-
-        /*if (ingame) {
-            playGame(g2d);
+    class moveRunnable implements Runnable {
+        public Controller c;
+        moveRunnable(Controller _c){
+            c = _c;
         }
-        else if(gameover){
-        	drawGameOverInfo(g2d);
-        	//showGameOverScreen(g2d);
-        }*/
-    }    
-    
-    private void playGame(Graphics2D g2d) {
-    	//algorithm.evaluateCurrentSituationOnBoard(g2d);
-    	//updateView(g2d);
-    } 
-    
-    private void updateView(Graphics2D g2d) {
-        drawBoard(g2d);
-    	//drawFigures(g2d);  	
-    	//paintPossibleMovesSquares(g2d, algorithm.possibleMovesPoints);
-    	drawInfo(g2d);
-    }    
-    
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        repaint();
-    }    
-    
-    private void showGameOverScreen(Graphics2D g2d) {
-    }  
-    
-    private void drawGameOverInfo(Graphics2D g2d) {
-    	String message = "Koniec gry";
-    	
-    	g2d.setColor(Color.orange);
-        g2d.setFont(bigFont);
-        
-        /*if(algorithm.blackDisks.size() == algorithm.whiteDisks.size())
-        	g2d.drawString(message + ", remis", 160, 100);
-        else if(algorithm.blackDisks.size() > algorithm.whiteDisks.size())
-        	g2d.drawString(message + ", wygrały czarne piony", 160, 100);
-        else
-        	g2d.drawString(message + ", wygrały białe piony", 160, 100);*/
-        	
-    }
-    
-    private void drawInfo(Graphics2D g2d) {
-    	/*String message = "Czarne piony: " + algorithm.blackDisks.size() + " białe piony: " 
-    + algorithm.whiteDisks.size() + " obecny gracz: " + algorithm.currentPlayerColor;
-    	g2d.setColor(Color.orange);
-        g2d.setFont(smallFont);
-    	g2d.drawString(message, 130, 50);*/
-    }
-    
-    private void drawBoard(Graphics2D g2d) {
-    	
-    	for(int i = 0; i < NUMBER_OF_SQUARES; i++)
-    		for(int j = 0; j < NUMBER_OF_SQUARES; j++) {
-    			if((i + j) % 2 == 0) {
-    				g2d.setColor(brightFieldColor);
-    		        g2d.fillRect(i * SQUARE_SIZE, j * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
-    			}
-    			else { // (i + j) % 2 == 1
-    				g2d.setColor(darkFieldColor);
-    		        g2d.fillRect(i * SQUARE_SIZE, j * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
-    			}
-    		}    	
-    }
- 
-    public void paintPossibleMovesSquares(Graphics2D g2d, List<Point> possibleMovesPoints) {
-    	
-    	g2d.setColor(possibleMoveFieldColor);
-    	Iterator<Point> iter = possibleMovesPoints.iterator();
-    	Point point;
-        
-    	while (iter.hasNext()) {
-			point = iter.next();
-			g2d.fillRect((point.x-1) * SQUARE_SIZE + 1, 
-				(NUMBER_OF_SQUARES - point.y) * SQUARE_SIZE + 1, 
-				SQUARE_SIZE, SQUARE_SIZE-1); 	
-    	}
-    }
-    
-    private void drawFigures(Graphics g2d) {
-    	
-    }
-    
-    private void placeImagesOnBoard() {
-        controller.placeImagesOnBoard(this);
-	}
-    
-    // function used in mouse clicked event, it returns point representing square pressed by mouse
-    private Point boardSquarePoint(Point mousePoint) {       
-        return new Point(mousePoint.x / SQUARE_SIZE, NUMBER_OF_SQUARES - mousePoint.y / SQUARE_SIZE - 1);
-    }
-    
-    @Override
-    public void mousePressed(MouseEvent event) {
-    	System.out.println("mouse pressed");
-    	System.out.println(this.getComponentAt(event.getPoint()));
-    	if(this.getComponentAt(event.getPoint()) instanceof JLabel) {
-    		System.out.println("JLabel pressed");
-    		Point pressedBoardPoint = boardSquarePoint(event.getPoint());
-    		draggedFigure = controller.getBoard()[pressedBoardPoint.x][pressedBoardPoint.y];
-    	}
-    	else if(this.getComponentAt(event.getPoint()) instanceof BoardPanel)
-    		System.out.println("BoardPanel pressed");
-    }
-    
-    @Override
-    public void mouseReleased(MouseEvent event) {
-    	System.out.println("mouse released");
-    	if(draggedFigure != null) {
-    		controller.getBoard()[draggedFigure.getPoint().x][draggedFigure.getPoint().y] = null;
-    		Point boardPoint = boardSquarePoint(event.getPoint());
-    		draggedFigure.setPoint(boardPoint);
-    		controller.getBoard()[boardPoint.x][boardPoint.y] = draggedFigure;	
-    	}
-    }
-    
-    @Override
-    public void mouseEntered(MouseEvent event) {
-    }
-    
-    @Override
-    public void mouseExited(MouseEvent event) {
-    }
-    
-    @Override
-    public void mouseClicked(MouseEvent event) {
-    	Point squarePoint = boardSquarePoint(event.getPoint());
-    	
-    	//(if(algorithm.possibleMovesPoints.contains(squarePoint)) {
-    	//	algorithm.movePlayerColor(squarePoint);
-    	//}
+
+        @Override
+        public void run() {
+            c.getMainWindow().getBoardPanel().getAIButtonm().setEnabled(false);
+            c.makeComputerMove();
+            c.getMainWindow().getBoardPanel().getAIButtonm().setEnabled(true);
+        }
     }
 
-	@Override
-	public void mouseDragged(MouseEvent event) {
-		System.out.println("mouse dragged");
-		if(draggedFigure != null)
-			draggedFigure.getFigureImage().setBounds(event.getX() - SQUARE_SIZE / 2, event.getY() - SQUARE_SIZE / 2, SQUARE_SIZE, SQUARE_SIZE);
-	}
+    public class AIThread extends Thread{
 
-	@Override
-	public void mouseMoved(MouseEvent event) {
-		System.out.println("mouse moved");	
-	}       
+        public AIRunnable airunnable;
+        Controller controller;
+
+        AIThread(AIRunnable _airunnable){
+            super(_airunnable);
+            airunnable = _airunnable;
+        }
+
+        void setFlag(Boolean _f){
+            airunnable.setRunFlag(_f);
+        }
+    }
+
+    public class AIRunnable implements Runnable {
+
+        public Boolean flag = true;
+        public Controller c;
+
+        AIRunnable(Controller _c){
+            c = _c;
+        }
+
+        public void setRunFlag(Boolean _f){
+            flag = _f;
+        }
+
+        @Override
+        public void run() {
+            while(true) {
+                if(flag == true)
+                    c.computerVsComputer();
+                if(flag == true)
+                    c.getMainWindow().getBoardPanel().repaintFigures();
+                if(flag == false)
+                    break;
+            }
+            c.getMainWindow().getBoardPanel().getAIButtonm().setEnabled(true);
+            c.getMainWindow().getBoardPanel().getAIButtonm().setBackground(null);
+            c.getMainWindow().getBoardPanel().enableFigures();
+
+        }
+    }
+
+    AIRunnable computerVsComputerRunnable = null;
+    moveRunnable computerMoveRunnable = null;
+    Thread aithread = null;
+
+    class Field extends JButton {
+
+        public Figure figure;
+        public Integer x;
+        public Integer y;
+        void setFigure(Figure f){
+            figure = f;
+            removeAll();
+            add(f.getFigureImage());
+        }
+        Field(int _x, int _y){
+            x = _x;
+            y = _y;
+        }
+
+        public void resetColor(){
+
+            if ((x + y) % 2 == 0)
+                setBackground(brightFieldColor);
+            else
+                setBackground(darkFieldColor);
+        }
+    }
+
+    private Boolean playersMove = false;
+    private Field selected = null;
+
+    private Collection<Tuple2<Object, Object>> possibleMoves;
+
+    private Field[][] board;
+
+    private JButton AIbutton;
+
+    public  JButton getAIButtonm() {
+        return AIbutton;
+    }
+
+    public BoardPanel(Controller _c) {
+        controller = _c;
+        this.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        board = new Field[8][8];
+        for(int j = 7; j >= 0; j--){
+            for(int i = 0; i < 8; i++){
+                board[i][j] = new Field(i, j);
+                board[i][j].setPreferredSize(new Dimension(SQUARE_SIZE, SQUARE_SIZE));
+                board[i][j].setVisible(true);
+                board[i][j].addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if(controller.isPlayersMove()) {
+
+                            Field newSelected = (Field)e.getSource();
+
+                            if(possibleMoves != null && possibleMoves.contains(new Tuple2(newSelected.x, newSelected.y))){
+                                controller.makePlayerMove(selected.figure, new Tuple2(newSelected.x, newSelected.y));
+								 repaintFigures();
+								 enableFigures();
+								 possibleMoves = null;
+								 selected = null;
+								 new Thread(new moveRunnable(controller)).start();
+                                return;
+                            }
+                            if(selected != null) {
+                                selected.resetColor();
+                                possibleMoves.forEach(field -> {
+                                    board[(int)field._1()][(int)field._2()].resetColor();
+                                    board[(int)field._1()][(int)field._2()].setEnabled(false);
+                                });
+                            }
+                            selected = (Field) e.getSource();
+                            selected.setBackground(selectedFieldColor);
+                            System.out.println("x " + selected.x + ", y " + selected.y + "\n");
+
+                            possibleMoves = JavaConverters.asJavaCollection(controller.findPossibleMoves(selected.figure));
+                            possibleMoves.forEach(field -> {
+                                board[(int)field._1()][(int)field._2()].setBackground(possibleMoveFieldColor);
+                                board[(int)field._1()][(int)field._2()].setEnabled(true);
+                                }
+                            );
+                        }
+                    }
+                });
+                board[i][j].resetColor();
+                board[i][j].setEnabled(false);
+                this.add(board[i][j]);
+            }
+        }
+        repaintFigures();
+        enableFigures();
+        AIbutton = new JButton();
+        aithread = new AIThread(new AIRunnable(controller));
+        AIbutton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JButton b = ((JButton)e.getSource());
+                if(computerVsComputerRunnable == null){
+                    repaintFigures();
+                    b.removeAll();
+                    AIbutton.setText("Zatrzymaj AI");
+                    b.repaint();
+                    disableFigures();
+                    computerVsComputerRunnable = new AIRunnable(controller);
+                    aithread = new Thread(computerVsComputerRunnable);
+                    aithread.start();
+                }
+                else {
+                    b.removeAll();
+                    AIbutton.setText("Zacznij gre komputer vs komputer");
+                    b.setBackground(yellow);
+                    computerVsComputerRunnable.setRunFlag(false);
+                    computerVsComputerRunnable = null;
+                    AIbutton.setEnabled(false);
+                }
+            }
+        });
+        AIbutton.setText("Zacznij gre komputer vs komputer");
+        AIbutton.setPreferredSize(new Dimension(300, 50));
+        AIbutton.setVisible(true);
+        AIbutton.setEnabled(true);
+        add(AIbutton);
+    }
+    public Figure getFigure(int x, int y){
+        return board[x][y].figure;
+    }
+
+    public void disableFigures() {
+
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                board[i][j].setEnabled(false);
+            }
+        }
+    }
+
+    public void enableFigures() {
+
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+
+                Figure [] blackFigures = controller.getBlackFigures();
+                Figure [] whiteFigures = controller.getWhiteFigures();
+
+                for(Figure f : whiteFigures){
+                    if(f == null)
+                        continue;
+                    if(controller.playerColor() == PlayerColor.White())
+                        board[f.x()][f.y()].setEnabled(true);
+                    else
+                        board[f.x()][f.y()].setEnabled(false);
+                }
+
+                for(Figure f : blackFigures){
+                    if(f == null)
+                        continue;
+                    if(controller.playerColor() == PlayerColor.Black())
+                        board[f.x()][f.y()].setEnabled(true);
+                    else
+                        board[f.x()][f.y()].setEnabled(false);
+                }
+            }
+        }
+    }
+
+    public void repaintFigures(){
+
+        for(int i = 0; i < 8; i++){
+            for(int j = 0; j < 8; j++){
+                board[i][j].removeAll();
+                board[i][j].resetColor();
+                board[i][j].figure = null;
+                board[i][j].setEnabled(false);
+                board[i][j].repaint();
+            }
+        }
+
+        Figure [] blackFigures = controller.getBlackFigures();
+        Figure [] whiteFigures = controller.getWhiteFigures();
+
+        for(Figure f : whiteFigures){
+            if(f != null)
+                board[f.x()][f.y()].setFigure(f);
+        }
+
+        for(Figure f : blackFigures){
+            if(f != null)
+                board[f.x()][f.y()].setFigure(f);
+        }
+
+        this.repaint();
+    }
+
+	public void displayGameOverInfo(String gameOverInfoString) {
+		JLabel gameOverLabel = new JLabel(gameOverInfoString);
+		repaintFigures();
+		this.add(gameOverLabel);
+		gameOverLabel.repaint();
+		this.repaint();
+	}
 }

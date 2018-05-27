@@ -4,17 +4,16 @@ import javax.swing.JFrame;
 
 import controller.Controller;
 import model.Constants;
+import model.Figure;
+import model.PlayerColor;
 
 public class MainWindow extends JFrame implements Constants {
-	
-	private static final long serialVersionUID = -7729510720848698724L; // kod seryjny klasy JFrame
-	
+
 	private Controller controller;
 	private IntroPanel introPanel;
 	private BoardPanel boardPanel;
 	
-    public MainWindow(Controller controller)
-    {
+    public MainWindow(Controller controller){
     	this.controller = controller;
     }
     
@@ -35,9 +34,19 @@ public class MainWindow extends JFrame implements Constants {
     	getContentPane().removeAll();
     	getContentPane().add(boardPanel);
     	setTitle("Szachy");
-    	setSize(BOARD_WIDTH, BOARD_HEIGHT);
+    	setSize(BOARD_WIDTH, BOARD_HEIGHT + 100);
     	setDefaultCloseOperation(EXIT_ON_CLOSE);
-    	setLocationRelativeTo(null); // ustawiamy ekran gry na srodku ekranu
+    	setLocationRelativeTo(null); // ustawiamy okno gry na srodku ekranu
     	setResizable(false);
-    }
+		if(controller.playerColor() == PlayerColor.Black())
+			controller.makeComputerMove();
+	}
+
+    public BoardPanel getBoardPanel(){
+    	return boardPanel;
+	}
+
+	public Figure getFigure(int x, int y){
+    	return boardPanel.getFigure(x, y);
+	}
 }
