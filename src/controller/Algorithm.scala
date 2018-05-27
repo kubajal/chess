@@ -3,21 +3,20 @@ package controller
 import model.{Figure, PlayerColor}
 import model.PlayerColor.PlayerColor
 
-class Algorithm(val initialState : InternalState, val maximizing : PlayerColor) {
+class Algorithm(val initialState : InternalState, val maximizing : PlayerColor, val depth : Int = 2) {
 
   val evaluator = new Evaluator(maximizing)
   val INFINITY = 1000000
 
   def run(): (Figure, (Int, Int)) = {
 
-    val DEPTH = 2
     var move = (-1, -1)
-    var figure : Figure = null;
+    var figure : Figure = null
     var maxi = -INFINITY // minus infinity, score is being maximized
      for (f <- initialState.getFigures(maximizing)) {
        if(f != null)
          for (e <- initialState.findPossibleMoves(f)) {
-           val score = alfabeta(DEPTH, initialState.makeMove(f, e), initialState.getOpponentColor(maximizing), -INFINITY, INFINITY)
+           val score = alfabeta(depth, initialState.makeMove(f, e), initialState.getOpponentColor(maximizing), -INFINITY, INFINITY)
            //println(f.x + " " + f.y + ": " + score)
            if(score > maxi){
              maxi = score

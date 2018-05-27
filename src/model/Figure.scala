@@ -14,7 +14,7 @@ case class Figure(var figureType : FigureType, color : PlayerColor, var x : Int,
   def getY: Int = y
   def setPoint(_x: Int, _y: Int): Unit = {
     this.x = _x
-    this.y = _y;
+    this.y = _y
   }
   def getType(): FigureType = figureType
   def getColor(): PlayerColor = color

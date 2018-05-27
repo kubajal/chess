@@ -7,8 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 
-import javax.swing.JButton;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 import controller.Controller;
 import model.PlayerColor;
@@ -19,12 +18,14 @@ public class IntroPanel extends JPanel{
 
 	private JButton acceptButton, whitePlayerColorButton, blackPlayerColorButton;
     
-    private Label playerColorLabel1, playerColorLabel2;
+    private Label playerColorLabel1, playerColorLabel2, algorithmDepthLabel;
     private TextField playerColorField, timeField;
-    
+    private SpinnerModel depthSpinnerModel;
+	private JSpinner depthSpinner;
+
     private Controller controller;
 	
-    boolean playerHasWhiteFigures;
+    private boolean playerHasWhiteFigures;
     
     IntroPanel(Controller controller) {
     	
@@ -35,6 +36,8 @@ public class IntroPanel extends JPanel{
     	blackPlayerColorButton = new JButton("Czarny");
     	acceptButton = new JButton("Ok");
 		playerHasWhiteFigures = true;
+ 		depthSpinnerModel = new SpinnerNumberModel(2, 1, 5, 1); 
+		depthSpinner = new JSpinner(depthSpinnerModel);
     	
     	whitePlayerColorButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
@@ -51,6 +54,8 @@ public class IntroPanel extends JPanel{
     	acceptButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
+				controller.setAlgorithmDepth((int) depthSpinner.getValue());
+				
 				if (playerHasWhiteFigures)
 					controller.setPlayerColor(PlayerColor.White());
 				else // playerHasWhiteFigures == false
@@ -62,6 +67,7 @@ public class IntroPanel extends JPanel{
     	
     	playerColorLabel1 = new Label("Wybierz kolor figur, którymi będzie grał gracz.");
     	playerColorLabel2 = new Label("Komputer otrzyma figury przeciwnego koloru");
+		algorithmDepthLabel = new Label("Wybierz głębokość drzewa dla algorytmu Minimax");
         
         playerColorField = new TextField("Biały", 6);
         playerColorField.setEditable(false);
@@ -71,6 +77,8 @@ public class IntroPanel extends JPanel{
         add(whitePlayerColorButton);
         add(blackPlayerColorButton);
         add(playerColorField);
+		add(algorithmDepthLabel);
+		add(depthSpinner);;
         add(acceptButton);
     }
 }

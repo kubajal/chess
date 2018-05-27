@@ -4,16 +4,13 @@ import javax.swing.{ImageIcon, JLabel}
 import model.Constants.NUMBER_OF_SQUARES
 import model.FigureType.FigureType
 import model.PlayerColor.PlayerColor
-import model.{Figure, FigureType, PlayerColor}
+import model.{Figure, FigureType, Images, PlayerColor}
 
 import scala.annotation.tailrec
 import scala.collection.immutable.VectorBuilder
 
 case class InternalState(val whiteFigures : Array[Figure], val blackFigures : Array[Figure], val board: Array[Array[Figure]],
-                         currentPlayerColor : PlayerColor, isCurrentPlayerKingAttacked : Boolean = false) {
-
-  private val blackQueenImage = new ImageIcon(getClass.getResource("/images/black_queen.png"))
-  private val whiteQueenImage = new ImageIcon(getClass.getResource("/images/white_queen.png"))
+                         currentPlayerColor : PlayerColor, var isCurrentPlayerKingAttacked : Boolean = false) extends Images {
 
   def points(figure : Figure) : Int = {
     figure.getType match {
@@ -25,6 +22,8 @@ case class InternalState(val whiteFigures : Array[Figure], val blackFigures : Ar
       case FigureType.King => 1000
     }
   }
+
+  def setCurrentPlayerKingAttacked(isCurrentPlayerKingAttacked : Boolean) = this.isCurrentPlayerKingAttacked = isCurrentPlayerKingAttacked
 
   def whiteHeuristic() : Int = whiteFigures.map(f => points(f)).sum
   def blackHeuristic() : Int = blackFigures.map(f => points(f)).sum
@@ -55,23 +54,26 @@ case class InternalState(val whiteFigures : Array[Figure], val blackFigures : Ar
 
 	def isKingAttacked(kingColor : PlayerColor) : Boolean = {
 		val kingFigure = getFigures(kingColor)(15)
-		isFieldAttacked((kingFigure.x, kingFigure.y))
+		isFieldAttacked(kingColor, (kingFigure.x, kingFigure.y))
 	}
 
 	def isAnyMovePossible(playerColor : PlayerColor) : Boolean = {
 		val allPossibleMovesFields : Set[(Int, Int)] = getAllPossibleMovesFields(playerColor)
 		allPossibleMovesFields.nonEmpty
 	}
-	
+
+	def isMoveDefendingKing(figure : Figure, move : (Int, Int)) : Boolean = {
+		val afterMoveState = makeMove(figure, move)
+    !afterMoveState.isKingAttacked(figure.getColor)
+	}	
+
 	def isAnyMoveDefendingKingPossible(playerColor : PlayerColor) : Boolean = {
 		for (figure <- getFigures(playerColor))
       if(figure != null)
-        for (move <- findPossibleMoves(figure)) {
-          val afterMoveState = makeMove(figure, move)
-					if(!afterMoveState.isKingAttacked(playerColor))
-						true
-				}
-		false
+        for (move <- findPossibleMoves(figure))
+          if(isMoveDefendingKing(figure, move))
+						return true
+		return false
 	}
 
 	def getAllPossibleMovesFields(color : PlayerColor) : Set[(Int, Int)] = {
@@ -90,7 +92,8 @@ case class InternalState(val whiteFigures : Array[Figure], val blackFigures : Ar
     recursion(0, getFigures(color), Set.empty[(Int, Int)])
   }
 
-  def findPossibleMoves(figure : Figure) : Vector[(Int, Int)] =
+  def findPossibleMoves(figure : Figure) : Vector[(Int, Int)] = {
+		val possibleMoves =
     figure.getType() match {
       case FigureType.Bishop => findBishopPossibleMoves(figure)
       case FigureType.Knight => findKnightPossibleMoves(figure)
@@ -99,6 +102,12 @@ case class InternalState(val whiteFigures : Array[Figure], val blackFigures : Ar
       case FigureType.Rook => findRookPossibleMoves(figure)
       case FigureType.King => findKingPossibleMoves(figure)
     }
+
+    if(isCurrentPlayerKingAttacked)
+      possibleMoves.filter(move => isMoveDefendingKing(figure, move))
+    else
+      possibleMoves
+	}
 
   def findPawnPossibleMoves(figure : Figure) : Vector[(Int, Int)] = {
     val possibleMoves = new VectorBuilder[(Int, Int)]
@@ -219,10 +228,21 @@ case class InternalState(val whiteFigures : Array[Figure], val blackFigures : Ar
 
 	def removeAttackedFields(possibleMoves : Vector[(Int, Int)]) : Vector[(Int, Int)] = {
 		val allOpponentPossibleMovesFields : Set[(Int, Int)] = getAllPossibleMovesFields(getOpponentColor(currentPlayerColor))
-		possibleMoves.filterNot(move => allOpponentPossibleMovesFields.contains(move))
+		possibleMoves.filterNot(move => allOpponentPossibleMovesFields.contains(move) || isFieldAttackedByEnemyPawn(move))
 	}
 
-	def isFieldAttacked(fieldPosition: (Int, Int)) : Boolean = {
+  def isFieldAttackedByEnemyPawn(field : (Int, Int)) : Boolean = {
+    currentPlayerColor match {
+      case PlayerColor.Black =>
+        (field._1 > 0 && field._2 > 0 && board(field._1-1)(field._2-1) != null && board(field._1-1)(field._2-1).getType() == FigureType.Pawn && board(field._1-1)(field._2-1).getColor == getOpponentColor(currentPlayerColor)) ||
+        (field._1 < 7 && field._2 > 0 && board(field._1+1)(field._2-1) != null && board(field._1+1)(field._2-1).getType() == FigureType.Pawn && board(field._1+1)(field._2-1).getColor == getOpponentColor(currentPlayerColor))
+      case PlayerColor.White =>
+        (field._1 > 0 && field._2 < 7 && board(field._1-1)(field._2+1) != null && board(field._1-1)(field._2+1).getType() == FigureType.Pawn && board(field._1-1)(field._2+1).getColor == getOpponentColor(currentPlayerColor)) ||
+        (field._1 < 7 && field._2 < 7 && board(field._1+1)(field._2+1) != null && board(field._1+1)(field._2+1).getType() == FigureType.Pawn && board(field._1+1)(field._2+1).getColor == getOpponentColor(currentPlayerColor))
+    }
+  }
+
+	def isFieldAttacked(currentPlayerColor : PlayerColor, fieldPosition: (Int, Int)) : Boolean = {
 		val allOpponentPossibleMovesFields : Set[(Int, Int)] = getAllPossibleMovesFields(getOpponentColor(currentPlayerColor))
 		allOpponentPossibleMovesFields.contains(fieldPosition)
 	}
@@ -292,9 +312,10 @@ case class InternalState(val whiteFigures : Array[Figure], val blackFigures : Ar
 		  newBoard(figure.x+1)(figure.y) = newBoard(figure.x+3)(figure.y)
 			newBoard(figure.x+3)(figure.y) = null
 		}
-
-		new InternalState(newWhiteFigures, newBlackFigures, newBoard,
-      getOpponentColor(currentPlayerColor), isKingAttacked(getOpponentColor(currentPlayerColor)))
+    val newState = new InternalState(newWhiteFigures, newBlackFigures, newBoard, getOpponentColor(currentPlayerColor))
+    if(!isCurrentPlayerKingAttacked)
+      newState.setCurrentPlayerKingAttacked(newState.isKingAttacked(newState.currentPlayerColor))
+    newState
   }
 
   // function which tries to add consistently all possible moves in direction chosen by h - horizontal factor and v - vertical factor, v and h can be only 3 values (-1, 0, 1)
@@ -376,6 +397,6 @@ case class InternalState(val whiteFigures : Array[Figure], val blackFigures : Ar
       if(figure != null)
         board(figure.x)(figure.y) = figure
     }
-    return board
+    board
   }
 }

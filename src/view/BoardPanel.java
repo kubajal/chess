@@ -278,7 +278,14 @@ public class BoardPanel extends JPanel {
                 board[f.x()][f.y()].setFigure(f);
         }
 
-
         this.repaint();
     }
+
+	public void displayGameOverInfo(String gameOverInfoString) {
+		JLabel gameOverLabel = new JLabel(gameOverInfoString);
+		repaintFigures();
+		this.add(gameOverLabel);
+		gameOverLabel.repaint();
+		this.repaint();
+	}
 }

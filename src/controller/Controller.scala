@@ -1,26 +1,13 @@
 package controller
 
 import javax.swing.{ImageIcon, JLabel}
-import model.{Figure, FigureType, PlayerColor}
+import model.{Figure, FigureType, Images, PlayerColor}
 import model.PlayerColor.PlayerColor
 import view.MainWindow
 import model.Constants._
 
-class Controller(var mainWindow: MainWindow = null, var timeForMove: Long = 100, var playerColor: PlayerColor = PlayerColor.White,
-                 var currentPlayerColor: PlayerColor = PlayerColor.White, inGame: Boolean = true, gameOver: Boolean = false) {
-
-  private val whitePawnImage = new ImageIcon(getClass.getResource("/images/white_pawn.png"))
-  private val whiteKnightImage = new ImageIcon(getClass.getResource("/images/white_knight.png"))
-  private val whiteBishopImage = new ImageIcon(getClass.getResource("/images/white_bishop.png"))
-  private val whiteRookImage = new ImageIcon(getClass.getResource("/images/white_rook.png"))
-  private val whiteQueenImage = new ImageIcon(getClass.getResource("/images/white_queen.png"))
-  private val whiteKingImage = new ImageIcon(getClass.getResource("/images/white_king.png"))
-  private val blackPawnImage = new ImageIcon(getClass.getResource("/images/black_pawn.png"))
-  private val blackKnightImage = new ImageIcon(getClass.getResource("/images/black_knight.png"))
-  private val blackBishopImage = new ImageIcon(getClass.getResource("/images/black_bishop.png"))
-  private val blackRookImage = new ImageIcon(getClass.getResource("/images/black_rook.png"))
-  private val blackQueenImage = new ImageIcon(getClass.getResource("/images/black_queen.png"))
-  private val blackKingImage = new ImageIcon(getClass.getResource("/images/black_king.png"))
+case class Controller(var mainWindow: MainWindow = null, var timeForMove: Long = 100, var playerColor: PlayerColor = PlayerColor.White,
+                 var currentPlayerColor: PlayerColor = PlayerColor.White, var algorithmDepth : Int = 2) extends Images {
 
   val tmp1 = createWhiteFigures
   val tmp2 = createBlackFigures
@@ -108,7 +95,7 @@ class Controller(var mainWindow: MainWindow = null, var timeForMove: Long = 100,
       gameOver(getOpponentColor(currentPlayerColor))
     else
 		{
-		  val minimax = new Algorithm(currentState.copy(), currentPlayerColor)
+		  val minimax = new Algorithm(currentState.copy(), currentPlayerColor, algorithmDepth)
 		  val move = minimax.run()
 		  currentState = currentState.makeMove(move)
 		  mainWindow.getBoardPanel.repaintFigures()
@@ -122,7 +109,7 @@ class Controller(var mainWindow: MainWindow = null, var timeForMove: Long = 100,
       gameOver(getOpponentColor(currentPlayerColor))
     else
 		{
-		  val minimaxFirst = new Algorithm(currentState.copy(), currentPlayerColor)
+		  val minimaxFirst = new Algorithm(currentState.copy(), currentPlayerColor, algorithmDepth)
 		  val firstMove = minimaxFirst.run()
 		  currentState = currentState.makeMove(firstMove)
 		  mainWindow.getBoardPanel.repaintFigures()
@@ -133,7 +120,7 @@ class Controller(var mainWindow: MainWindow = null, var timeForMove: Long = 100,
       gameOver(getOpponentColor(currentPlayerColor))
     else
 		{
-		  val minimaxSecond = new Algorithm(currentState.copy(), currentPlayerColor)
+		  val minimaxSecond = new Algorithm(currentState.copy(), currentPlayerColor, algorithmDepth)
 		  val secondMove = minimaxSecond.run()
 		  currentState = currentState.makeMove(secondMove)
 		  mainWindow.getBoardPanel.repaintFigures()
@@ -142,7 +129,10 @@ class Controller(var mainWindow: MainWindow = null, var timeForMove: Long = 100,
   }
 
 	def gameOver(winnerPlayerColor : PlayerColor) : Unit = {
-	
+		winnerPlayerColor match {
+      case PlayerColor.Black => mainWindow.getBoardPanel.displayGameOverInfo("Koniec gry. Wygrały czarne figury")
+      case PlayerColor.White => mainWindow.getBoardPanel.displayGameOverInfo("Koniec gry. Wygrały białe figury")
+    }
 	}
 
   def setCurrentPlayersColor(color : PlayerColor) = currentPlayerColor = color
@@ -164,4 +154,6 @@ class Controller(var mainWindow: MainWindow = null, var timeForMove: Long = 100,
   def setMainWindow(mainWindow: MainWindow) = this.mainWindow = mainWindow
 
   def getMainWindow: MainWindow = mainWindow
+
+  def setAlgorithmDepth(algorithmDepth : Int) = this.algorithmDepth = algorithmDepth
 }
