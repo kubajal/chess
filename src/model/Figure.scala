@@ -16,6 +16,7 @@ case class Figure(var figureType : FigureType, color : PlayerColor, var x : Int,
     this.x = _x
     this.y = _y
   }
+  def XY() : (Int, Int) = (x, y)
   def getType(): FigureType = figureType
   def getColor(): PlayerColor = color
 	def hasMoved(): Boolean = moved

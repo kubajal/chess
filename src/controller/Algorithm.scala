@@ -3,6 +3,8 @@ package controller
 import model.{Figure, PlayerColor}
 import model.PlayerColor.PlayerColor
 
+import scala.annotation.tailrec
+
 class Algorithm(val initialState : InternalState, val maximizing : PlayerColor, val depth : Int = 2) {
 
   val evaluator = new Evaluator(maximizing)
@@ -67,5 +69,42 @@ class Algorithm(val initialState : InternalState, val maximizing : PlayerColor, 
       }
       return newBeta
     }
+  }
+
+  def getAllMoves(state : InternalState) : Array[(Figure, (Int, Int))] = {
+
+    state.getActiveFigures().map(f => state.getMoves(f)).reduce(_ ++ _)
+  }
+
+  def getChildren(state : InternalState) : Array[InternalState] = {
+
+    val moves = state.getActiveFigures().map(f => state.getMoves(f)).reduce(_ ++ _)
+    moves.map(m => state.makeMove(m))
+  }
+
+  def min(height : Int, state : InternalState): Int = {
+//    println("min - poziom " + height)
+    if(height == 0)
+      return evaluator.evaluateState(state)
+    val values = getChildren(state).map(child => max(height - 1, child))
+//    println("min: " + values.min)
+    return values.min
+  }
+
+  def max(height : Int, state : InternalState): Int = {
+//    println("max - poziom " + height)
+    if(height == 0)
+      return evaluator.evaluateState(state)
+    val values = getChildren(state).map(child => min(height - 1, child))
+//    println("max: " + values.max)
+    return values.max
+  }
+
+  def minimax_algorithm(initialState : InternalState) : (Figure, (Int, Int)) = {
+//    println("inicjalizacja minimaxa")
+    val moves = getAllMoves(initialState)
+    val x = moves.map(m => (m, max( depth - 1, initialState.makeMove(m))))
+    val e = x.maxBy(_._2)
+    return e._1
   }
 }

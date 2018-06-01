@@ -96,7 +96,7 @@ case class Controller(var mainWindow: MainWindow = null, var timeForMove: Long =
     else
 		{
 		  val minimax = new Algorithm(currentState.copy(), currentPlayerColor, algorithmDepth)
-		  val move = minimax.run()
+		  val move = minimax.minimax_algorithm(currentState)
 		  currentState = currentState.makeMove(move)
 		  mainWindow.getBoardPanel.repaintFigures()
 		  mainWindow.getBoardPanel.enableFigures()

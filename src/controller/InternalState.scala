@@ -12,6 +12,8 @@ import scala.collection.immutable.VectorBuilder
 case class InternalState(val whiteFigures : Array[Figure], val blackFigures : Array[Figure], val board: Array[Array[Figure]],
                          currentPlayerColor : PlayerColor, var isCurrentPlayerKingAttacked : Boolean = false) extends Images {
 
+  def getActiveFigures()  : Array[Figure] = return getFigures(currentPlayerColor)
+
   def points(figure : Figure) : Int = {
     figure.getType match {
       case FigureType.Pawn => 1
@@ -23,6 +25,9 @@ case class InternalState(val whiteFigures : Array[Figure], val blackFigures : Ar
     }
   }
 
+  def getMoves(figure : Figure) : Array[(Figure, (Int, Int))] = {
+    findPossibleMoves(figure).map(e => (figure, e)).toArray
+  }
   def setCurrentPlayerKingAttacked(isCurrentPlayerKingAttacked : Boolean) = this.isCurrentPlayerKingAttacked = isCurrentPlayerKingAttacked
 
   def whiteHeuristic() : Int = whiteFigures.map(f => points(f)).sum
@@ -137,93 +142,17 @@ case class InternalState(val whiteFigures : Array[Figure], val blackFigures : Ar
     possibleMoves.result()
   }
 
-  def findKnightPossibleMoves(figure : Figure) : Vector[(Int, Int)] = {
-    val possibleMoves = new VectorBuilder[(Int, Int)]
-
-    if(figure.x < 7 && figure.y < 6)
-      if(board(figure.x+1)(figure.y+2) == null || board(figure.x+1)(figure.y+2).getColor == getOpponentColor(figure.getColor))
-        possibleMoves += ((figure.x+1, figure.y+2))
-
-    if(figure.x < 6 && figure.y < 7)
-      if(board(figure.x+2)(figure.y+1) == null || board(figure.x+2)(figure.y+1).getColor == getOpponentColor(figure.getColor))
-        possibleMoves += ((figure.x+2, figure.y+1))
-
-    if(figure.x < 6 && figure.y > 0)
-      if(board(figure.x+2)(figure.y-1) == null || board(figure.x+2)(figure.y-1).getColor == getOpponentColor(figure.getColor))
-        possibleMoves += ((figure.x+2, figure.y-1))
-
-    if(figure.x < 7 && figure.y > 1)
-      if(board(figure.x+1)(figure.y-2) == null || board(figure.x+1)(figure.y-2).getColor == getOpponentColor(figure.getColor))
-        possibleMoves += ((figure.x+1, figure.y-2))
-
-    if(figure.x > 0 && figure.y > 1)
-      if(board(figure.x-1)(figure.y-2) == null || board(figure.x-1)(figure.y-2).getColor == getOpponentColor(figure.getColor))
-        possibleMoves += ((figure.x-1, figure.y-2))
-
-    if(figure.x > 1 && figure.y > 0)
-      if(board(figure.x-2)(figure.y-1) == null || board(figure.x-2)(figure.y-1).getColor == getOpponentColor(figure.getColor))
-        possibleMoves += ((figure.x-2, figure.y-1))
-
-    if(figure.x > 1 && figure.y < 7)
-      if(board(figure.x-2)(figure.y+1) == null || board(figure.x-2)(figure.y+1).getColor == getOpponentColor(figure.getColor))
-        possibleMoves += ((figure.x-2, figure.y+1))
-
-    if(figure.x > 0 && figure.y < 6)
-      if(board(figure.x-1)(figure.y+2) == null || board(figure.x-1)(figure.y+2).getColor == getOpponentColor(figure.getColor))
-        possibleMoves += ((figure.x-1, figure.y+2))
-
-    possibleMoves.result()
+  def findKnightPossibleMoves(f : Figure) : Vector[(Int, Int)] = {
+    val moves = (for(x <- Array[Int](f.x - 1, f.x + 1); y <- Array[Int](f.y - 2, f.y + 2)) yield (x, y)).++(for(x <- Array[Int](f.x - 2, f.x + 2); y <- Array[Int](f.y - 1, f.y + 1)) yield (x, y))
+    return moves.filter(e => 8 > e._1 && e._1 >= 0 && e._2 < 8 && e._2 >= 0 && (getFigure(e) == null || getFigure(e).getColor() == getOpponentColor(f.getColor()))).toVector
   }
 
-  def findKingPossibleMoves(figure : Figure) : Vector[(Int, Int)] = {
-    val possibleMoves = new VectorBuilder[(Int, Int)]
+  def getFigure(e : (Int, Int)) : Figure = board(e._1)(e._2)
+  def getFigure(x : Int, y : Int) : Figure = board(x)(y)
 
-    if(figure.y < 7)
-      if(board(figure.x)(figure.y+1) == null || board(figure.x)(figure.y+1).getColor == getOpponentColor(figure.getColor))
-        possibleMoves += ((figure.x, figure.y+1))
-
-    if(figure.x < 7 && figure.y < 7)
-      if(board(figure.x+1)(figure.y+1) == null || board(figure.x+1)(figure.y+1).getColor == getOpponentColor(figure.getColor))
-        possibleMoves += ((figure.x+1, figure.y+1))
-
-    if(figure.x < 7)
-      if(board(figure.x+1)(figure.y) == null || board(figure.x+1)(figure.y).getColor == getOpponentColor(figure.getColor))
-        possibleMoves += ((figure.x+1, figure.y))
-
-    if(figure.x < 7 && figure.y > 0)
-      if(board(figure.x+1)(figure.y-1) == null || board(figure.x+1)(figure.y-1).getColor == getOpponentColor(figure.getColor))
-        possibleMoves += ((figure.x+1, figure.y-1))
-
-    if(figure.y > 0)
-      if(board(figure.x)(figure.y-1) == null || board(figure.x)(figure.y-1).getColor == getOpponentColor(figure.getColor))
-        possibleMoves += ((figure.x, figure.y-1))
-
-    if(figure.x > 0 && figure.y > 0)
-      if(board(figure.x-1)(figure.y-1) == null || board(figure.x-1)(figure.y-1).getColor == getOpponentColor(figure.getColor))
-        possibleMoves += ((figure.x-1, figure.y-1))
-
-    if(figure.x > 0)
-      if(board(figure.x-1)(figure.y) == null || board(figure.x-1)(figure.y).getColor == getOpponentColor(figure.getColor))
-        possibleMoves += ((figure.x-1, figure.y))
-
-    if(figure.x > 0 && figure.y < 7)
-      if(board(figure.x-1)(figure.y+1) == null || board(figure.x-1)(figure.y+1).getColor == getOpponentColor(figure.getColor))
-        possibleMoves += ((figure.x-1, figure.y+1))
-
-		if(figure.getColor() == currentPlayerColor && figure.hasMoved == false && board(figure.x+1)(figure.y) == null && board(figure.x+2)(figure.y) == null &&
-      board(figure.x+3)(figure.y) != null && board(figure.x+3)(figure.y).getType == FigureType.Rook && board(figure.x+3)(figure.y).hasMoved == false &&
-			!areFieldsAttacked(Vector((figure.x, figure.y), (figure.x+1, figure.y), (figure.x+2, figure.y), (figure.x+3, figure.y))))
-			possibleMoves += ((figure.x+2, figure.y))
-
-		if(figure.getColor() == currentPlayerColor && figure.hasMoved == false && board(figure.x-1)(figure.y) == null && board(figure.x-2)(figure.y) == null && board(figure.x-3)(figure.y) == null &&
-			board(figure.x-4)(figure.y) != null && board(figure.x-4)(figure.y).getType == FigureType.Rook && board(figure.x-4)(figure.y).hasMoved == false &&
-			!areFieldsAttacked(Vector((figure.x, figure.y), (figure.x-1, figure.y), (figure.x-2, figure.y), (figure.x-3, figure.y), (figure.x-4, figure.y))))
-			possibleMoves += ((figure.x-2, figure.y))
-
-    if(figure.getColor() == currentPlayerColor)
-      removeAttackedFields(possibleMoves.result())
-    else
-      possibleMoves.result()
+  def findKingPossibleMoves(f : Figure) : Vector[(Int, Int)] = {
+    val moves = for(x <- Array[Int](f.x - 1, f.x, f.x + 1); y <- Array[Int](f.y-1, f.y, f.y + 1)) yield (x, y)
+    return moves.filter(e => 8 > e._1 && e._1 >= 0 && e._2 < 8 && e._2 >= 0 && (getFigure(e) == null || getFigure(e).getColor() == getOpponentColor(f.getColor()))).toVector
   }
 
 	def removeAttackedFields(possibleMoves : Vector[(Int, Int)]) : Vector[(Int, Int)] = {
@@ -258,64 +187,34 @@ case class InternalState(val whiteFigures : Array[Figure], val blackFigures : Ar
 
   def makeMove(figure : Figure, destination: (Int, Int)) : InternalState = {
 
-    val newBlackFigures = blackFigures.map(f => if(f == null) null else f.copy())
-    val newWhiteFigures = whiteFigures.map(f => if(f == null) null else f.copy())
-    val newBoard = createBoard(newWhiteFigures, newBlackFigures)
-    val newFigure = newBoard(figure.x)(figure.y)
+    val newFigure = new Figure(figure.getType, figure.getColor, destination._1, destination._2, figure.getFigureImage)
 
+    val newBoard = board.map(_.clone)
     newBoard(figure.x)(figure.y) = null
-		newFigure.setPoint(destination._1, destination._2)
     newBoard(destination._1)(destination._2) = newFigure
-		newFigure.setMoved(true)
 
-    if(newFigure.getColor == PlayerColor.White)
-    {
-      for(i <- 0 to 15)
-        if(newWhiteFigures(i) != null && newWhiteFigures(i).x == figure.x && newWhiteFigures(i).y == figure.y)
-          newWhiteFigures(i) = newFigure
-      for(i <- 0 to 15)
-        if(newBlackFigures(i) != null && newBlackFigures(i).x == destination._1 && newBlackFigures(i).y == destination._2)
-          newBlackFigures(i) = null
+    if(figure.getColor == PlayerColor.White){
+      val newWhiteFigures = whiteFigures.filterNot(f => f.x == figure.x && f.y == figure.y) :+ newFigure
+      return new InternalState(newWhiteFigures,
+        if(board(destination._1)(destination._2) != null && board(destination._1)(destination._2).getColor() != figure.getColor())
+          getBlackFigures.filterNot(f => f.x == destination._1 && f.y == destination._2)
+        else
+          getBlackFigures,
+        newBoard,
+        getOpponentColor(figure.getColor()))
+
     }
-    else
-    {
-      for(i <- 0 to 15)
-        if(newBlackFigures(i) != null && newBlackFigures(i).x == figure.x && newBlackFigures(i).y == figure.y)
-          newBlackFigures(i) = newFigure
-      for(i <- 0 to 15)
-        if(newWhiteFigures(i) != null && newWhiteFigures(i).x == destination._1 && newWhiteFigures(i).y == destination._2)
-          newWhiteFigures(i) = null
+    else{
+      val newBlackFigures = blackFigures.filterNot(f => f.x == figure.x && f.y == figure.y) :+ newFigure
+      return new InternalState(
+        if(board(destination._1)(destination._2) != null && board(destination._1)(destination._2).getColor() != figure.getColor())
+          getWhiteFigures.filterNot(f => f.x == destination._1 && f.y == destination._2)
+        else
+          getWhiteFigures,
+        newBlackFigures,
+        newBoard,
+        getOpponentColor(figure.getColor()))
     }
-
-		if(newFigure.getType == FigureType.Pawn && currentPlayerColor == PlayerColor.Black && newFigure.y == 0)
-		{
-			newFigure.setFigureType(FigureType.Queen)
-			newFigure.setFigureImage(new JLabel(blackQueenImage))
-		} 
-		else if(newFigure.getType == FigureType.Pawn && currentPlayerColor == PlayerColor.White && newFigure.y == 7)
-		{
-			newFigure.setFigureType(FigureType.Queen)
-			newFigure.setFigureImage(new JLabel(whiteQueenImage))
-		}
-
-		if(figure.getType == FigureType.King && destination == (figure.x-2, figure.y))
-		{
-			newBoard(figure.x-4)(figure.y).setMoved(true)
-			newBoard(figure.x-4)(figure.y).setPoint(figure.x-1, figure.y)
-		  newBoard(figure.x-1)(figure.y) = newBoard(figure.x-4)(figure.y)
-			newBoard(figure.x-4)(figure.y) = null
-		}
-		if(figure.getType == FigureType.King && destination == (figure.x+2, figure.y))
-		{
-			newBoard(figure.x+3)(figure.y).setMoved(true)
-			newBoard(figure.x+3)(figure.y).setPoint(figure.x+1, figure.y)
-		  newBoard(figure.x+1)(figure.y) = newBoard(figure.x+3)(figure.y)
-			newBoard(figure.x+3)(figure.y) = null
-		}
-    val newState = new InternalState(newWhiteFigures, newBlackFigures, newBoard, getOpponentColor(currentPlayerColor))
-    if(!isCurrentPlayerKingAttacked)
-      newState.setCurrentPlayerKingAttacked(newState.isKingAttacked(newState.currentPlayerColor))
-    newState
   }
 
   // function which tries to add consistently all possible moves in direction chosen by h - horizontal factor and v - vertical factor, v and h can be only 3 values (-1, 0, 1)
