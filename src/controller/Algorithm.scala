@@ -82,28 +82,62 @@ class Algorithm(val initialState : InternalState, val maximizing : PlayerColor, 
     moves.map(m => state.makeMove(m))
   }
 
-  def min(height : Int, state : InternalState): Int = {
-//    println("min - poziom " + height)
-    if(height == 0)
-      return evaluator.evaluateState(state)
-    val values = getChildren(state).map(child => max(height - 1, child))
-//    println("min: " + values.min)
-    return values.min
+  @tailrec
+  private def minIteration(alpha : Int, beta : Int, height : Int, i : Int, states: Array[InternalState]) : Int = {
+    val newBeta = max(alpha, beta, height - 1, states(i))
+    if(newBeta <= alpha)
+      return alpha
+    if(i == states.size - 1){
+
+      if(newBeta < beta)
+        return newBeta
+      else
+       return beta
+    }
+    return minIteration(alpha, if(newBeta < beta) newBeta else beta, height, i+1, states)
   }
 
-  def max(height : Int, state : InternalState): Int = {
-//    println("max - poziom " + height)
-    if(height == 0)
+  @tailrec
+  private def maxIteration(alpha : Int, beta : Int, height : Int, i : Int, states: Array[InternalState]) : Int = {
+    val newAlpha = min(alpha, beta, height - 1, states(i))
+    if(newAlpha>= beta)
+      return beta
+    if(i == states.size - 1){
+      if(newAlpha > alpha)
+        return newAlpha
+      else
+        return alpha
+    }
+    return maxIteration(if(newAlpha > alpha) newAlpha else alpha, beta, height, i+1, states)
+  }
+
+  def min(alpha : Int, beta : Int, height : Int, state : InternalState): Int = {
+//    println("min - poziom " + height)
+    if(height == 0){
+
+//      println("min: " + evaluator.evaluateState(state))
       return evaluator.evaluateState(state)
-    val values = getChildren(state).map(child => min(height - 1, child))
-//    println("max: " + values.max)
-    return values.max
+    }
+    val newBeta = minIteration(alpha, beta, height, 0, getChildren(state))
+//    println("min: " + newBeta)
+    return newBeta
+  }
+
+  def max(alpha : Int, beta : Int, height : Int, state : InternalState): Int = {
+//    println("max - poziom " + height)
+    if(height == 0){
+//      println("max: " + evaluator.evaluateState(state))
+      return evaluator.evaluateState(state)
+    }
+    val newAlpha = maxIteration(alpha, beta, height, 0, getChildren(state))
+//    println("max: " + newAlpha)
+    return newAlpha
   }
 
   def minimax_algorithm(initialState : InternalState) : (Figure, (Int, Int)) = {
 //    println("inicjalizacja minimaxa")
     val moves = getAllMoves(initialState)
-    val x = moves.map(m => (m, max( depth - 1, initialState.makeMove(m))))
+    val x = moves.map(m => (m, min(-INFINITY, INFINITY, depth - 1, initialState.makeMove(m))))
     val e = x.maxBy(_._2)
     return e._1
   }
