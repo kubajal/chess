@@ -6,6 +6,7 @@ import model.PlayerColor.PlayerColor
 import view.{BoardPanel, MainWindow}
 import model.Constants._
 import model.FigureType.FigureType
+import runnables.moveRunnable
 
 case class Controller(var mainWindow: MainWindow = null, var timeForMove: Long = 100, var playerColor: PlayerColor = PlayerColor.White,
                  var algorithmDepth : Int = 2) extends Images {
@@ -100,7 +101,7 @@ case class Controller(var mainWindow: MainWindow = null, var timeForMove: Long =
   def makeComputerMove() : Unit = {
     new Thread(new Runnable {
       override def run(): Unit = {
-        val minimax = new Algorithm(currentState.copy(), currentState.activePlayer, algorithmDepth)
+        val minimax = new Algorithm(currentState.copy(), currentState.activePlayer, mainWindow.getBoardPanel.getEnemyDepth)
         val move = minimax.run()
         currentState = currentState.makeMove(move)
         if(currentState.getChildren().isEmpty){
@@ -118,7 +119,7 @@ case class Controller(var mainWindow: MainWindow = null, var timeForMove: Long =
   }
 
   def computerVsComputer() : Unit = {
-    val minimaxFirst = new Algorithm(currentState.copy(), currentState.activePlayer, algorithmDepth)
+    val minimaxFirst = new Algorithm(currentState.copy(), currentState.activePlayer, mainWindow.getBoardPanel.getPlayerDepth)
     val firstMove = minimaxFirst.run()
     currentState = currentState.makeMove(firstMove)
     if(currentState.getChildren().isEmpty){
@@ -128,7 +129,7 @@ case class Controller(var mainWindow: MainWindow = null, var timeForMove: Long =
 
     mainWindow.getBoardPanel.repaintFigures()
 
-    val minimaxSecond = new Algorithm(currentState.copy(), currentState.activePlayer, algorithmDepth)
+    val minimaxSecond = new Algorithm(currentState.copy(), currentState.activePlayer, mainWindow.getBoardPanel.getEnemyDepth)
     val secondMove = minimaxSecond.run()
     currentState = currentState.makeMove(secondMove)
     if(currentState.getChildren().isEmpty){

@@ -1,7 +1,6 @@
 package view;
 
 import controller.Controller;
-import controller.moveRunnable;
 import model.Figure;
 
 import java.awt.*;
@@ -11,10 +10,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 
-import model.PlayerColor;
 import scala.Tuple2;
 import scala.collection.JavaConverters;
 import static model.Constants.*;
+import runnables.*;
+
 
 public class BoardPanel extends JPanel {
 
@@ -28,50 +28,6 @@ public class BoardPanel extends JPanel {
 
     private Figure draggedFigure = null;
 
-    public class AIThread extends Thread{
-
-        public AIRunnable airunnable;
-        Controller controller;
-
-        AIThread(AIRunnable _airunnable){
-            super(_airunnable);
-            airunnable = _airunnable;
-        }
-
-        void setFlag(Boolean _f){
-            airunnable.setRunFlag(_f);
-        }
-    }
-
-    public class AIRunnable implements Runnable {
-
-        public Boolean flag = true;
-        public Controller c;
-
-        AIRunnable(Controller _c){
-            c = _c;
-        }
-
-        public void setRunFlag(Boolean _f){
-            flag = _f;
-        }
-
-        @Override
-        public void run() {
-            while(true) {
-                if(flag == true)
-                    c.computerVsComputer();
-                if(flag == true)
-                    c.getMainWindow().getBoardPanel().repaintFigures();
-                if(flag == false)
-                    break;
-            }
-            c.getMainWindow().getBoardPanel().getAIButtonm().setEnabled(true);
-            c.getMainWindow().getBoardPanel().getAIButtonm().setBackground(null);
-            c.getMainWindow().getBoardPanel().enableFigures();
-
-        }
-    }
 
     public void finish() {
         SwingUtilities.invokeLater(new Runnable() {
@@ -227,6 +183,14 @@ public class BoardPanel extends JPanel {
     private SpinnerModel playersDepthModel;
     private JSpinner enemyDepthSpinner;
     private JSpinner playersDepthSpinner;
+
+    public int getEnemyDepth() {
+        return (Integer)enemyDepthModel.getValue();
+    }
+
+    public int getPlayerDepth() {
+        return (Integer)playersDepthModel.getValue();
+    }
 
     public Figure getFigure(int x, int y){
         return board[x][y].figure;

@@ -1,8 +1,10 @@
-package controller;
+package runnables;
+
+import controller.Controller;
 
 public class moveRunnable implements Runnable {
-    public Controller c;
-    moveRunnable(Controller _c){
+    private Controller c;
+    public moveRunnable(Controller _c){
         c = _c;
     }
 
