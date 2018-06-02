@@ -16,7 +16,7 @@ import static model.Constants.*;
 import runnables.*;
 
 
-public class BoardPanel extends JPanel {
+public class BoardPanel extends JFrame {
 
     private Color brightFieldColor = new Color(196, 200, 190);
     private Color darkFieldColor = new Color(125, 40, 15);
@@ -27,7 +27,6 @@ public class BoardPanel extends JPanel {
     private static Controller controller;
 
     private Figure draggedFigure = null;
-
 
     public void finish() {
         SwingUtilities.invokeLater(new Runnable() {
@@ -83,6 +82,8 @@ public class BoardPanel extends JPanel {
     }
 
     public BoardPanel(Controller _c) {
+        setSize(BOARD_WIDTH, BOARD_HEIGHT + 100);
+        setResizable(false);
         controller = _c;
         this.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
         board = new Field[8][8];

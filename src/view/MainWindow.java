@@ -16,7 +16,8 @@ public class MainWindow extends JFrame implements Constants {
     public MainWindow(Controller controller){
     	this.controller = controller;
     }
-    
+    public MainWindow() {}
+
     public void showIntroPanel() {
     	introPanel = new IntroPanel(this.controller);
     	getContentPane().removeAll();

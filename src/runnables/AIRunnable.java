@@ -21,13 +21,13 @@ public class AIRunnable implements Runnable {
             if(flag == true)
                 c.computerVsComputer();
             if(flag == true)
-                c.getMainWindow().getBoardPanel().repaintFigures();
+                c.getBoardPanel().repaintFigures();
             if(flag == false)
                 break;
         }
-        c.getMainWindow().getBoardPanel().getAIButtonm().setEnabled(true);
-        c.getMainWindow().getBoardPanel().getAIButtonm().setBackground(null);
-        c.getMainWindow().getBoardPanel().enableFigures();
+        c.getBoardPanel().getAIButtonm().setEnabled(true);
+        c.getBoardPanel().getAIButtonm().setBackground(null);
+        c.getBoardPanel().enableFigures();
 
     }
 }

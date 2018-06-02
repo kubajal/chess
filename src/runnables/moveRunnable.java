@@ -10,8 +10,8 @@ public class moveRunnable implements Runnable {
 
     @Override
     public void run() {
-        c.getMainWindow().getBoardPanel().getAIButtonm().setEnabled(false);
+        c.getBoardPanel().getAIButtonm().setEnabled(false);
         c.makeComputerMove();
-        c.getMainWindow().getBoardPanel().getAIButtonm().setEnabled(true);
+        c.getBoardPanel().getAIButtonm().setEnabled(true);
     }
 }

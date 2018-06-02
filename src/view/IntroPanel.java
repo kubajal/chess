@@ -53,12 +53,12 @@ public class IntroPanel extends JPanel{
 		});
     	acceptButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				/*
 				if (playerHasWhiteFigures)
 					controller.setPlayerColor(PlayerColor.White());
 				else // playerHasWhiteFigures == false
 					controller.setPlayerColor(PlayerColor.Black());
-				controller.getMainWindow().showBoardPanel();
+				controller.getMainWindow().showBoardPanel();*/
 			}
 		});
     	

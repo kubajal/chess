@@ -6,6 +6,14 @@ import model.{Figure, FigureType, Images, PlayerColor}
 import scala.annotation.tailrec
 import scala.collection.immutable.VectorBuilder
 
+/**
+  *
+  * @param whiteFigures Set of white figures.
+  * @param blackFigures Set of black figures.
+  * @param board 8x8 representation of the board that is implied by @blackFigures and @whiteFigures.
+  * @param activePlayer The player that makes a move.
+  */
+
 case class InternalState(val whiteFigures : Vector[Figure], val blackFigures : Vector[Figure], val board: Vector[Vector[Figure]],
                          val activePlayer : PlayerColor) extends Images {
 
@@ -134,6 +142,9 @@ case class InternalState(val whiteFigures : Vector[Figure], val blackFigures : V
     return moves.filter(e => 8 > e._1 && e._1 >= 0 && e._2 < 8 && e._2 >= 0 && (getFigure(e) == null || getFigure(e).getColor() == getOpponentColor(f.getColor()))).toVector
   }
 
+  /**
+    * Returns a new internal state with figure sets and board updated according to the given parameters that represent the move.
+    */
   def makeMove(x : (Figure, (Int, Int))) : InternalState = {
     makeMove(x._1, x._2)
   }

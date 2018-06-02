@@ -8,15 +8,22 @@ import model.Constants._
 import model.FigureType.FigureType
 import runnables.moveRunnable
 
-case class Controller(var mainWindow: MainWindow = null, var timeForMove: Long = 100, var playerColor: PlayerColor = PlayerColor.White,
-                 var algorithmDepth : Int = 2) extends Images {
+/**
+  *
+  * @param playerColor - The color of the human player.
+  */
 
+case class Controller(val playerColor: PlayerColor = PlayerColor.White) extends Images {
+
+  var boardPanel : BoardPanel = null
   val whiteFigures = createWhiteFigures
   val blackFigures = createBlackFigures
 
-  var currentState = new InternalState(whiteFigures, blackFigures , createBoard(whiteFigures, blackFigures ), playerColor)
+  var currentState = new InternalState(whiteFigures, blackFigures , createBoard(whiteFigures, blackFigures ), PlayerColor.White)
 
   def getBoard() = currentState.getBoard
+
+  def getBoardPanel() = boardPanel
 
   def createWhiteFigures(): Vector[Figure] = {
 
@@ -89,6 +96,11 @@ case class Controller(var mainWindow: MainWindow = null, var timeForMove: Long =
     PlayerColor.White
   }
 
+  /**
+    * Update the internal state of the game according to the move that the human player does.
+    * @param figure The figure to be moved.
+    * @param destination The (x,y) destination position of the @figure.
+    */
 	def makePlayerMove(figure : Figure, destination: (Int, Int)) : Unit = {
     currentState = currentState.makeMove(figure, destination)
     if(currentState.getChildren().isEmpty){
@@ -101,7 +113,7 @@ case class Controller(var mainWindow: MainWindow = null, var timeForMove: Long =
   def makeComputerMove() : Unit = {
     new Thread(new Runnable {
       override def run(): Unit = {
-        val minimax = new Algorithm(currentState.copy(), currentState.activePlayer, mainWindow.getBoardPanel.getEnemyDepth)
+        val minimax = new Algorithm(currentState.copy(), currentState.activePlayer, boardPanel.getEnemyDepth)
         val move = minimax.run()
         currentState = currentState.makeMove(move)
         if(currentState.getChildren().isEmpty){
@@ -110,8 +122,8 @@ case class Controller(var mainWindow: MainWindow = null, var timeForMove: Long =
         }
         SwingUtilities.invokeAndWait(new Runnable {
           override def run(): Unit = {
-            mainWindow.getBoardPanel.repaintFigures()
-            mainWindow.getBoardPanel.enableFigures()
+            boardPanel.repaintFigures()
+            boardPanel.enableFigures()
           }
         })
       }
@@ -119,7 +131,7 @@ case class Controller(var mainWindow: MainWindow = null, var timeForMove: Long =
   }
 
   def computerVsComputer() : Unit = {
-    val minimaxFirst = new Algorithm(currentState.copy(), currentState.activePlayer, mainWindow.getBoardPanel.getPlayerDepth)
+    val minimaxFirst = new Algorithm(currentState.copy(), currentState.activePlayer, boardPanel.getPlayerDepth)
     val firstMove = minimaxFirst.run()
     currentState = currentState.makeMove(firstMove)
     if(currentState.getChildren().isEmpty){
@@ -127,25 +139,25 @@ case class Controller(var mainWindow: MainWindow = null, var timeForMove: Long =
       return
     }
 
-    mainWindow.getBoardPanel.repaintFigures()
+    boardPanel.repaintFigures()
 
-    val minimaxSecond = new Algorithm(currentState.copy(), currentState.activePlayer, mainWindow.getBoardPanel.getEnemyDepth)
+    val minimaxSecond = new Algorithm(currentState.copy(), currentState.activePlayer, boardPanel.getEnemyDepth)
     val secondMove = minimaxSecond.run()
     currentState = currentState.makeMove(secondMove)
     if(currentState.getChildren().isEmpty){
       win(currentState.getOpponentColor(currentState.activePlayer))
       return
     }
-    mainWindow.getBoardPanel.repaintFigures()
+    boardPanel.repaintFigures()
   }
 
   def win(color : PlayerColor): Unit = {
-    mainWindow.getBoardPanel.repaintFigures()
-    if(mainWindow.getBoardPanel.computerVsComputerRunnable != null)
-      mainWindow.getBoardPanel.setComputerVsComputerRunFlag(false)
+    boardPanel.repaintFigures()
+    if(boardPanel.computerVsComputerRunnable != null)
+      boardPanel.setComputerVsComputerRunFlag(false)
     println(currentState.getOpponentColor(currentState.activePlayer) + " has won.")
     JOptionPane.showMessageDialog(null, color.toString + " has won.")
-    mainWindow.getBoardPanel.finish
+    boardPanel.finish
   }
 
   def findPossibleMoves(figure : Figure) = currentState.findPossibleMoves(figure)
@@ -158,13 +170,5 @@ case class Controller(var mainWindow: MainWindow = null, var timeForMove: Long =
 
   def getWhiteFigures: Vector[Figure] = currentState.getWhiteFigures
 
-  def setPlayerColor(_playerColor: PlayerColor): Unit = this.playerColor = _playerColor
-
-  def setTimeForMove(timeForMove: Long): Unit = this.timeForMove = timeForMove
-
-  def setMainWindow(mainWindow: MainWindow) = this.mainWindow = mainWindow
-
-  def getMainWindow: MainWindow = mainWindow
-
-  def setAlgorithmDepth(algorithmDepth : Int) = this.algorithmDepth = algorithmDepth
+  def setBoardPanel(_boardPanel : BoardPanel) = boardPanel = _boardPanel
 }
