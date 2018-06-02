@@ -40,30 +40,28 @@ class Algorithm(val initialState : InternalState, val maximizing : PlayerColor, 
   }
 
   def min(alpha : Int, beta : Int, height : Int, state : InternalState): Int = {
-//    println("min - poziom " + height)
     if(height == 0){
-
-//      println("min: " + evaluator.evaluateState(state))
       return evaluator.evaluateState(state)
     }
-    val newBeta = minIteration(alpha, beta, height, 0, state.getChildren())
-//    println("min: " + newBeta)
+    val children = state.getChildren()
+    if(children.isEmpty)
+      return INFINITY     // szach mat - gracz, ktory minimalizuje nie moze wykonac zadnego ruchu
+    val newBeta = minIteration(alpha, beta, height, 0, children)
     return newBeta
   }
 
   def max(alpha : Int, beta : Int, height : Int, state : InternalState): Int = {
-//    println("max - poziom " + height)
     if(height == 0){
-//      println("max: " + evaluator.evaluateState(state))
       return evaluator.evaluateState(state)
     }
-    val newAlpha = maxIteration(alpha, beta, height, 0, state.getChildren())
-//    println("max: " + newAlpha)
+    val children = state.getChildren()
+    if(children.isEmpty)
+      return -INFINITY     // szach mat - gracz, ktory maksymalizuje nie moze wykonac zadnego ruchu
+    val newAlpha = maxIteration(alpha, beta, height, 0, children)
     return newAlpha
   }
 
   def run() : (Figure, (Int, Int)) = {
-//    println("inicjalizacja minimaxa")
     val moves = initialState.getAllMoves()
     val x = moves.map(m => (m, min(-INFINITY, INFINITY, depth - 1, initialState.makeMove(m))))
     val e = x.maxBy(_._2)

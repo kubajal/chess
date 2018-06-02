@@ -1,6 +1,6 @@
 package controller
 
-import javax.swing.{ImageIcon, JLabel}
+import javax.swing.{ImageIcon, JLabel, JOptionPane}
 import model.{Figure, FigureType, Images, PlayerColor}
 import model.PlayerColor.PlayerColor
 import view.MainWindow
@@ -8,12 +8,12 @@ import model.Constants._
 import model.FigureType.FigureType
 
 case class Controller(var mainWindow: MainWindow = null, var timeForMove: Long = 100, var playerColor: PlayerColor = PlayerColor.White,
-                 var currentPlayerColor: PlayerColor = PlayerColor.White, var algorithmDepth : Int = 2) extends Images {
+                 var algorithmDepth : Int = 2) extends Images {
 
   val whiteFigures = createWhiteFigures
   val blackFigures = createBlackFigures
 
-  var currentState = new InternalState(whiteFigures, blackFigures , createBoard(whiteFigures, blackFigures ), currentPlayerColor)
+  var currentState = new InternalState(whiteFigures, blackFigures , createBoard(whiteFigures, blackFigures ), playerColor)
 
   def getBoard() = currentState.getBoard
 
@@ -63,15 +63,16 @@ case class Controller(var mainWindow: MainWindow = null, var timeForMove: Long =
 
   def createBoard(w : Vector[Figure], b : Vector[Figure]): Vector[Vector[Figure]] = {
 
-    return Vector[Vector[Figure]](
-      Vector[Figure](w(1), w(3), w(5), w(7), w(0), w(6), w(4), w(2)),
-      Vector[Figure](w(8), w(9), w(10), w(11), w(12), w(13), w(14), w(15)),
-      Vector[Figure](null, null, null, null, null, null, null, null),
-      Vector[Figure](null, null, null, null, null, null, null, null),
-      Vector[Figure](null, null, null, null, null, null, null, null),
-      Vector[Figure](null, null, null, null, null, null, null, null),
-      Vector[Figure](b(8), b(9), b(10), b(11), b(12), b(13), b(14), b(15)),
-      Vector[Figure](b(1), b(3), b(5), b(7), b(0), b(6), b(4), b(2)))
+    val t = Vector[Vector[Figure]](
+      Vector[Figure](w(2), w(8), null, null, null, null, b(8), b(2)),
+      Vector[Figure](w(3),w(9), null, null, null, null, b(9), b(3)),
+      Vector[Figure](w(5),w(10),null,null,null,null,b(9),b(5)),
+      Vector[Figure](w(0),w(11),null,null,null,null,b(11),b(0)),
+      Vector[Figure](w(7),w(12),null,null,null,null,b(12),b(7)),
+      Vector[Figure](w(6),w(13),null,null,null,null,b(13),b(6)),
+      Vector[Figure](w(4),w(14),null,null,null,null,b(14),b(4)),
+      Vector[Figure](w(1),w(15),null,null,null,null,b(15),b(1)))
+    return t
   }
 
   def getOpponentColor(playerColor: PlayerColor): PlayerColor = {
@@ -92,41 +93,46 @@ case class Controller(var mainWindow: MainWindow = null, var timeForMove: Long =
 	}
 
   def makeComputerMove() : Unit = {
-    val minimax = new Algorithm(currentState.copy(), currentPlayerColor, algorithmDepth)
+    val minimax = new Algorithm(currentState.copy(), currentState.activePlayer, algorithmDepth)
     val move = minimax.run()
     currentState = currentState.makeMove(move)
     mainWindow.getBoardPanel.repaintFigures()
     mainWindow.getBoardPanel.enableFigures()
-    currentPlayerColor = getOpponentColor(currentPlayerColor)
   }
 
   def computerVsComputer() : Unit = {
-    val minimaxFirst = new Algorithm(currentState.copy(), currentPlayerColor, algorithmDepth)
+    val minimaxFirst = new Algorithm(currentState.copy(), currentState.activePlayer, algorithmDepth)
     val firstMove = minimaxFirst.run()
     currentState = currentState.makeMove(firstMove)
-    mainWindow.getBoardPanel.repaintFigures()
-    currentPlayerColor = getOpponentColor(currentPlayerColor)
+    if(currentState.getChildren().isEmpty){
+      win(currentState.getOpponentColor(currentState.activePlayer))
+      return
+    }
 
-    val minimaxSecond = new Algorithm(currentState.copy(), currentPlayerColor, algorithmDepth)
+    mainWindow.getBoardPanel.repaintFigures()
+
+    val minimaxSecond = new Algorithm(currentState.copy(), currentState.activePlayer, algorithmDepth)
     val secondMove = minimaxSecond.run()
     currentState = currentState.makeMove(secondMove)
+    if(currentState.getChildren().isEmpty){
+      win(currentState.getOpponentColor(currentState.activePlayer))
+      return
+    }
     mainWindow.getBoardPanel.repaintFigures()
-    currentPlayerColor = getOpponentColor(currentPlayerColor)
   }
 
-	def gameOver(winnerPlayerColor : PlayerColor) : Unit = {
-		winnerPlayerColor match {
-      case PlayerColor.Black => mainWindow.getBoardPanel.displayGameOverInfo("Koniec gry. Wygrały czarne figury")
-      case PlayerColor.White => mainWindow.getBoardPanel.displayGameOverInfo("Koniec gry. Wygrały białe figury")
-    }
-	}
+  def win(color : PlayerColor): Unit = {
+    mainWindow.getBoardPanel.setComputerVsComputerRunFlag(false)
+    println(currentState.getOpponentColor(currentState.activePlayer) + "has won.")
 
-  def setCurrentPlayersColor(color : PlayerColor) = currentPlayerColor = color
+    JOptionPane.showMessageDialog(null, color.toString + "has won.")
+    mainWindow.getBoardPanel.repaintFigures()
+  }
 
   def findPossibleMoves(figure : Figure) = currentState.findPossibleMoves(figure)
 
-  def isPlayersMove : Boolean = currentPlayerColor == playerColor
-  
+  def isPlayersMove : Boolean = currentState.activePlayer == playerColor
+
   def figureAtSquareBelongsToPlayer(x : Int, y : Int) : Boolean = getBoard()(x)(y).getColor == playerColor
 
   def getBlackFigures: Vector[Figure] = currentState.getBlackFigures

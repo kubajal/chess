@@ -86,6 +86,14 @@ public class BoardPanel extends JPanel {
         }
     }
 
+    public void finish() {
+        AIbutton.setText("Game has finished.");
+        AIbutton.setEnabled(false);
+        repaintFigures();
+    }
+
+    public void setComputerVsComputerRunFlag(Boolean flag){ computerVsComputerRunnable.setRunFlag(flag); }
+
     AIRunnable computerVsComputerRunnable = null;
     moveRunnable computerMoveRunnable = null;
     Thread aithread = null;

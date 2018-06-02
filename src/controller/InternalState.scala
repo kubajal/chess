@@ -1,8 +1,5 @@
 package controller
 
-import javax.swing.{ImageIcon, JLabel}
-import model.Constants.NUMBER_OF_SQUARES
-import model.FigureType.FigureType
 import model.PlayerColor.PlayerColor
 import model.{Figure, FigureType, Images, PlayerColor}
 
@@ -10,16 +7,13 @@ import scala.annotation.tailrec
 import scala.collection.immutable.VectorBuilder
 
 case class InternalState(val whiteFigures : Vector[Figure], val blackFigures : Vector[Figure], val board: Vector[Vector[Figure]],
-                         currentPlayerColor : PlayerColor, var isCurrentPlayerKingAttacked : Boolean = false) extends Images {
+                         val activePlayer : PlayerColor) extends Images {
 
-  def getActiveFigures()  : Vector[Figure] = return getFigures(currentPlayerColor)
-
+  def getActiveFigures()  : Vector[Figure] = return getFigures(activePlayer)
 
   def getMoves(figure : Figure) : Vector[(Figure, (Int, Int))] = {
     findPossibleMoves(figure).map(e => (figure, e))
   }
-  def setCurrentPlayerKingAttacked(isCurrentPlayerKingAttacked : Boolean) = this.isCurrentPlayerKingAttacked = isCurrentPlayerKingAttacked
-
   def getWhiteFigures() : Vector[Figure] = whiteFigures
   def getBlackFigures() : Vector[Figure] = blackFigures
   def getFigures(color : PlayerColor) : Vector[Figure] = {
@@ -73,20 +67,20 @@ case class InternalState(val whiteFigures : Vector[Figure], val blackFigures : V
         case FigureType.Rook => findRookPossibleMoves(figure)
         case FigureType.King => findKingPossibleMoves(figure)
       }
-    return Vector[(Int, Int)]()
+    return possibleMoves
   }
 
   def findPossibleMoves(figure : Figure) : Vector[(Int, Int)] = {
 		val possibleMoves =
     figure.getType() match {
-      case FigureType.Bishop => findBishopPossibleMoves(figure).filter(m => makeMove(figure, m).isKingAttacked(figure.getColor()))
-      case FigureType.Knight => findKnightPossibleMoves(figure).filter(m => makeMove(figure, m).isKingAttacked(figure.getColor()))
-      case FigureType.Pawn => findPawnPossibleMoves(figure)//.filter(m => makeMove(figure, m).isKingAttacked(figure.getColor()))
-      case FigureType.Queen => findQueenPossibleMoves(figure).filter(m => makeMove(figure, m).isKingAttacked(figure.getColor()))
-      case FigureType.Rook => findRookPossibleMoves(figure).filter(m => makeMove(figure, m).isKingAttacked(figure.getColor()))
-      case FigureType.King => findKingPossibleMoves(figure).filter(m => makeMove(figure, m).isKingAttacked(figure.getColor()))
+      case FigureType.Bishop => findBishopPossibleMoves(figure)
+      case FigureType.Knight => findKnightPossibleMoves(figure)
+      case FigureType.Pawn => findPawnPossibleMoves(figure)
+      case FigureType.Queen => findQueenPossibleMoves(figure)
+      case FigureType.Rook => findRookPossibleMoves(figure)
+      case FigureType.King => findKingPossibleMoves(figure)
     }
-    return possibleMoves
+    return possibleMoves.filterNot(m => makeMove(figure, m).isKingAttacked(figure.getColor()))
 	}
 
   def whitePawnAttackMoves(pawn : Figure) : Vector[(Int, Int)] = {
@@ -148,7 +142,10 @@ case class InternalState(val whiteFigures : Vector[Figure], val blackFigures : V
 
     val newFigure = new Figure(figure.getType, figure.getColor, destination._1, destination._2, figure.getFigureImage)
 
-    val newBoard = board.updated(figure.x, board(figure.x).updated(figure.y, null)).updated(destination._1, board(destination._1).updated(destination._2, null))
+    val t1 = board(figure.x).updated(figure.y, null)
+    val t2 = board.updated(figure.x, t1)
+    val t3 = t2(destination._1).updated(destination._2, newFigure)
+    val newBoard = t2.updated(destination._1, t3)
 
     if(figure.getColor == PlayerColor.White){
       val newWhiteFigures = whiteFigures.filterNot(f => f.x == figure.x && f.y == figure.y) :+ newFigure
