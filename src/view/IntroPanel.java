@@ -32,29 +32,27 @@ public class IntroPanel extends JPanel{
     	this.controller = controller;
     	setLayout(new FlowLayout(FlowLayout.CENTER, 1000, 5));
     	
-    	whitePlayerColorButton = new JButton("Biały");
-    	blackPlayerColorButton = new JButton("Czarny");
+    	whitePlayerColorButton = new JButton("White");
+    	blackPlayerColorButton = new JButton("Black");
     	acceptButton = new JButton("Ok");
 		playerHasWhiteFigures = true;
- 		depthSpinnerModel = new SpinnerNumberModel(2, 1, 5, 1); 
+ 		depthSpinnerModel = new SpinnerNumberModel(2, 1, 5, 1);
 		depthSpinner = new JSpinner(depthSpinnerModel);
     	
     	whitePlayerColorButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				playerColorField.setText("Biały");
+				playerColorField.setText("White");
 				playerHasWhiteFigures = true;
 			}
 		});
     	blackPlayerColorButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				playerColorField.setText("Czarny");
+				playerColorField.setText("Black");
 				playerHasWhiteFigures = false;
 			}
 		});
     	acceptButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
-				controller.setAlgorithmDepth((int) depthSpinner.getValue());
 				
 				if (playerHasWhiteFigures)
 					controller.setPlayerColor(PlayerColor.White());
@@ -64,11 +62,10 @@ public class IntroPanel extends JPanel{
 			}
 		});
     	
-    	playerColorLabel1 = new Label("Wybierz kolor figur, którymi będzie grał gracz.");
-    	playerColorLabel2 = new Label("Komputer otrzyma figury przeciwnego koloru");
-		algorithmDepthLabel = new Label("Wybierz głębokość drzewa dla algorytmu Minimax");
+    	playerColorLabel1 = new Label("Choose color with which you want to play.");
+    	playerColorLabel2 = new Label("Computer will play with the opposite color.");
         
-        playerColorField = new TextField("Biały", 6);
+        playerColorField = new TextField("White", 6);
         playerColorField.setEditable(false);
         
         add(playerColorLabel1);
@@ -76,8 +73,6 @@ public class IntroPanel extends JPanel{
         add(whitePlayerColorButton);
         add(blackPlayerColorButton);
         add(playerColorField);
-		add(algorithmDepthLabel);
-		add(depthSpinner);;
         add(acceptButton);
     }
 }

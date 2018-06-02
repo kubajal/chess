@@ -1,6 +1,7 @@
 package view;
 
 import controller.Controller;
+import controller.moveRunnable;
 import model.Figure;
 
 import java.awt.*;
@@ -26,20 +27,6 @@ public class BoardPanel extends JPanel {
     private static Controller controller;
 
     private Figure draggedFigure = null;
-
-    class moveRunnable implements Runnable {
-        public Controller c;
-        moveRunnable(Controller _c){
-            c = _c;
-        }
-
-        @Override
-        public void run() {
-            c.getMainWindow().getBoardPanel().getAIButtonm().setEnabled(false);
-            c.makeComputerMove();
-            c.getMainWindow().getBoardPanel().getAIButtonm().setEnabled(true);
-        }
-    }
 
     public class AIThread extends Thread{
 
@@ -87,15 +74,19 @@ public class BoardPanel extends JPanel {
     }
 
     public void finish() {
-        AIbutton.setText("Game has finished.");
-        AIbutton.setEnabled(false);
-        repaintFigures();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                AIbutton.setText("Game has finished.");
+                AIbutton.setEnabled(false);
+                repaintFigures();
+            }
+        });
     }
 
     public void setComputerVsComputerRunFlag(Boolean flag){ computerVsComputerRunnable.setRunFlag(flag); }
 
-    AIRunnable computerVsComputerRunnable = null;
-    moveRunnable computerMoveRunnable = null;
+    public AIRunnable computerVsComputerRunnable = null;
     Thread aithread = null;
 
     class Field extends JButton {
@@ -157,7 +148,6 @@ public class BoardPanel extends JPanel {
 								 enableFigures();
 								 possibleMoves = null;
 								 selected = null;
-								 new Thread(new moveRunnable(controller)).start();
                                 return;
                             }
                             if(selected != null) {
@@ -196,7 +186,7 @@ public class BoardPanel extends JPanel {
                 if(computerVsComputerRunnable == null){
                     repaintFigures();
                     b.removeAll();
-                    AIbutton.setText("Zatrzymaj AI");
+                    AIbutton.setText("Stop AI.");
                     b.repaint();
                     disableFigures();
                     computerVsComputerRunnable = new AIRunnable(controller);
@@ -205,7 +195,7 @@ public class BoardPanel extends JPanel {
                 }
                 else {
                     b.removeAll();
-                    AIbutton.setText("Zacznij gre komputer vs komputer");
+                    AIbutton.setText("Start computer vs computer AI.");
                     b.setBackground(yellow);
                     computerVsComputerRunnable.setRunFlag(false);
                     computerVsComputerRunnable = null;
@@ -213,12 +203,31 @@ public class BoardPanel extends JPanel {
                 }
             }
         });
-        AIbutton.setText("Zacznij gre komputer vs komputer");
+        AIbutton.setText("Start computer vs computer AI.");
         AIbutton.setPreferredSize(new Dimension(300, 50));
         AIbutton.setVisible(true);
         AIbutton.setEnabled(true);
+
         add(AIbutton);
+        enemyDepthModel = new SpinnerNumberModel(2, 1, 5, 1);
+        enemyDepthSpinner = new JSpinner(enemyDepthModel);
+        JPanel spinners = new JPanel();
+        spinners.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        spinners.add(new JLabel("Minimax depth for the opponent."));
+        spinners.add(enemyDepthSpinner);
+
+        playersDepthModel = new SpinnerNumberModel(2, 1, 5, 1);
+        playersDepthSpinner = new JSpinner(playersDepthModel);
+        spinners.add(new JLabel("Minimax depth your figures when using AI."));
+        spinners.add(playersDepthSpinner);
+        add(spinners);
     }
+
+    private SpinnerModel enemyDepthModel;
+    private SpinnerModel playersDepthModel;
+    private JSpinner enemyDepthSpinner;
+    private JSpinner playersDepthSpinner;
+
     public Figure getFigure(int x, int y){
         return board[x][y].figure;
     }

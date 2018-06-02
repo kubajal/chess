@@ -1,9 +1,9 @@
 package controller
 
-import javax.swing.{ImageIcon, JLabel, JOptionPane}
+import javax.swing.{ImageIcon, JLabel, JOptionPane, SwingUtilities}
 import model.{Figure, FigureType, Images, PlayerColor}
 import model.PlayerColor.PlayerColor
-import view.MainWindow
+import view.{BoardPanel, MainWindow}
 import model.Constants._
 import model.FigureType.FigureType
 
@@ -90,14 +90,31 @@ case class Controller(var mainWindow: MainWindow = null, var timeForMove: Long =
 
 	def makePlayerMove(figure : Figure, destination: (Int, Int)) : Unit = {
     currentState = currentState.makeMove(figure, destination)
+    if(currentState.getChildren().isEmpty){
+      win(currentState.getOpponentColor(currentState.activePlayer))
+      return
+    }
+    new Thread(new moveRunnable(this)).start()
 	}
 
   def makeComputerMove() : Unit = {
-    val minimax = new Algorithm(currentState.copy(), currentState.activePlayer, algorithmDepth)
-    val move = minimax.run()
-    currentState = currentState.makeMove(move)
-    mainWindow.getBoardPanel.repaintFigures()
-    mainWindow.getBoardPanel.enableFigures()
+    new Thread(new Runnable {
+      override def run(): Unit = {
+        val minimax = new Algorithm(currentState.copy(), currentState.activePlayer, algorithmDepth)
+        val move = minimax.run()
+        currentState = currentState.makeMove(move)
+        if(currentState.getChildren().isEmpty){
+          win(currentState.getOpponentColor(currentState.activePlayer))
+          return
+        }
+        SwingUtilities.invokeAndWait(new Runnable {
+          override def run(): Unit = {
+            mainWindow.getBoardPanel.repaintFigures()
+            mainWindow.getBoardPanel.enableFigures()
+          }
+        })
+      }
+    }).start()
   }
 
   def computerVsComputer() : Unit = {
@@ -122,11 +139,12 @@ case class Controller(var mainWindow: MainWindow = null, var timeForMove: Long =
   }
 
   def win(color : PlayerColor): Unit = {
-    mainWindow.getBoardPanel.setComputerVsComputerRunFlag(false)
-    println(currentState.getOpponentColor(currentState.activePlayer) + "has won.")
-
-    JOptionPane.showMessageDialog(null, color.toString + "has won.")
     mainWindow.getBoardPanel.repaintFigures()
+    if(mainWindow.getBoardPanel.computerVsComputerRunnable != null)
+      mainWindow.getBoardPanel.setComputerVsComputerRunFlag(false)
+    println(currentState.getOpponentColor(currentState.activePlayer) + " has won.")
+    JOptionPane.showMessageDialog(null, color.toString + " has won.")
+    mainWindow.getBoardPanel.finish
   }
 
   def findPossibleMoves(figure : Figure) = currentState.findPossibleMoves(figure)
