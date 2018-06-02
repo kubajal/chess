@@ -3,8 +3,17 @@
   <component name="ChangeListManager">
     <list default="true" id="8dd20f1f-04d8-4da9-bbe7-f8921b75592f" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/chess-upgraded-moves/controller/Algorithm.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/chess-upgraded-moves/controller/Algorithm.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/chess-upgraded-moves/controller/Controller.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/chess-upgraded-moves/controller/Controller.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/chess-upgraded-moves/controller/Evaluator.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/chess-upgraded-moves/controller/Evaluator.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/chess-upgraded-moves/controller/InternalState$.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/chess-upgraded-moves/controller/InternalState$.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/chess-upgraded-moves/controller/InternalState.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/chess-upgraded-moves/controller/InternalState.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/chess-upgraded-moves/view/BoardPanel.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/chess-upgraded-moves/view/BoardPanel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controller/Algorithm.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/Algorithm.scala" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controller/Controller.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/Controller.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controller/InternalState.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/InternalState.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/view/BoardPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/BoardPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/view/IntroPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/IntroPanel.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -18,14 +27,17 @@
     <SUITE FILE_PATH="coverage/chess$Main.ic" NAME="Main Coverage Results" MODIFIED="1527835534895" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
       <FILTER>controller.*</FILTER>
     </SUITE>
+    <SUITE FILE_PATH="coverage/chess_alphabeta$Main.ic" NAME="Main Coverage Results" MODIFIED="1527940378317" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>controller.*</FILTER>
+    </SUITE>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="InternalState.scala" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/controller/InternalState.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="206">
-              <caret line="276" column="42" selection-start-line="276" selection-start-column="42" selection-end-line="276" selection-end-column="42" />
+            <state relative-caret-position="122">
+              <caret line="80" column="4" selection-start-line="80" selection-start-column="4" selection-end-line="80" selection-end-column="4" />
               <folding>
                 <element signature="e#20#58#0" expanded="true" />
               </folding>
@@ -33,34 +45,20 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="FigureType.scala" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/model/FigureType.scala">
+      <file leaf-file-name="ArrayOps.scala" pinned="false" current-in-tab="false">
+        <entry file="jar://$USER_HOME$/.ivy2/cache/org.scala-lang/scala-library/srcs/scala-library-2.12.5-sources.jar!/scala/collection/mutable/ArrayOps.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="34">
-              <caret line="2" column="7" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
+            <state relative-caret-position="130">
+              <caret line="193" selection-start-line="193" selection-end-line="193" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="KingFigure.scala" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/model/KingFigure.scala">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file leaf-file-name="Node.scala" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/model/Node.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="34">
-              <caret line="2" column="6" selection-start-line="2" selection-start-column="6" selection-end-line="2" selection-end-column="6" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Controller.scala" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Controller.scala" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/controller/Controller.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="340">
-              <caret line="40" column="74" selection-start-line="40" selection-start-column="74" selection-end-line="40" selection-end-column="74" />
+            <state relative-caret-position="102">
+              <caret line="24" column="84" lean-forward="true" selection-start-line="24" selection-start-column="84" selection-end-line="24" selection-end-column="84" />
               <folding>
                 <element signature="e#20#58#0" expanded="true" />
               </folding>
@@ -68,23 +66,38 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Main.scala" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/controller/Main.scala">
+      <file leaf-file-name="MainWindow.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/view/MainWindow.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="68">
-              <caret line="5" selection-start-line="5" selection-end-line="5" />
+            <state relative-caret-position="188">
+              <caret line="41" selection-start-line="41" selection-end-line="41" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Algorithm.scala" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/controller/Algorithm.scala">
+      <file leaf-file-name="IntroPanel.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/view/IntroPanel.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="171">
+              <caret line="62" selection-start-line="62" selection-end-line="62" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Images.scala" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/model/Images.scala">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="272">
-              <caret line="98" lean-forward="true" selection-start-line="98" selection-end-line="98" />
-              <folding>
-                <element signature="e#20#54#0" expanded="true" />
-              </folding>
+              <caret line="16" column="84" lean-forward="true" selection-start-line="16" selection-start-column="84" selection-end-line="16" selection-end-column="84" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BoardPanel.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/view/BoardPanel.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="229">
+              <caret line="235" column="91" selection-start-line="235" selection-start-column="91" selection-end-line="235" selection-end-column="91" />
             </state>
           </provider>
         </entry>
@@ -92,17 +105,20 @@
       <file leaf-file-name="TraversableLike.scala" pinned="false" current-in-tab="false">
         <entry file="jar://$USER_HOME$/.ivy2/cache/org.scala-lang/scala-library/srcs/scala-library-2.12.5-sources.jar!/scala/collection/TraversableLike.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="122">
-              <caret line="233" column="20" selection-start-line="233" selection-start-column="20" selection-end-line="233" selection-end-column="20" />
+            <state relative-caret-position="130">
+              <caret line="233" selection-start-line="233" selection-end-line="233" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="IndexedSeqOptimized.scala" pinned="false" current-in-tab="false">
-        <entry file="jar://$USER_HOME$/.ivy2/cache/org.scala-lang/scala-library/srcs/scala-library-2.12.5-sources.jar!/scala/collection/IndexedSeqOptimized.scala">
+      <file leaf-file-name="Algorithm.scala" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/controller/Algorithm.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="122">
-              <caret line="31" column="4" selection-start-line="31" selection-start-column="4" selection-end-line="31" selection-end-column="4" />
+            <state relative-caret-position="239">
+              <caret line="68" selection-start-line="68" selection-end-line="68" />
+              <folding>
+                <element signature="e#20#54#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -110,8 +126,8 @@
       <file leaf-file-name="Evaluator.scala" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/controller/Evaluator.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="215">
-              <caret line="31" column="34" lean-forward="true" selection-start-line="31" selection-start-column="34" selection-end-line="31" selection-end-column="34" />
+            <state relative-caret-position="188">
+              <caret line="63" column="34" selection-start-line="63" selection-start-column="34" selection-end-line="63" selection-end-column="34" />
             </state>
           </provider>
         </entry>
@@ -120,24 +136,40 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>private</find>
-      <find>public</find>
-      <find>removeAttackedFields</find>
-      <find>add</find>
-      <find>isFieldAttacked</find>
-      <find>makemove</find>
-      <find>getmoves</find>
-      <find>getm</find>
-      <find>findking</find>
-      <find>findki</find>
-      <find>heuri</find>
       <find>size</find>
       <find>maxIteration</find>
       <find>whiteFi</find>
       <find>evalu</find>
+      <find>makemove</find>
+      <find>findpossiblemove</find>
+      <find>isKingAttacked</find>
+      <find>isFieldAttacked</find>
+      <find>getallMove</find>
+      <find>iskingAt</find>
+      <find>iskinga</find>
+      <find>getAllMoves</find>
+      <find>getmoves</find>
+      <find>array</find>
+      <find>createB</find>
+      <find>createBoa</find>
+      <find>update</find>
+      <find>createbo</find>
+      <find>updat</find>
+      <find>createboar</find>
+      <find>setEnabled</find>
+      <find>updated</find>
+      <find>fki</find>
+      <find>iskingatta</find>
+      <find>vectorbuild</find>
+      <find>isking</find>
+      <find>findkingpo</find>
+      <find>findkin</find>
+      <find>repaint</find>
+      <find>Array</find>
     </findStrings>
     <replaceStrings>
       <replace>public</replace>
+      <replace>Vector</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -146,14 +178,14 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/view/IntroPanel.java" />
         <option value="$PROJECT_DIR$/src/model/Constants.java" />
         <option value="$PROJECT_DIR$/src/model/Images.scala" />
-        <option value="$PROJECT_DIR$/src/view/BoardPanel.java" />
         <option value="$PROJECT_DIR$/src/model/Figure.scala" />
-        <option value="$PROJECT_DIR$/src/controller/InternalState.scala" />
         <option value="$PROJECT_DIR$/src/controller/Algorithm.scala" />
+        <option value="$PROJECT_DIR$/src/controller/InternalState.scala" />
+        <option value="$PROJECT_DIR$/src/view/IntroPanel.java" />
         <option value="$PROJECT_DIR$/src/controller/Controller.scala" />
+        <option value="$PROJECT_DIR$/src/view/BoardPanel.java" />
       </list>
     </option>
   </component>
@@ -167,7 +199,7 @@
     <packageJsonPaths />
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-9" />
+    <option name="x" value="-10" />
     <option name="width" value="1260" />
     <option name="height" value="640" />
   </component>
@@ -176,37 +208,37 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
-      <pane id="AndroidView" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
             <path>
-              <item name="chess" type="b2602c69:ProjectViewProjectNode" />
-              <item name="chess" type="462c0819:PsiDirectoryNode" />
+              <item name="chess_alphabeta" type="b2602c69:ProjectViewProjectNode" />
+              <item name="chess_alphabeta" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="chess" type="b2602c69:ProjectViewProjectNode" />
-              <item name="chess" type="462c0819:PsiDirectoryNode" />
+              <item name="chess_alphabeta" type="b2602c69:ProjectViewProjectNode" />
+              <item name="chess_alphabeta" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="chess" type="b2602c69:ProjectViewProjectNode" />
-              <item name="chess" type="462c0819:PsiDirectoryNode" />
+              <item name="chess_alphabeta" type="b2602c69:ProjectViewProjectNode" />
+              <item name="chess_alphabeta" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="controller" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="chess" type="b2602c69:ProjectViewProjectNode" />
-              <item name="chess" type="462c0819:PsiDirectoryNode" />
+              <item name="chess_alphabeta" type="b2602c69:ProjectViewProjectNode" />
+              <item name="chess_alphabeta" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="model" type="462c0819:PsiDirectoryNode" />
+              <item name="view" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
       <pane id="Scope" />
+      <pane id="AndroidView" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -303,6 +335,8 @@
       <updated>1527425757111</updated>
       <workItem from="1527755662158" duration="7608000" />
       <workItem from="1527785660426" duration="27244000" />
+      <workItem from="1527856062694" duration="1114000" />
+      <workItem from="1527884919766" duration="11388000" />
     </task>
     <task id="LOCAL-00001" summary="rewritten minimax function">
       <created>1527832290733</created>
@@ -322,7 +356,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="34852000" />
+    <option name="totallyTimeSpent" value="47354000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
@@ -337,26 +371,26 @@
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="right" id="Maven Projects" order="3" />
       <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.35586208" />
       <window_info anchor="bottom" id="Version Control" order="7" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.35586208" />
-      <window_info anchor="right" id="Coverage" side_tool="true" weight="0.3294271" />
       <window_info anchor="bottom" id="Terminal" order="7" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="2" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24283855" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24283855" />
       <window_info anchor="right" id="Database" order="4" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32965517" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info id="UI Designer" order="2" />
       <window_info anchor="right" id="Theme Preview" order="3" />
-      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39172414" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="right" id="Coverage" order="4" side_tool="true" weight="0.3294271" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Find" order="1" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -375,60 +409,107 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="scala-line">
           <url>file://$PROJECT_DIR$/src/controller/Algorithm.scala</url>
-          <line>102</line>
+          <line>30</line>
           <properties />
           <option name="timeStamp" value="95" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="scala-line">
           <url>file://$PROJECT_DIR$/src/controller/Algorithm.scala</url>
-          <line>103</line>
+          <line>31</line>
           <properties />
           <option name="timeStamp" value="96" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="scala-line">
           <url>file://$PROJECT_DIR$/src/controller/Algorithm.scala</url>
-          <line>104</line>
+          <line>32</line>
           <properties />
           <option name="timeStamp" value="98" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="scala-line">
           <url>file://$PROJECT_DIR$/src/controller/Algorithm.scala</url>
-          <line>110</line>
+          <line>38</line>
           <properties />
           <option name="timeStamp" value="100" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="scala-line">
           <url>file://$PROJECT_DIR$/src/controller/Algorithm.scala</url>
-          <line>105</line>
+          <line>33</line>
           <properties />
           <option name="timeStamp" value="101" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="scala-line">
           <url>file://$PROJECT_DIR$/src/controller/Algorithm.scala</url>
-          <line>106</line>
+          <line>34</line>
           <properties />
           <option name="timeStamp" value="102" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="scala-line">
           <url>file://$PROJECT_DIR$/src/controller/Algorithm.scala</url>
-          <line>107</line>
+          <line>35</line>
           <properties />
           <option name="timeStamp" value="103" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="scala-line">
           <url>file://$PROJECT_DIR$/src/controller/Algorithm.scala</url>
-          <line>108</line>
+          <line>36</line>
           <properties />
           <option name="timeStamp" value="104" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="scala-line">
-          <url>file://$PROJECT_DIR$/src/controller/Algorithm.scala</url>
-          <line>140</line>
+          <url>file://$PROJECT_DIR$/src/controller/InternalState.scala</url>
+          <line>80</line>
           <properties />
-          <option name="timeStamp" value="108" />
+          <option name="timeStamp" value="131" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="scala-line">
+          <url>file://$PROJECT_DIR$/src/controller/InternalState.scala</url>
+          <line>82</line>
+          <properties />
+          <option name="timeStamp" value="132" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="scala-line">
+          <url>file://$PROJECT_DIR$/src/controller/InternalState.scala</url>
+          <line>81</line>
+          <properties />
+          <option name="timeStamp" value="133" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="scala-line">
+          <url>file://$PROJECT_DIR$/src/controller/InternalState.scala</url>
+          <line>83</line>
+          <properties>
+            <option name="lambda-ordinal" value="-1" />
+          </properties>
+          <option name="timeStamp" value="134" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="scala-line">
+          <url>file://$PROJECT_DIR$/src/controller/InternalState.scala</url>
+          <line>84</line>
+          <properties />
+          <option name="timeStamp" value="135" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="scala-line">
+          <url>file://$PROJECT_DIR$/src/controller/InternalState.scala</url>
+          <line>85</line>
+          <properties />
+          <option name="timeStamp" value="136" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="scala-line">
+          <url>file://$PROJECT_DIR$/src/controller/InternalState.scala</url>
+          <line>86</line>
+          <properties />
+          <option name="timeStamp" value="137" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/view/BoardPanel.java</url>
+          <line>263</line>
+          <properties />
+          <option name="timeStamp" value="141" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="115" />
+      <breakpoints-dialog>
+        <breakpoints-dialog />
+      </breakpoints-dialog>
+      <option name="time" value="142" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="Application">
@@ -476,6 +557,112 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
+    <entry file="jar://$USER_HOME$/.ivy2/cache/org.scala-lang/scala-library/srcs/scala-library-2.12.5-sources.jar!/scala/collection/TraversableLike.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3961">
+          <caret line="233" column="20" selection-start-line="233" selection-start-column="20" selection-end-line="233" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.ivy2/cache/org.scala-lang/scala-library/srcs/scala-library-2.12.5-sources.jar!/scala/collection/IndexedSeqOptimized.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="408">
+          <caret line="31" column="4" selection-start-line="31" selection-start-column="4" selection-end-line="31" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/controller/Evaluator.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1054">
+          <caret line="63" column="34" lean-forward="true" selection-start-line="63" selection-start-column="34" selection-end-line="63" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/controller/Controller.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="476">
+          <caret line="32" column="102" lean-forward="true" selection-start-line="31" selection-start-column="104" selection-end-line="32" selection-end-column="102" />
+          <folding>
+            <element signature="e#20#58#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/controller/InternalState.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4573">
+          <caret line="276" column="42" selection-start-line="276" selection-start-column="42" selection-end-line="276" selection-end-column="42" />
+          <folding>
+            <element signature="e#20#58#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/model/FigureType.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="7" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/model/KingFigure.scala">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/model/Node.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="6" selection-start-line="2" selection-start-column="6" selection-end-line="2" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/controller/Main.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="5" selection-start-line="5" selection-end-line="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/controller/Algorithm.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1615">
+          <caret line="98" lean-forward="true" selection-start-line="98" selection-end-line="98" />
+          <folding>
+            <element signature="e#20#54#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.ivy2/cache/org.scala-lang/scala-library/srcs/scala-library-2.12.5-sources.jar!/scala/collection/TraversableLike.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3774">
+          <caret line="233" column="20" selection-start-line="233" selection-start-column="20" selection-end-line="233" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.ivy2/cache/org.scala-lang/scala-library/srcs/scala-library-2.12.5-sources.jar!/scala/collection/IndexedSeqOptimized.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="408">
+          <caret line="31" column="4" selection-start-line="31" selection-start-column="4" selection-end-line="31" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/controller/Evaluator.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="510">
+          <caret line="31" column="34" lean-forward="true" selection-start-line="31" selection-start-column="34" selection-end-line="31" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/controller/Controller.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="612">
+          <caret line="40" column="74" selection-start-line="40" selection-start-column="74" selection-end-line="40" selection-end-column="74" />
+          <folding>
+            <element signature="e#20#58#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/controller/InternalState.scala">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="238">
@@ -531,9 +718,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1173">
           <caret line="69" column="90" selection-start-line="69" selection-start-column="90" selection-end-line="69" selection-end-column="90" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -599,19 +783,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1003">
           <caret line="69" column="90" lean-forward="true" selection-start-line="69" selection-start-column="90" selection-end-line="69" selection-end-column="90" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/view/IntroPanel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1003">
-          <caret line="69" column="90" selection-start-line="69" selection-start-column="90" selection-end-line="69" selection-end-column="90" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -619,13 +790,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="153">
           <caret line="9" column="30" lean-forward="true" selection-start-line="9" selection-start-column="30" selection-end-line="9" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/model/Images.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" column="84" selection-start-line="10" selection-start-column="84" selection-end-line="10" selection-end-column="84" />
         </state>
       </provider>
     </entry>
@@ -647,13 +811,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/view/BoardPanel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="130">
-          <caret line="166" selection-start-line="166" selection-end-line="166" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Program Files/Java/jdk-10/lib/src.zip!/java.base/jdk/internal/misc/Unsafe.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="274">
@@ -661,27 +818,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar://$USER_HOME$/.ivy2/cache/org.scala-lang/scala-library/srcs/scala-library-2.12.5-sources.jar!/scala/collection/TraversableLike.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="122">
-          <caret line="233" column="20" selection-start-line="233" selection-start-column="20" selection-end-line="233" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$USER_HOME$/.ivy2/cache/org.scala-lang/scala-library/srcs/scala-library-2.12.5-sources.jar!/scala/collection/IndexedSeqOptimized.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="122">
+        <state relative-caret-position="408">
           <caret line="31" column="4" selection-start-line="31" selection-start-column="4" selection-end-line="31" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/controller/Algorithm.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="98" lean-forward="true" selection-start-line="98" selection-end-line="98" />
-          <folding>
-            <element signature="e#20#54#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -709,30 +849,99 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/controller/InternalState.scala">
+    <entry file="jar://C:/Program Files/Java/jdk-10/lib/src.zip!/java.base/java/lang/String.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="206">
-          <caret line="276" column="42" selection-start-line="276" selection-start-column="42" selection-end-line="276" selection-end-column="42" />
+        <state relative-caret-position="130">
+          <caret line="1533" selection-start-line="1533" selection-end-line="1533" />
           <folding>
-            <element signature="e#20#58#0" expanded="true" />
+            <element signature="e#60963#60964#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk-10/lib/src.zip!/java.base/java/net/URLStreamHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="165" selection-start-line="165" selection-end-line="165" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.ivy2/cache/org.scala-lang/scala-library/srcs/scala-library-2.12.5-sources.jar!/scala/collection/TraversableLike.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="130">
+          <caret line="233" selection-start-line="233" selection-end-line="233" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.ivy2/cache/org.scala-lang/scala-library/srcs/scala-library-2.12.5-sources.jar!/scala/collection/mutable/ArrayOps.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="130">
+          <caret line="193" selection-start-line="193" selection-end-line="193" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/controller/Evaluator.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="215">
-          <caret line="31" column="34" lean-forward="true" selection-start-line="31" selection-start-column="34" selection-end-line="31" selection-end-column="34" />
+        <state relative-caret-position="188">
+          <caret line="63" column="34" selection-start-line="63" selection-start-column="34" selection-end-line="63" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/model/Images.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="16" column="84" lean-forward="true" selection-start-line="16" selection-start-column="84" selection-end-line="16" selection-end-column="84" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/controller/InternalState.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="122">
+          <caret line="80" column="4" selection-start-line="80" selection-start-column="4" selection-end-line="80" selection-end-column="4" />
+          <folding>
+            <element signature="e#20#58#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/controller/Algorithm.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="239">
+          <caret line="68" selection-start-line="68" selection-end-line="68" />
+          <folding>
+            <element signature="e#20#54#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/view/MainWindow.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="188">
+          <caret line="41" selection-start-line="41" selection-end-line="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/view/IntroPanel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="62" selection-start-line="62" selection-end-line="62" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/controller/Controller.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="40" column="74" selection-start-line="40" selection-start-column="74" selection-end-line="40" selection-end-column="74" />
+        <state relative-caret-position="102">
+          <caret line="24" column="84" lean-forward="true" selection-start-line="24" selection-start-column="84" selection-end-line="24" selection-end-column="84" />
           <folding>
             <element signature="e#20#58#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/view/BoardPanel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="229">
+          <caret line="235" column="91" selection-start-line="235" selection-start-column="91" selection-end-line="235" selection-end-column="91" />
         </state>
       </provider>
     </entry>

@@ -16,56 +16,62 @@ case class Controller(var mainWindow: MainWindow = null, var timeForMove: Long =
 
   def getBoard() = currentState.getBoard
 
-  def createWhiteFigures(): Array[Figure] = {
+  def createWhiteFigures(): Vector[Figure] = {
 
-
-    var whiteFigures = new Array[Figure](16)
-    for (i <- 8 to 15)
-      whiteFigures(i) = new Figure(FigureType.Pawn, PlayerColor.White, i-8, 1, new JLabel(whitePawnImage))
-
-    whiteFigures(2) = new Figure(FigureType.Rook, PlayerColor.White, 0, 0, new JLabel(whiteRookImage))
-    whiteFigures(1) = new Figure(FigureType.Rook, PlayerColor.White, 7, 0, new JLabel(whiteRookImage))
-    whiteFigures(3) = new Figure(FigureType.Knight, PlayerColor.White, 1, 0, new JLabel(whiteKnightImage))
-    whiteFigures(4) = new Figure(FigureType.Knight, PlayerColor.White, 6, 0, new JLabel(whiteKnightImage))
-    whiteFigures(5) = new Figure(FigureType.Bishop, PlayerColor.White, 2, 0, new JLabel(whiteBishopImage))
-    whiteFigures(6) = new Figure(FigureType.Bishop, PlayerColor.White, 5, 0, new JLabel(whiteBishopImage))
-    whiteFigures(0) = new Figure(FigureType.Queen, PlayerColor.White, 3, 0, new JLabel(whiteQueenImage))
-    whiteFigures(7) = new Figure(FigureType.King, PlayerColor.White, 4, 0, new JLabel(whiteKingImage))
-    return whiteFigures
+    return Vector[Figure](
+      new Figure(FigureType.Queen, PlayerColor.White, 3, 0, new JLabel(whiteQueenImage)),
+      new Figure(FigureType.Rook, PlayerColor.White, 7, 0, new JLabel(whiteRookImage)),
+      new Figure(FigureType.Rook, PlayerColor.White, 0, 0, new JLabel(whiteRookImage)),
+      new Figure(FigureType.Knight, PlayerColor.White, 1, 0, new JLabel(whiteKnightImage)),
+      new Figure(FigureType.Knight, PlayerColor.White, 6, 0, new JLabel(whiteKnightImage)),
+      new Figure(FigureType.Bishop, PlayerColor.White, 2, 0, new JLabel(whiteBishopImage)),
+      new Figure(FigureType.Bishop, PlayerColor.White, 5, 0, new JLabel(whiteBishopImage)),
+      new Figure(FigureType.King, PlayerColor.White, 4, 0, new JLabel(whiteKingImage)),
+      new Figure(FigureType.Pawn, PlayerColor.White, 0, 1, new JLabel(whitePawnImage)),
+      new Figure(FigureType.Pawn, PlayerColor.White, 1, 1, new JLabel(whitePawnImage)),
+      new Figure(FigureType.Pawn, PlayerColor.White, 2, 1, new JLabel(whitePawnImage)),
+      new Figure(FigureType.Pawn, PlayerColor.White, 3, 1, new JLabel(whitePawnImage)),
+      new Figure(FigureType.Pawn, PlayerColor.White, 4, 1, new JLabel(whitePawnImage)),
+      new Figure(FigureType.Pawn, PlayerColor.White, 5, 1, new JLabel(whitePawnImage)),
+      new Figure(FigureType.Pawn, PlayerColor.White, 6, 1, new JLabel(whitePawnImage)),
+      new Figure(FigureType.Pawn, PlayerColor.White, 7, 1, new JLabel(whitePawnImage))
+    )
   }
 
-  def createBlackFigures(): Array[Figure] = {
+  def createBlackFigures(): Vector[Figure] = {
 
-    var blackFigures = new Array[Figure](16)
-    for (i <- 8 to 15)
-      blackFigures(i) = new Figure(FigureType.Pawn, PlayerColor.Black, i-8, 6, new JLabel(blackPawnImage))
-
-    blackFigures(2) = new Figure(FigureType.Rook, PlayerColor.Black, 0, 7, new JLabel(blackRookImage))
-    blackFigures(1) = new Figure(FigureType.Rook, PlayerColor.Black, 7, 7, new JLabel(blackRookImage))
-    blackFigures(3) = new Figure(FigureType.Knight, PlayerColor.Black, 1, 7, new JLabel(blackKnightImage))
-    blackFigures(4) = new Figure(FigureType.Knight, PlayerColor.Black, 6, 7, new JLabel(blackKnightImage))
-    blackFigures(5) = new Figure(FigureType.Bishop, PlayerColor.Black, 2, 7, new JLabel(blackBishopImage))
-    blackFigures(6) = new Figure(FigureType.Bishop, PlayerColor.Black, 5, 7, new JLabel(blackBishopImage))
-    blackFigures(0) = new Figure(FigureType.Queen, PlayerColor.Black, 3, 7, new JLabel(blackQueenImage))
-    blackFigures(7) = new Figure(FigureType.King, PlayerColor.Black, 4, 7, new JLabel(blackKingImage))
-    return blackFigures
+    return Vector[Figure](
+      new Figure(FigureType.Queen, PlayerColor.Black, 3, 7, new JLabel(blackQueenImage)),
+      new Figure(FigureType.Rook, PlayerColor.Black, 7, 7, new JLabel(blackRookImage)),
+      new Figure(FigureType.Rook, PlayerColor.Black, 0, 7, new JLabel(blackRookImage)),
+      new Figure(FigureType.Knight, PlayerColor.Black, 1, 7, new JLabel(blackKnightImage)),
+      new Figure(FigureType.Knight, PlayerColor.Black, 6, 7, new JLabel(blackKnightImage)),
+      new Figure(FigureType.Bishop, PlayerColor.Black, 2, 7, new JLabel(blackBishopImage)),
+      new Figure(FigureType.Bishop, PlayerColor.Black, 5, 7, new JLabel(blackBishopImage)),
+      new Figure(FigureType.King, PlayerColor.Black, 4, 7, new JLabel(blackKingImage)),
+      new Figure(FigureType.Pawn, PlayerColor.Black, 0, 6, new JLabel(blackPawnImage)),
+      new Figure(FigureType.Pawn, PlayerColor.Black, 1, 6, new JLabel(blackPawnImage)),
+      new Figure(FigureType.Pawn, PlayerColor.Black, 2, 6, new JLabel(blackPawnImage)),
+      new Figure(FigureType.Pawn, PlayerColor.Black, 3, 6, new JLabel(blackPawnImage)),
+      new Figure(FigureType.Pawn, PlayerColor.Black, 4, 6, new JLabel(blackPawnImage)),
+      new Figure(FigureType.Pawn, PlayerColor.Black, 5, 6, new JLabel(blackPawnImage)),
+      new Figure(FigureType.Pawn, PlayerColor.Black, 6, 6, new JLabel(blackPawnImage)),
+      new Figure(FigureType.Pawn, PlayerColor.Black, 7, 6, new JLabel(blackPawnImage))
+    )
   }
 
-  def createBoard(whiteFigures : Array[Figure], blackFigures : Array[Figure]): Array[Array[Figure]] = {
+  def createBoard(whiteFigures : Vector[Figure], blackFigures : Vector[Figure]): Vector[Vector[Figure]] = {
 
-    val board = Array.ofDim[Figure](8, 8)
-    for (i <- 0 to NUMBER_OF_SQUARES - 1)
-      for (j <- 0 to NUMBER_OF_SQUARES - 1)
-        board(i)(j) = null
-
-    for (figure <- whiteFigures) {
-      board(figure.x)(figure.y) = figure
-    }
-
-    for (figure <- blackFigures) {
-      board(figure.x)(figure.y) = figure
-    }
-    return board
+    return Vector[Vector[Figure]](
+      blackFigures.take(8),
+      blackFigures.takeRight(8),
+      Vector[Figure](null, null, null, null, null, null, null, null),
+      Vector[Figure](null, null, null, null, null, null, null, null),
+      Vector[Figure](null, null, null, null, null, null, null, null),
+      Vector[Figure](null, null, null, null, null, null, null, null),
+      whiteFigures.takeRight(8),
+      whiteFigures.take(8)
+    )
   }
 
   def getOpponentColor(playerColor: PlayerColor): PlayerColor = {
@@ -82,51 +88,30 @@ case class Controller(var mainWindow: MainWindow = null, var timeForMove: Long =
   }
 
 	def makePlayerMove(figure : Figure, destination: (Int, Int)) : Unit = {
-		if(currentState.isCurrentPlayerKingAttacked && !currentState.isAnyMoveDefendingKingPossible(currentPlayerColor))
-      gameOver(getOpponentColor(currentPlayerColor))
-    else
-    {
-		  currentState = currentState.makeMove(figure, destination)
-		  currentPlayerColor = getOpponentColor(currentPlayerColor)
-		}
+    currentState = currentState.makeMove(figure, destination)
 	}
 
   def makeComputerMove() : Unit = {
-    if(currentState.isCurrentPlayerKingAttacked && !currentState.isAnyMoveDefendingKingPossible(currentPlayerColor))
-      gameOver(getOpponentColor(currentPlayerColor))
-    else
-		{
-		  val minimax = new Algorithm(currentState.copy(), currentPlayerColor, algorithmDepth)
-		  val move = minimax.minimax_algorithm(currentState)
-		  currentState = currentState.makeMove(move)
-		  mainWindow.getBoardPanel.repaintFigures()
-		  mainWindow.getBoardPanel.enableFigures()
-		  currentPlayerColor = getOpponentColor(currentPlayerColor)
-		}
+    val minimax = new Algorithm(currentState.copy(), currentPlayerColor, algorithmDepth)
+    val move = minimax.run()
+    currentState = currentState.makeMove(move)
+    mainWindow.getBoardPanel.repaintFigures()
+    mainWindow.getBoardPanel.enableFigures()
+    currentPlayerColor = getOpponentColor(currentPlayerColor)
   }
 
   def computerVsComputer() : Unit = {
-    if(currentState.isCurrentPlayerKingAttacked && !currentState.isAnyMoveDefendingKingPossible(currentPlayerColor))
-      gameOver(getOpponentColor(currentPlayerColor))
-    else
-		{
-		  val minimaxFirst = new Algorithm(currentState.copy(), currentPlayerColor, algorithmDepth)
-		  val firstMove = minimaxFirst.run()
-		  currentState = currentState.makeMove(firstMove)
-		  mainWindow.getBoardPanel.repaintFigures()
-		  currentPlayerColor = getOpponentColor(currentPlayerColor)
-		}
+    val minimaxFirst = new Algorithm(currentState.copy(), currentPlayerColor, algorithmDepth)
+    val firstMove = minimaxFirst.run()
+    currentState = currentState.makeMove(firstMove)
+    mainWindow.getBoardPanel.repaintFigures()
+    currentPlayerColor = getOpponentColor(currentPlayerColor)
 
-    if(currentState.isCurrentPlayerKingAttacked && !currentState.isAnyMoveDefendingKingPossible(currentPlayerColor))
-      gameOver(getOpponentColor(currentPlayerColor))
-    else
-		{
-		  val minimaxSecond = new Algorithm(currentState.copy(), currentPlayerColor, algorithmDepth)
-		  val secondMove = minimaxSecond.run()
-		  currentState = currentState.makeMove(secondMove)
-		  mainWindow.getBoardPanel.repaintFigures()
-		  currentPlayerColor = getOpponentColor(currentPlayerColor)
-		}
+    val minimaxSecond = new Algorithm(currentState.copy(), currentPlayerColor, algorithmDepth)
+    val secondMove = minimaxSecond.run()
+    currentState = currentState.makeMove(secondMove)
+    mainWindow.getBoardPanel.repaintFigures()
+    currentPlayerColor = getOpponentColor(currentPlayerColor)
   }
 
 	def gameOver(winnerPlayerColor : PlayerColor) : Unit = {
@@ -144,9 +129,9 @@ case class Controller(var mainWindow: MainWindow = null, var timeForMove: Long =
   
   def figureAtSquareBelongsToPlayer(x : Int, y : Int) : Boolean = getBoard()(x)(y).getColor == playerColor
 
-  def getBlackFigures: Array[Figure] = currentState.getBlackFigures
+  def getBlackFigures: Vector[Figure] = currentState.getBlackFigures
 
-  def getWhiteFigures: Array[Figure] = currentState.getWhiteFigures
+  def getWhiteFigures: Vector[Figure] = currentState.getWhiteFigures
 
   def setPlayerColor(_playerColor: PlayerColor): Unit = this.playerColor = _playerColor
 

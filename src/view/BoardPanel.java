@@ -229,26 +229,14 @@ public class BoardPanel extends JPanel {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
 
-                Figure [] blackFigures = controller.getBlackFigures();
-                Figure [] whiteFigures = controller.getWhiteFigures();
+                Iterable<Figure> blackFigures = JavaConverters.asJavaIterable(controller.getBlackFigures());
+                Iterable<Figure> whiteFigures = JavaConverters.asJavaIterable(controller.getWhiteFigures());
 
-                for(Figure f : whiteFigures){
-                    if(f == null)
-                        continue;
-                    if(controller.playerColor() == PlayerColor.White())
-                        board[f.x()][f.y()].setEnabled(true);
-                    else
-                        board[f.x()][f.y()].setEnabled(false);
-                }
+                for(Figure f : whiteFigures)
+                    board[f.x()][f.y()].setEnabled(controller.playerColor() == f.getColor());
 
-                for(Figure f : blackFigures){
-                    if(f == null)
-                        continue;
-                    if(controller.playerColor() == PlayerColor.Black())
-                        board[f.x()][f.y()].setEnabled(true);
-                    else
-                        board[f.x()][f.y()].setEnabled(false);
-                }
+                for(Figure f : blackFigures)
+                    board[f.x()][f.y()].setEnabled(controller.playerColor() == f.getColor());
             }
         }
     }
@@ -265,17 +253,15 @@ public class BoardPanel extends JPanel {
             }
         }
 
-        Figure [] blackFigures = controller.getBlackFigures();
-        Figure [] whiteFigures = controller.getWhiteFigures();
+        Iterable<Figure> blackFigures = JavaConverters.asJavaIterable(controller.getBlackFigures());
+        Iterable<Figure> whiteFigures = JavaConverters.asJavaIterable(controller.getWhiteFigures());
 
         for(Figure f : whiteFigures){
-            if(f != null)
-                board[f.x()][f.y()].setFigure(f);
+            board[f.x()][f.y()].setFigure(f);
         }
 
         for(Figure f : blackFigures){
-            if(f != null)
-                board[f.x()][f.y()].setFigure(f);
+            board[f.x()][f.y()].setFigure(f);
         }
 
         this.repaint();

@@ -60,7 +60,6 @@ public class IntroPanel extends JPanel{
 					controller.setPlayerColor(PlayerColor.White());
 				else // playerHasWhiteFigures == false
 					controller.setPlayerColor(PlayerColor.Black());
-
 				controller.getMainWindow().showBoardPanel();
 			}
 		});

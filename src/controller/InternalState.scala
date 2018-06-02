@@ -9,46 +9,27 @@ import model.{Figure, FigureType, Images, PlayerColor}
 import scala.annotation.tailrec
 import scala.collection.immutable.VectorBuilder
 
-case class InternalState(val whiteFigures : Array[Figure], val blackFigures : Array[Figure], val board: Array[Array[Figure]],
+case class InternalState(val whiteFigures : Vector[Figure], val blackFigures : Vector[Figure], val board: Vector[Vector[Figure]],
                          currentPlayerColor : PlayerColor, var isCurrentPlayerKingAttacked : Boolean = false) extends Images {
 
-  def getActiveFigures()  : Array[Figure] = return getFigures(currentPlayerColor)
+  def getActiveFigures()  : Vector[Figure] = return getFigures(currentPlayerColor)
 
-  def points(figure : Figure) : Int = {
-    figure.getType match {
-      case FigureType.Pawn => 1
-      case FigureType.Knight => 3
-      case FigureType.Bishop => 3
-      case FigureType.Rook => 5
-      case FigureType.Queen => 9
-      case FigureType.King => 1000
-    }
-  }
 
-  def getMoves(figure : Figure) : Array[(Figure, (Int, Int))] = {
-    findPossibleMoves(figure).map(e => (figure, e)).toArray
+  def getMoves(figure : Figure) : Vector[(Figure, (Int, Int))] = {
+    findPossibleMoves(figure).map(e => (figure, e))
   }
   def setCurrentPlayerKingAttacked(isCurrentPlayerKingAttacked : Boolean) = this.isCurrentPlayerKingAttacked = isCurrentPlayerKingAttacked
 
-  def whiteHeuristic() : Int = whiteFigures.map(f => points(f)).sum
-  def blackHeuristic() : Int = blackFigures.map(f => points(f)).sum
-  def heuristic(color : PlayerColor) : Int = {
-    color match {
-      case PlayerColor.White => whiteHeuristic
-      case PlayerColor.Black => blackHeuristic
-    }
-  }
-
-  def getWhiteFigures() : Array[Figure] = whiteFigures
-  def getBlackFigures() : Array[Figure] = blackFigures
-  def getFigures(color : PlayerColor) : Array[Figure] = {
+  def getWhiteFigures() : Vector[Figure] = whiteFigures
+  def getBlackFigures() : Vector[Figure] = blackFigures
+  def getFigures(color : PlayerColor) : Vector[Figure] = {
     color match {
       case PlayerColor.White => getWhiteFigures
       case PlayerColor.Black => getBlackFigures
     }
   }
 
-  def getBoard : Array[Array[Figure]] = board
+  def getBoard : Vector[Vector[Figure]] = board
 
   def getOpponentColor(color : PlayerColor) : PlayerColor = {
     color match {
@@ -57,62 +38,66 @@ case class InternalState(val whiteFigures : Array[Figure], val blackFigures : Ar
     }
   }
 
-	def isKingAttacked(kingColor : PlayerColor) : Boolean = {
-		val kingFigure = getFigures(kingColor)(15)
-		isFieldAttacked(kingColor, (kingFigure.x, kingFigure.y))
-	}
+  def findAllCoveredFields(color : PlayerColor) : Vector[(Int, Int)] = {
+    return getFigures(color).map(f => findCoveredFields(f)).reduce(_ ++ _)
+  }
 
-	def isAnyMovePossible(playerColor : PlayerColor) : Boolean = {
-		val allPossibleMovesFields : Set[(Int, Int)] = getAllPossibleMovesFields(playerColor)
-		allPossibleMovesFields.nonEmpty
-	}
-
-	def isMoveDefendingKing(figure : Figure, move : (Int, Int)) : Boolean = {
-		val afterMoveState = makeMove(figure, move)
-    !afterMoveState.isKingAttacked(figure.getColor)
-	}	
-
-	def isAnyMoveDefendingKingPossible(playerColor : PlayerColor) : Boolean = {
-		for (figure <- getFigures(playerColor))
-      if(figure != null)
-        for (move <- findPossibleMoves(figure))
-          if(isMoveDefendingKing(figure, move))
-						return true
-		return false
-	}
-
-	def getAllPossibleMovesFields(color : PlayerColor) : Set[(Int, Int)] = {
-
-    @tailrec
-    def recursion(i : Int, playerFigures : Array[Figure], allPossibleMovesFields : Set[(Int, Int)]) : Set[(Int, Int)] = {
-      if(i < playerFigures.size)
-        if(playerFigures(i) != null)
-          recursion(i+1, playerFigures, allPossibleMovesFields ++ findPossibleMoves(playerFigures(i)))
-        else
-          recursion(i+1, playerFigures, allPossibleMovesFields)
-      else
-        allPossibleMovesFields
+  def findPawnAttackMoves(pawn : Figure): Vector[(Figure, (Int, Int))] = {
+    pawn.getColor() match {
+      case PlayerColor.White => return whitePawnAttackMoves(pawn).map(m => (pawn, m))
+      case PlayerColor.Black => return blackPawnAttackMoves(pawn).map(m => (pawn, m))
     }
+    return Vector[(Figure, (Int, Int))]()
+  }
 
-    recursion(0, getFigures(color), Set.empty[(Int, Int)])
+	def isKingAttacked(kingColor : PlayerColor) : Boolean = {
+		val king = getFigures(kingColor).filter(f => f.getType() == FigureType.King)(0)
+    val enemyMoves = findAllCoveredFields(getOpponentColor(kingColor))
+    if(enemyMoves.contains(king.XY))
+      return true
+    return false
+	}
+
+  def findCoveredFields(figure : Figure) : Vector[(Int, Int)] = {
+    val possibleMoves =
+      figure.getType() match {
+        case FigureType.Bishop => findBishopPossibleMoves(figure)
+        case FigureType.Knight => findKnightPossibleMoves(figure)
+        case FigureType.Pawn => {
+          figure.getColor() match {
+            case PlayerColor.White => whitePawnAttackMoves(figure)
+            case PlayerColor.Black => blackPawnAttackMoves(figure)
+          }
+        }
+        case FigureType.Queen => findQueenPossibleMoves(figure)
+        case FigureType.Rook => findRookPossibleMoves(figure)
+        case FigureType.King => findKingPossibleMoves(figure)
+      }
+    return Vector[(Int, Int)]()
   }
 
   def findPossibleMoves(figure : Figure) : Vector[(Int, Int)] = {
 		val possibleMoves =
     figure.getType() match {
-      case FigureType.Bishop => findBishopPossibleMoves(figure)
-      case FigureType.Knight => findKnightPossibleMoves(figure)
-      case FigureType.Pawn => findPawnPossibleMoves(figure)
-      case FigureType.Queen => findQueenPossibleMoves(figure)
-      case FigureType.Rook => findRookPossibleMoves(figure)
-      case FigureType.King => findKingPossibleMoves(figure)
+      case FigureType.Bishop => findBishopPossibleMoves(figure).filter(m => makeMove(figure, m).isKingAttacked(figure.getColor()))
+      case FigureType.Knight => findKnightPossibleMoves(figure).filter(m => makeMove(figure, m).isKingAttacked(figure.getColor()))
+      case FigureType.Pawn => findPawnPossibleMoves(figure).filter(m => makeMove(figure, m).isKingAttacked(figure.getColor()))
+      case FigureType.Queen => findQueenPossibleMoves(figure).filter(m => makeMove(figure, m).isKingAttacked(figure.getColor()))
+      case FigureType.Rook => findRookPossibleMoves(figure).filter(m => makeMove(figure, m).isKingAttacked(figure.getColor()))
+      case FigureType.King => findKingPossibleMoves(figure).filter(m => makeMove(figure, m).isKingAttacked(figure.getColor()))
     }
-
-    if(isCurrentPlayerKingAttacked)
-      possibleMoves.filter(move => isMoveDefendingKing(figure, move))
-    else
-      possibleMoves
+    return Vector[(Int, Int)]()
 	}
+
+  def whitePawnAttackMoves(pawn : Figure) : Vector[(Int, Int)] = {
+    val moves = Vector[(Int, Int)]((pawn.x-1, pawn.y+1), (pawn.x+1, pawn.y+1))
+    return moves.filter(m => m._1 > 0 && m._1 < 8 && m._2 > 0 && m._2 < 8 && getFigure(m) != null && getFigure(m).getColor() != pawn.getColor())
+  }
+
+  def blackPawnAttackMoves(pawn : Figure) : Vector[(Int, Int)] = {
+    val moves = Vector[(Int, Int)]((pawn.x-1, pawn.y-1), (pawn.x+1, pawn.y-1))
+    return moves.filter(m => m._1 > 0 && m._1 < 8 && m._2 > 0 && m._2 < 8 && getFigure(m) != null && getFigure(m).getColor() != pawn.getColor())
+  }
 
   def findPawnPossibleMoves(figure : Figure) : Vector[(Int, Int)] = {
     val possibleMoves = new VectorBuilder[(Int, Int)]
@@ -143,7 +128,7 @@ case class InternalState(val whiteFigures : Array[Figure], val blackFigures : Ar
   }
 
   def findKnightPossibleMoves(f : Figure) : Vector[(Int, Int)] = {
-    val moves = (for(x <- Array[Int](f.x - 1, f.x + 1); y <- Array[Int](f.y - 2, f.y + 2)) yield (x, y)).++(for(x <- Array[Int](f.x - 2, f.x + 2); y <- Array[Int](f.y - 1, f.y + 1)) yield (x, y))
+    val moves = (for(x <- Vector[Int](f.x - 1, f.x + 1); y <- Vector[Int](f.y - 2, f.y + 2)) yield (x, y)).++(for(x <- Vector[Int](f.x - 2, f.x + 2); y <- Vector[Int](f.y - 1, f.y + 1)) yield (x, y))
     return moves.filter(e => 8 > e._1 && e._1 >= 0 && e._2 < 8 && e._2 >= 0 && (getFigure(e) == null || getFigure(e).getColor() == getOpponentColor(f.getColor()))).toVector
   }
 
@@ -151,35 +136,9 @@ case class InternalState(val whiteFigures : Array[Figure], val blackFigures : Ar
   def getFigure(x : Int, y : Int) : Figure = board(x)(y)
 
   def findKingPossibleMoves(f : Figure) : Vector[(Int, Int)] = {
-    val moves = for(x <- Array[Int](f.x - 1, f.x, f.x + 1); y <- Array[Int](f.y-1, f.y, f.y + 1)) yield (x, y)
+    val moves = for(x <- Vector[Int](f.x - 1, f.x, f.x + 1); y <- Vector[Int](f.y-1, f.y, f.y + 1)) yield (x, y)
     return moves.filter(e => 8 > e._1 && e._1 >= 0 && e._2 < 8 && e._2 >= 0 && (getFigure(e) == null || getFigure(e).getColor() == getOpponentColor(f.getColor()))).toVector
   }
-
-	def removeAttackedFields(possibleMoves : Vector[(Int, Int)]) : Vector[(Int, Int)] = {
-		val allOpponentPossibleMovesFields : Set[(Int, Int)] = getAllPossibleMovesFields(getOpponentColor(currentPlayerColor))
-		possibleMoves.filterNot(move => allOpponentPossibleMovesFields.contains(move) || isFieldAttackedByEnemyPawn(move))
-	}
-
-  def isFieldAttackedByEnemyPawn(field : (Int, Int)) : Boolean = {
-    currentPlayerColor match {
-      case PlayerColor.Black =>
-        (field._1 > 0 && field._2 > 0 && board(field._1-1)(field._2-1) != null && board(field._1-1)(field._2-1).getType() == FigureType.Pawn && board(field._1-1)(field._2-1).getColor == getOpponentColor(currentPlayerColor)) ||
-        (field._1 < 7 && field._2 > 0 && board(field._1+1)(field._2-1) != null && board(field._1+1)(field._2-1).getType() == FigureType.Pawn && board(field._1+1)(field._2-1).getColor == getOpponentColor(currentPlayerColor))
-      case PlayerColor.White =>
-        (field._1 > 0 && field._2 < 7 && board(field._1-1)(field._2+1) != null && board(field._1-1)(field._2+1).getType() == FigureType.Pawn && board(field._1-1)(field._2+1).getColor == getOpponentColor(currentPlayerColor)) ||
-        (field._1 < 7 && field._2 < 7 && board(field._1+1)(field._2+1) != null && board(field._1+1)(field._2+1).getType() == FigureType.Pawn && board(field._1+1)(field._2+1).getColor == getOpponentColor(currentPlayerColor))
-    }
-  }
-
-	def isFieldAttacked(currentPlayerColor : PlayerColor, fieldPosition: (Int, Int)) : Boolean = {
-		val allOpponentPossibleMovesFields : Set[(Int, Int)] = getAllPossibleMovesFields(getOpponentColor(currentPlayerColor))
-		allOpponentPossibleMovesFields.contains(fieldPosition)
-	}
-
-	def areFieldsAttacked(fieldPositions : Vector[(Int, Int)]) : Boolean = {
-		val allOpponentPossibleMovesFields : Set[(Int, Int)] = getAllPossibleMovesFields(getOpponentColor(currentPlayerColor))
-		fieldPositions.exists(fieldPosition => allOpponentPossibleMovesFields.contains(fieldPosition))
-	}
 
   def makeMove(x : (Figure, (Int, Int))) : InternalState = {
     makeMove(x._1, x._2)
@@ -189,9 +148,7 @@ case class InternalState(val whiteFigures : Array[Figure], val blackFigures : Ar
 
     val newFigure = new Figure(figure.getType, figure.getColor, destination._1, destination._2, figure.getFigureImage)
 
-    val newBoard = board.map(_.clone)
-    newBoard(figure.x)(figure.y) = null
-    newBoard(destination._1)(destination._2) = newFigure
+    val newBoard = board.updated(figure.x, board(figure.x).updated(figure.y, null)).updated(destination._1, board(destination._1).updated(destination._2, null))
 
     if(figure.getColor == PlayerColor.White){
       val newWhiteFigures = whiteFigures.filterNot(f => f.x == figure.x && f.y == figure.y) :+ newFigure
@@ -280,22 +237,19 @@ case class InternalState(val whiteFigures : Array[Figure], val blackFigures : Ar
     possibleMoves.result()
   }
 
-  def createBoard(whiteFigures : Array[Figure], blackFigures : Array[Figure]): Array[Array[Figure]] = {
+  def getAllMoves() : Vector[(Figure, (Int, Int))] = {
 
-    val board = Array.ofDim[Figure](8, 8)
-    for (i <- 0 to NUMBER_OF_SQUARES - 1)
-      for (j <- 0 to NUMBER_OF_SQUARES - 1)
-        board(i)(j) = null
+    getActiveFigures().map(f => getMoves(f)).reduce(_ ++ _)
+  }
 
-    for (figure <- whiteFigures) {
-      if(figure != null)
-        board(figure.x)(figure.y) = figure
-    }
+  def getAllMoves(color : PlayerColor) : Vector[(Figure, (Int, Int))] = {
 
-    for (figure <- blackFigures) {
-      if(figure != null)
-        board(figure.x)(figure.y) = figure
-    }
-    board
+    getFigures(color).map(f => getMoves(f)).reduce(_ ++ _)
+  }
+
+  def getChildren() : Vector[InternalState] = {
+
+    val moves = getActiveFigures().map(f => getMoves(f)).reduce(_ ++ _)
+    moves.map(m => makeMove(m))
   }
 }
