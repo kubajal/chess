@@ -44,8 +44,10 @@ class Algorithm(val initialState : InternalState, val maximizing : PlayerColor, 
       return evaluator.evaluateState(state)
     }
     val children = state.getChildren()
-    if(children.isEmpty)
-      return INFINITY     // szach mat - gracz, ktory minimalizuje nie moze wykonac zadnego ruchu
+    if(children.isEmpty && state.isKingAttacked(state.getOpponentColor(maximizing)))
+      return INFINITY     // szach mat - gracz, nasz przeciwnik nie moze wykonac zadnego ruchu, dazymy do tego!
+    if(children.isEmpty && !state.isKingAttacked(maximizing))
+      return -INFINITY    // pat - chcemy go uniknac!
     val newBeta = minIteration(alpha, beta, height, 0, children)
     return newBeta
   }
@@ -56,7 +58,7 @@ class Algorithm(val initialState : InternalState, val maximizing : PlayerColor, 
     }
     val children = state.getChildren()
     if(children.isEmpty)
-      return -INFINITY     // szach mat - gracz, ktory maksymalizuje nie moze wykonac zadnego ruchu
+      return -INFINITY     // szach mat lub pat - nie mozemy wykonac zadnego ruchu, chcemy tego uniknac!
     val newAlpha = maxIteration(alpha, beta, height, 0, children)
     return newAlpha
   }

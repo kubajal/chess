@@ -3,7 +3,7 @@ package controller
 import javax.swing.{ImageIcon, JLabel, JOptionPane, SwingUtilities}
 import model.{Figure, FigureType, Images, PlayerColor}
 import model.PlayerColor.PlayerColor
-import view.{BoardPanel, MainWindow}
+import view.{BoardPanel}
 import model.Constants._
 import model.FigureType.FigureType
 import runnables.moveRunnable
@@ -96,15 +96,29 @@ case class Controller(val playerColor: PlayerColor = PlayerColor.White) extends 
     PlayerColor.White
   }
 
+  def stalemate(color: PlayerColor) = {
+    boardPanel.repaintFigures()
+    if(boardPanel.computerVsComputerRunnable != null)
+      boardPanel.setComputerVsComputerRunFlag(false)
+    println("Stalemate - nobody has won.")
+    JOptionPane.showMessageDialog(null, "Stalemate - nobody has won.")
+    boardPanel.finish
+  }
+
   /**
     * Update the internal state of the game according to the move that the human player does.
+    *
     * @param figure The figure to be moved.
     * @param destination The (x,y) destination position of the @figure.
     */
 	def makePlayerMove(figure : Figure, destination: (Int, Int)) : Unit = {
     currentState = currentState.makeMove(figure, destination)
-    if(currentState.getChildren().isEmpty){
+    if(currentState.getChildren().isEmpty && currentState.isKingAttacked(currentState.activePlayer)){
       win(currentState.getOpponentColor(currentState.activePlayer))
+      return
+    }
+    if(currentState.getChildren().isEmpty && !currentState.isKingAttacked(currentState.activePlayer)){
+      stalemate(currentState.getOpponentColor(currentState.activePlayer))
       return
     }
     new Thread(new moveRunnable(this)).start()
@@ -116,8 +130,12 @@ case class Controller(val playerColor: PlayerColor = PlayerColor.White) extends 
         val minimax = new Algorithm(currentState.copy(), currentState.activePlayer, boardPanel.getEnemyDepth)
         val move = minimax.run()
         currentState = currentState.makeMove(move)
-        if(currentState.getChildren().isEmpty){
+        if(currentState.getChildren().isEmpty && currentState.isKingAttacked(currentState.activePlayer)){
           win(currentState.getOpponentColor(currentState.activePlayer))
+          return
+        }
+        if(currentState.getChildren().isEmpty && !currentState.isKingAttacked(currentState.activePlayer)){
+          stalemate(currentState.getOpponentColor(currentState.activePlayer))
           return
         }
         SwingUtilities.invokeAndWait(new Runnable {
@@ -134,8 +152,12 @@ case class Controller(val playerColor: PlayerColor = PlayerColor.White) extends 
     val minimaxFirst = new Algorithm(currentState.copy(), currentState.activePlayer, boardPanel.getPlayerDepth)
     val firstMove = minimaxFirst.run()
     currentState = currentState.makeMove(firstMove)
-    if(currentState.getChildren().isEmpty){
+    if(currentState.getChildren().isEmpty && currentState.isKingAttacked(currentState.activePlayer)){
       win(currentState.getOpponentColor(currentState.activePlayer))
+      return
+    }
+    if(currentState.getChildren().isEmpty && !currentState.isKingAttacked(currentState.activePlayer)){
+      stalemate(currentState.getOpponentColor(currentState.activePlayer))
       return
     }
 
@@ -144,8 +166,12 @@ case class Controller(val playerColor: PlayerColor = PlayerColor.White) extends 
     val minimaxSecond = new Algorithm(currentState.copy(), currentState.activePlayer, boardPanel.getEnemyDepth)
     val secondMove = minimaxSecond.run()
     currentState = currentState.makeMove(secondMove)
-    if(currentState.getChildren().isEmpty){
+    if(currentState.getChildren().isEmpty && currentState.isKingAttacked(currentState.activePlayer)){
       win(currentState.getOpponentColor(currentState.activePlayer))
+      return
+    }
+    if(currentState.getChildren().isEmpty && !currentState.isKingAttacked(currentState.activePlayer)){
+      stalemate(currentState.getOpponentColor(currentState.activePlayer))
       return
     }
     boardPanel.repaintFigures()

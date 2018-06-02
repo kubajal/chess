@@ -7,12 +7,12 @@ class Evaluator(val maximizing : PlayerColor) {
 
   val pawnTable : Array[Array[Int]] = Array(
     Array(0, 0, 0, 0, 0, 0, 0, 0),
+    Array(1, 1, 1, 1, 1, 1, 1, 1),
     Array(1, 2, 2, 2, 2, 2, 2, 1),
+    Array(1, 2, 2, 3, 3, 2, 2, 1),
+    Array(1, 2, 2, 3, 3, 2, 2, 1),
     Array(1, 2, 2, 2, 2, 2, 2, 1),
-    Array(1, 2, 2, 2, 2, 2, 2, 1),
-    Array(1, 2, 2, 2, 2, 2, 2, 1),
-    Array(1, 2, 2, 2, 2, 2, 2, 1),
-    Array(1, 2, 2, 2, 2, 2, 2, 1),
+    Array(1, 1, 1, 1, 1, 1, 1, 1),
     Array(0, 0, 0, 0, 0, 0, 0, 0)
   )
   val knightTable : Array[Array[Int]] = Array(

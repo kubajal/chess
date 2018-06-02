@@ -14,7 +14,7 @@ import view.BoardPanel
 
 object Main extends App {
   val chooseColor = JOptionPane.showConfirmDialog(null,
-    "Do you want to play white figures?", "Figures color", JOptionPane.YES_NO_OPTION)
+    "Do you want to play white figures? If \"no\" you will play with black figures.", "Figures color", JOptionPane.YES_NO_OPTION)
   var controller : Controller = null
   if (chooseColor == JOptionPane.YES_OPTION)
     controller = new Controller(PlayerColor.White)
