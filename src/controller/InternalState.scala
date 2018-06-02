@@ -81,22 +81,22 @@ case class InternalState(val whiteFigures : Vector[Figure], val blackFigures : V
     figure.getType() match {
       case FigureType.Bishop => findBishopPossibleMoves(figure).filter(m => makeMove(figure, m).isKingAttacked(figure.getColor()))
       case FigureType.Knight => findKnightPossibleMoves(figure).filter(m => makeMove(figure, m).isKingAttacked(figure.getColor()))
-      case FigureType.Pawn => findPawnPossibleMoves(figure).filter(m => makeMove(figure, m).isKingAttacked(figure.getColor()))
+      case FigureType.Pawn => findPawnPossibleMoves(figure)//.filter(m => makeMove(figure, m).isKingAttacked(figure.getColor()))
       case FigureType.Queen => findQueenPossibleMoves(figure).filter(m => makeMove(figure, m).isKingAttacked(figure.getColor()))
       case FigureType.Rook => findRookPossibleMoves(figure).filter(m => makeMove(figure, m).isKingAttacked(figure.getColor()))
       case FigureType.King => findKingPossibleMoves(figure).filter(m => makeMove(figure, m).isKingAttacked(figure.getColor()))
     }
-    return Vector[(Int, Int)]()
+    return possibleMoves
 	}
 
   def whitePawnAttackMoves(pawn : Figure) : Vector[(Int, Int)] = {
     val moves = Vector[(Int, Int)]((pawn.x-1, pawn.y+1), (pawn.x+1, pawn.y+1))
-    return moves.filter(m => m._1 > 0 && m._1 < 8 && m._2 > 0 && m._2 < 8 && getFigure(m) != null && getFigure(m).getColor() != pawn.getColor())
+    return moves.filter(m => m._1 > 0 && m._1 < 8 && m._2 > 0 && m._2 < 8)
   }
 
   def blackPawnAttackMoves(pawn : Figure) : Vector[(Int, Int)] = {
     val moves = Vector[(Int, Int)]((pawn.x-1, pawn.y-1), (pawn.x+1, pawn.y-1))
-    return moves.filter(m => m._1 > 0 && m._1 < 8 && m._2 > 0 && m._2 < 8 && getFigure(m) != null && getFigure(m).getColor() != pawn.getColor())
+    return moves.filter(m => m._1 > 0 && m._1 < 8 && m._2 > 0 && m._2 < 8)
   }
 
   def findPawnPossibleMoves(figure : Figure) : Vector[(Int, Int)] = {

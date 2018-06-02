@@ -5,14 +5,15 @@ import model.{Figure, FigureType, Images, PlayerColor}
 import model.PlayerColor.PlayerColor
 import view.MainWindow
 import model.Constants._
+import model.FigureType.FigureType
 
 case class Controller(var mainWindow: MainWindow = null, var timeForMove: Long = 100, var playerColor: PlayerColor = PlayerColor.White,
                  var currentPlayerColor: PlayerColor = PlayerColor.White, var algorithmDepth : Int = 2) extends Images {
 
-  val tmp1 = createWhiteFigures
-  val tmp2 = createBlackFigures
+  val whiteFigures = createWhiteFigures
+  val blackFigures = createBlackFigures
 
-  var currentState = new InternalState(tmp1, tmp2, createBoard(tmp1, tmp2), currentPlayerColor)
+  var currentState = new InternalState(whiteFigures, blackFigures , createBoard(whiteFigures, blackFigures ), currentPlayerColor)
 
   def getBoard() = currentState.getBoard
 
@@ -60,18 +61,17 @@ case class Controller(var mainWindow: MainWindow = null, var timeForMove: Long =
     )
   }
 
-  def createBoard(whiteFigures : Vector[Figure], blackFigures : Vector[Figure]): Vector[Vector[Figure]] = {
+  def createBoard(w : Vector[Figure], b : Vector[Figure]): Vector[Vector[Figure]] = {
 
     return Vector[Vector[Figure]](
-      blackFigures.take(8),
-      blackFigures.takeRight(8),
+      Vector[Figure](w(1), w(3), w(5), w(7), w(0), w(6), w(4), w(2)),
+      Vector[Figure](w(8), w(9), w(10), w(11), w(12), w(13), w(14), w(15)),
       Vector[Figure](null, null, null, null, null, null, null, null),
       Vector[Figure](null, null, null, null, null, null, null, null),
       Vector[Figure](null, null, null, null, null, null, null, null),
       Vector[Figure](null, null, null, null, null, null, null, null),
-      whiteFigures.takeRight(8),
-      whiteFigures.take(8)
-    )
+      Vector[Figure](b(8), b(9), b(10), b(11), b(12), b(13), b(14), b(15)),
+      Vector[Figure](b(1), b(3), b(5), b(7), b(0), b(6), b(4), b(2)))
   }
 
   def getOpponentColor(playerColor: PlayerColor): PlayerColor = {
