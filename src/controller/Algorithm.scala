@@ -5,10 +5,19 @@ import model.PlayerColor.PlayerColor
 
 import scala.annotation.tailrec
 
-class Algorithm(val initialState : InternalState, val maximizing : PlayerColor, val depth : Int = 2) {
+/**
+  * Implementation of the [[https://en.wikipedia.org/wiki/Minimax minimax algorithm]] with [[https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning alpha-beta pruning]].
+  *
+  * @param initialState State for which we want to calculate the next move.
+  * @param depth Number of recursive calls of the algorithm. I. e. how many moves will be simulated.
+  */
 
+class Algorithm(val initialState : InternalState, val depth : Int = 2) {
+
+  val maximizing = initialState.activePlayer
   val evaluator = new Evaluator(maximizing)
   val INFINITY = 1000000
+
 
   @tailrec
   private def minIteration(alpha : Int, beta : Int, height : Int, i : Int, states: Vector[InternalState]) : Int = {

@@ -1,5 +1,9 @@
 package model;
 
+/**
+ * All number constants used in the application.
+ */
+
 public interface Constants {
 	// Stale uzywane w programie
 	int INTRO_WINDOW_WIDTH = 320;

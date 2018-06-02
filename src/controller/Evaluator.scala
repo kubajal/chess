@@ -3,6 +3,12 @@ package controller
 import model.PlayerColor.PlayerColor
 import model.{Figure, FigureType}
 
+/**
+  * Represents general algorithm to evaluate the state of the board from the maximizing players perspective.
+  * Gives clue how good the situtation on the board is for the maximizing player.
+  *
+  * @param maximizing The color of the player whose score we want to maximize.
+  */
 class Evaluator(val maximizing : PlayerColor) {
 
   val pawnTable : Array[Array[Int]] = Array(
@@ -66,6 +72,12 @@ class Evaluator(val maximizing : PlayerColor) {
     Array(12, 12, 12, 12, 12, 12, 12, 12)
   )
 
+  /**
+    * Evaluates the score of a single figure according to its type and position.
+    * @param figure Figure which position is to be evaluated.
+    * @return The score of the given figure.
+    */
+
   def evaluate(figure : Figure) : Int = {
     figure.figureType match {
       case FigureType.King => return kingTable(figure.x)(figure.y)
@@ -77,6 +89,14 @@ class Evaluator(val maximizing : PlayerColor) {
     }
   }
 
+  /**
+    * Evaluates the whole state of the board. The more the maximizing player has figures that are placed in good positions
+    * the better score he/she gets. The score of a single figure on the board is based on its position according to the
+    * score tables for each figure type.
+    *
+    * @param internalState State to be evaluated.
+    * @return Evaluation of the state of the board from the perspective of the maximizing player.
+    */
   def evaluateState(internalState : InternalState) : Int = {
     val minimizing = internalState.getOpponentColor(maximizing)
     return internalState.getFigures(maximizing).map(f => if(f == null) 0 else evaluate(f)).sum -

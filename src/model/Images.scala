@@ -2,6 +2,10 @@ package model
 
 import javax.swing.ImageIcon
 
+/**
+  * Icons that will be show on the board for each figure.
+  */
+
 trait Images {
   val whitePawnImage = new ImageIcon(getClass.getResource("/images/white_pawn.png"))
   val whiteKnightImage = new ImageIcon(getClass.getResource("/images/white_knight.png"))

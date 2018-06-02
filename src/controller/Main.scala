@@ -9,7 +9,7 @@ import view.BoardPanel
 /**
   * Entry point to the application.
   *
-  * Creates Controller and shows the main windows of the app.
+  * Asks the user which figures - white or black - he/she wants to play with, creates the controller and shows the board.
   */
 
 object Main extends App {
@@ -23,6 +23,7 @@ object Main extends App {
   val boardPanel = new BoardPanel(controller)
   controller.setBoardPanel(boardPanel)
   boardPanel.setVisible(true)
+  /* if the player chose black figures -> computer starts  */
   if(chooseColor == JOptionPane.NO_OPTION)
     controller.makeComputerMove()
 }

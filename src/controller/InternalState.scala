@@ -7,6 +7,8 @@ import scala.annotation.tailrec
 import scala.collection.immutable.VectorBuilder
 
 /**
+  * Represents the situation on the board including the set of white figures, the set of black figures and the general
+  * state of the board.
   *
   * @param whiteFigures Set of white figures.
   * @param blackFigures Set of black figures.

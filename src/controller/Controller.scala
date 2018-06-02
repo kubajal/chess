@@ -9,6 +9,8 @@ import model.FigureType.FigureType
 import runnables.moveRunnable
 
 /**
+  * Represents the core logic of the game. Initializes game, manipulates the board, executes players and computers moves on the model
+  * of the board, handels checkmates and stalemates.
   *
   * @param playerColor - The color of the human player.
   */
@@ -127,7 +129,7 @@ case class Controller(val playerColor: PlayerColor = PlayerColor.White) extends 
   def makeComputerMove() : Unit = {
     new Thread(new Runnable {
       override def run(): Unit = {
-        val minimax = new Algorithm(currentState.copy(), currentState.activePlayer, boardPanel.getEnemyDepth)
+        val minimax = new Algorithm(currentState.copy(), boardPanel.getEnemyDepth)
         val move = minimax.run()
         currentState = currentState.makeMove(move)
         if(currentState.getChildren().isEmpty && currentState.isKingAttacked(currentState.activePlayer)){
@@ -149,7 +151,7 @@ case class Controller(val playerColor: PlayerColor = PlayerColor.White) extends 
   }
 
   def computerVsComputer() : Unit = {
-    val minimaxFirst = new Algorithm(currentState.copy(), currentState.activePlayer, boardPanel.getPlayerDepth)
+    val minimaxFirst = new Algorithm(currentState.copy(), boardPanel.getPlayerDepth)
     val firstMove = minimaxFirst.run()
     currentState = currentState.makeMove(firstMove)
     if(currentState.getChildren().isEmpty && currentState.isKingAttacked(currentState.activePlayer)){
@@ -163,7 +165,7 @@ case class Controller(val playerColor: PlayerColor = PlayerColor.White) extends 
 
     boardPanel.repaintFigures()
 
-    val minimaxSecond = new Algorithm(currentState.copy(), currentState.activePlayer, boardPanel.getEnemyDepth)
+    val minimaxSecond = new Algorithm(currentState.copy(), boardPanel.getEnemyDepth)
     val secondMove = minimaxSecond.run()
     currentState = currentState.makeMove(secondMove)
     if(currentState.getChildren().isEmpty && currentState.isKingAttacked(currentState.activePlayer)){
@@ -189,8 +191,6 @@ case class Controller(val playerColor: PlayerColor = PlayerColor.White) extends 
   def findPossibleMoves(figure : Figure) = currentState.findPossibleMoves(figure)
 
   def isPlayersMove : Boolean = currentState.activePlayer == playerColor
-
-  def figureAtSquareBelongsToPlayer(x : Int, y : Int) : Boolean = getBoard()(x)(y).getColor == playerColor
 
   def getBlackFigures: Vector[Figure] = currentState.getBlackFigures
 
